@@ -1,22 +1,15 @@
-html>
-
+<!DOCTYPE html>
 <html lang="it">
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <meta name="description" content="BJ Beyond — Art Market Intelligence. One step beyond AI."/>
-  <meta property="og:title" content="BJ Beyond — One step beyond AI."/>
-  <meta property="og:description" content="Art market intelligence all'incrocio tra arte contemporanea e intelligenza artificiale."/>
-  <meta property="og:url" content="https://bjbeyond.it"/>
   <title>BJ Beyond — One step beyond AI.</title>
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Exo+2:ital,wght@0,300;0,400;0,600;0,700;1,300&display=swap" rel="stylesheet"/>
   <style>
     :root {
       --cyan: #00e5ff;
-      --cyan-dim: rgba(0,229,255,0.6);
-      --cyan-glow: rgba(0,229,255,0.15);
       --red: #e53935;
-      --red-glow: rgba(229,57,53,0.4);
       --bg: #000;
       --card: rgba(255,255,255,0.03);
       --card-border: rgba(0,229,255,0.12);
@@ -25,421 +18,104 @@ html>
     }
     *{margin:0;padding:0;box-sizing:border-box}
     html{scroll-behavior:smooth}
-    body{
-      background:var(--bg);
-      color:var(--text);
-      font-family:'Exo 2',sans-serif;
-      font-weight:300;
-      line-height:1.7;
-      overflow-x:hidden;
-    }
-
-```
-/* STARFIELD */
-#starfield{position:fixed;inset:0;z-index:0;pointer-events:none}
-#starfield canvas{width:100%;height:100%}
-
-/* NAV */
-nav{
-  position:fixed;top:0;left:0;right:0;z-index:100;
-  display:flex;align-items:center;justify-content:space-between;
-  padding:18px 40px;
-  background:rgba(0,0,0,0.55);
-  backdrop-filter:blur(12px);
-  border-bottom:1px solid rgba(0,229,255,0.08);
-}
-.nav-logo{
-  font-family:'Orbitron',monospace;
-  font-weight:900;font-size:1.3rem;
-  color:#fff;letter-spacing:0.08em;
-  text-decoration:none;
-  text-shadow:0 0 18px var(--cyan),0 0 40px rgba(0,229,255,0.3);
-}
-.nav-links{display:flex;gap:32px;align-items:center}
-.nav-links a{
-  font-family:'Orbitron',monospace;
-  font-size:0.65rem;font-weight:700;
-  letter-spacing:0.18em;text-transform:uppercase;
-  color:var(--muted);text-decoration:none;
-  transition:color .2s;
-}
-.nav-links a:hover{color:var(--cyan)}
-.nav-cta{
-  background:transparent;
-  border:1px solid var(--cyan);
-  color:var(--cyan)!important;
-  padding:8px 18px;border-radius:3px;
-  transition:background .2s,color .2s!important;
-}
-.nav-cta:hover{background:var(--cyan);color:#000!important}
-
-/* HERO */
-#hero{
-  position:relative;z-index:1;
-  min-height:100vh;
-  display:flex;flex-direction:column;
-  align-items:center;justify-content:center;
-  text-align:center;
-  padding:120px 24px 80px;
-}
-.hero-logo{
-  font-family:'Orbitron',monospace;
-  font-weight:900;
-  font-size:clamp(5rem,20vw,11rem);
-  line-height:1;
-  color:#fff;
-  text-shadow:
-    0 0 30px var(--cyan),
-    0 0 80px rgba(0,229,255,0.35),
-    0 0 160px rgba(0,229,255,0.15);
-  letter-spacing:0.04em;
-  animation:pulseLogo 4s ease-in-out infinite;
-}
-@keyframes pulseLogo{
-  0%,100%{text-shadow:0 0 30px var(--cyan),0 0 80px rgba(0,229,255,.35),0 0 160px rgba(0,229,255,.15)}
-  50%{text-shadow:0 0 50px var(--cyan),0 0 120px rgba(0,229,255,.5),0 0 220px rgba(0,229,255,.25)}
-}
-.hero-redline{
-  width:min(600px,80vw);height:2px;
-  background:linear-gradient(90deg,transparent,var(--red) 15%,var(--red) 85%,transparent);
-  box-shadow:0 0 14px var(--red),0 0 35px var(--red-glow);
-  margin:24px 0 28px;
-}
-.hero-tagline{
-  font-family:'Exo 2',sans-serif;
-  font-size:clamp(1rem,3.5vw,1.5rem);
-  font-weight:300;
-  letter-spacing:0.25em;
-  color:rgba(255,255,255,0.75);
-  text-transform:uppercase;
-}
-.hero-sub{
-  max-width:560px;
-  margin:28px auto 0;
-  font-size:clamp(0.88rem,2vw,1rem);
-  color:var(--muted);
-  line-height:1.85;
-}
-.hero-ctas{
-  display:flex;gap:16px;flex-wrap:wrap;
-  justify-content:center;margin-top:48px;
-}
-.btn-primary{
-  font-family:'Orbitron',monospace;
-  font-size:0.68rem;font-weight:700;
-  letter-spacing:0.18em;text-transform:uppercase;
-  padding:14px 32px;
-  background:transparent;
-  border:1px solid var(--cyan);
-  color:var(--cyan);
-  cursor:pointer;text-decoration:none;
-  border-radius:3px;
-  transition:background .25s,color .25s,box-shadow .25s;
-}
-.btn-primary:hover{
-  background:var(--cyan);color:#000;
-  box-shadow:0 0 20px rgba(0,229,255,.4);
-}
-.btn-ghost{
-  font-family:'Orbitron',monospace;
-  font-size:0.68rem;font-weight:700;
-  letter-spacing:0.18em;text-transform:uppercase;
-  padding:14px 32px;
-  background:transparent;
-  border:1px solid rgba(255,255,255,0.15);
-  color:var(--muted);
-  cursor:pointer;text-decoration:none;
-  border-radius:3px;
-  transition:border-color .25s,color .25s;
-}
-.btn-ghost:hover{border-color:var(--muted);color:#fff}
-.scroll-hint{
-  position:absolute;bottom:36px;left:50%;transform:translateX(-50%);
-  display:flex;flex-direction:column;align-items:center;gap:6px;
-  color:var(--muted);font-size:0.7rem;letter-spacing:0.12em;
-  animation:bounce 2.5s ease-in-out infinite;
-}
-.scroll-hint::after{content:'↓';font-size:1rem}
-@keyframes bounce{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(6px)}}
-
-/* SECTIONS */
-section{position:relative;z-index:1;padding:100px 24px}
-.section-inner{max-width:1080px;margin:0 auto}
-.section-label{
-  font-family:'Orbitron',monospace;
-  font-size:0.65rem;font-weight:700;
-  letter-spacing:0.3em;text-transform:uppercase;
-  color:var(--cyan);margin-bottom:14px;
-}
-.section-title{
-  font-family:'Orbitron',monospace;
-  font-size:clamp(1.3rem,4vw,2rem);
-  font-weight:900;color:#fff;
-  line-height:1.2;margin-bottom:20px;
-}
-.section-line{
-  width:60px;height:2px;
-  background:var(--red);
-  box-shadow:0 0 10px var(--red);
-  margin-bottom:36px;
-}
-.section-intro{
-  max-width:620px;
-  font-size:1rem;color:var(--muted);line-height:1.85;
-}
-
-/* ABOUT */
-#about{background:rgba(0,229,255,0.015);border-top:1px solid var(--card-border);border-bottom:1px solid var(--card-border)}
-.about-grid{
-  display:grid;grid-template-columns:1fr 1fr;gap:64px;
-  align-items:center;margin-top:60px;
-}
-.about-text p{
-  color:var(--muted);font-size:0.97rem;
-  margin-bottom:18px;line-height:1.9;
-}
-.about-text p strong{color:#fff;font-weight:600}
-.about-stat-block{display:grid;grid-template-columns:1fr 1fr;gap:20px}
-.stat-card{
-  background:var(--card);
-  border:1px solid var(--card-border);
-  border-radius:4px;padding:24px 20px;
-  text-align:center;
-  transition:border-color .3s,background .3s;
-}
-.stat-card:hover{border-color:rgba(0,229,255,.3);background:rgba(0,229,255,.05)}
-.stat-num{
-  font-family:'Orbitron',monospace;
-  font-size:2rem;font-weight:900;
-  color:var(--cyan);
-  text-shadow:0 0 20px rgba(0,229,255,.5);
-  display:block;
-}
-.stat-label{
-  font-size:0.72rem;letter-spacing:0.12em;
-  color:var(--muted);text-transform:uppercase;
-  margin-top:6px;display:block;line-height:1.5;
-}
-
-/* PROJECTS */
-#projects{padding-bottom:80px}
-.projects-grid{
-  display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(300px,1fr));
-  gap:24px;margin-top:60px;
-}
-.project-card{
-  background:var(--card);
-  border:1px solid var(--card-border);
-  border-radius:6px;
-  padding:36px 32px;
-  position:relative;overflow:hidden;
-  transition:border-color .3s,transform .3s,background .3s;
-}
-.project-card::before{
-  content:'';position:absolute;top:0;left:0;right:0;
-  height:2px;
-  background:linear-gradient(90deg,transparent,var(--cyan),transparent);
-  opacity:0;transition:opacity .3s;
-}
-.project-card:hover{
-  border-color:rgba(0,229,255,.3);
-  transform:translateY(-4px);
-  background:rgba(0,229,255,.04);
-}
-.project-card:hover::before{opacity:1}
-.card-icon{font-size:1.8rem;margin-bottom:18px;display:block}
-.card-tag{
-  font-family:'Orbitron',monospace;
-  font-size:0.6rem;font-weight:700;
-  letter-spacing:0.2em;text-transform:uppercase;
-  color:var(--cyan);margin-bottom:10px;display:block;
-}
-.card-title{
-  font-family:'Orbitron',monospace;
-  font-size:0.95rem;font-weight:700;
-  color:#fff;margin-bottom:14px;line-height:1.3;
-}
-.card-desc{font-size:0.9rem;color:var(--muted);line-height:1.75}
-.card-link{
-  display:inline-flex;align-items:center;gap:6px;
-  margin-top:24px;
-  font-family:'Orbitron',monospace;
-  font-size:0.65rem;font-weight:700;
-  letter-spacing:0.15em;text-transform:uppercase;
-  color:var(--cyan);text-decoration:none;
-  border-bottom:1px solid rgba(0,229,255,.25);
-  padding-bottom:2px;
-  transition:border-color .2s;
-}
-.card-link:hover{border-color:var(--cyan)}
-.card-link::after{content:' →'}
-
-/* INDEX FEATURE */
-#index-feature{
-  background:rgba(0,229,255,.015);
-  border-top:1px solid var(--card-border);
-  border-bottom:1px solid var(--card-border);
-}
-.index-layout{
-  display:grid;grid-template-columns:1fr 1fr;
-  gap:80px;align-items:center;margin-top:60px;
-}
-.index-visual{
-  background:var(--card);
-  border:1px solid var(--card-border);
-  border-radius:6px;padding:40px 32px;
-  position:relative;
-}
-.index-visual::after{
-  content:'';
-  position:absolute;bottom:0;left:0;right:0;height:2px;
-  background:linear-gradient(90deg,transparent,var(--red),transparent);
-  box-shadow:0 0 10px var(--red);
-}
-.index-name{
-  font-family:'Orbitron',monospace;
-  font-size:0.65rem;font-weight:700;
-  letter-spacing:0.22em;color:var(--cyan);
-  margin-bottom:10px;text-transform:uppercase;
-}
-.index-value{
-  font-family:'Orbitron',monospace;
-  font-size:clamp(2.5rem,7vw,4.5rem);
-  font-weight:900;color:#fff;
-  line-height:1;
-  text-shadow:0 0 30px rgba(255,255,255,.2);
-}
-.index-unit{color:var(--cyan);font-size:.45em;vertical-align:super}
-.index-subtitle{font-size:.82rem;color:var(--muted);margin-top:12px;line-height:1.6}
-.index-bars{margin-top:28px;display:flex;flex-direction:column;gap:10px}
-.bar-row{display:flex;align-items:center;gap:12px;font-size:.8rem}
-.bar-label{color:var(--muted);min-width:100px;font-size:.75rem}
-.bar-track{flex:1;height:4px;background:rgba(255,255,255,.08);border-radius:2px;overflow:hidden}
-.bar-fill{height:100%;border-radius:2px;width:0;transition:width 1.5s ease}
-.bar-fill.human{background:var(--cyan);box-shadow:0 0 8px var(--cyan)}
-.bar-fill.ai{background:var(--red);box-shadow:0 0 8px var(--red)}
-.bar-fill.hybrid{background:rgba(255,255,255,.3)}
-.bar-val{color:#fff;font-family:'Orbitron',monospace;font-size:.72rem;min-width:40px;text-align:right}
-
-/* SOCIAL */
-#social{padding:80px 24px}
-.social-grid{
-  display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
-  gap:16px;margin-top:48px;
-}
-.social-card{
-  display:flex;align-items:center;gap:16px;
-  background:var(--card);
-  border:1px solid var(--card-border);
-  border-radius:4px;padding:22px 24px;
-  text-decoration:none;
-  transition:border-color .25s,transform .25s,background .25s;
-}
-.social-card:hover{
-  border-color:rgba(0,229,255,.35);
-  transform:translateX(4px);
-  background:rgba(0,229,255,.04);
-}
-.social-icon{font-size:1.4rem;min-width:28px;text-align:center}
-.social-info{flex:1}
-.social-platform{
-  font-family:'Orbitron',monospace;
-  font-size:.7rem;font-weight:700;
-  letter-spacing:.15em;color:var(--cyan);
-  text-transform:uppercase;
-}
-.social-handle{font-size:.82rem;color:var(--muted);margin-top:2px}
-.social-arr{color:var(--muted);font-size:.9rem;transition:color .2s}
-.social-card:hover .social-arr{color:var(--cyan)}
-
-/* FOOTER */
-footer{
-  position:relative;z-index:1;
-  border-top:1px solid var(--card-border);
-  padding:48px 24px 36px;
-  text-align:center;
-}
-.footer-logo{
-  font-family:'Orbitron',monospace;
-  font-weight:900;font-size:1.6rem;
-  color:#fff;letter-spacing:.08em;
-  text-shadow:0 0 20px var(--cyan),0 0 50px rgba(0,229,255,.25);
-  display:block;margin-bottom:6px;
-}
-.footer-tag{font-size:.75rem;letter-spacing:.2em;color:var(--muted);text-transform:uppercase}
-.footer-links{
-  display:flex;gap:28px;justify-content:center;
-  margin:28px 0 20px;flex-wrap:wrap;
-}
-.footer-links a{
-  font-family:'Orbitron',monospace;
-  font-size:.62rem;font-weight:700;
-  letter-spacing:.15em;text-transform:uppercase;
-  color:var(--muted);text-decoration:none;
-  transition:color .2s;
-}
-.footer-links a:hover{color:var(--cyan)}
-.footer-copy{font-size:.75rem;color:rgba(255,255,255,.2);letter-spacing:.06em}
-.diamond{
-  display:inline-block;width:8px;height:8px;
-  background:var(--cyan);transform:rotate(45deg);
-  box-shadow:0 0 10px var(--cyan);
-  margin:0 8px;vertical-align:middle;
-}
-
-/* COOKIE BANNER */
-#cookie-banner{
-  position:fixed;bottom:0;left:0;right:0;z-index:999;
-  background:rgba(5,5,5,.96);
-  border-top:1px solid var(--card-border);
-  backdrop-filter:blur(16px);
-  padding:20px 32px;
-  display:flex;align-items:center;justify-content:space-between;
-  gap:24px;flex-wrap:wrap;
-  transform:translateY(100%);
-  transition:transform .4s ease;
-}
-#cookie-banner.show{transform:translateY(0)}
-.cookie-text{font-size:.83rem;color:var(--muted);max-width:680px;line-height:1.6}
-.cookie-text a{color:var(--cyan);text-decoration:none;border-bottom:1px solid rgba(0,229,255,.3)}
-.cookie-btns{display:flex;gap:12px;flex-shrink:0}
-.cookie-accept{
-  font-family:'Orbitron',monospace;
-  font-size:.65rem;font-weight:700;
-  letter-spacing:.15em;text-transform:uppercase;
-  padding:10px 24px;
-  background:var(--cyan);color:#000;
-  border:none;cursor:pointer;border-radius:3px;
-}
-.cookie-decline{
-  font-family:'Orbitron',monospace;
-  font-size:.65rem;font-weight:700;
-  letter-spacing:.15em;text-transform:uppercase;
-  padding:10px 24px;
-  background:transparent;color:var(--muted);
-  border:1px solid rgba(255,255,255,.12);cursor:pointer;border-radius:3px;
-  transition:color .2s,border-color .2s;
-}
-.cookie-decline:hover{color:#fff;border-color:rgba(255,255,255,.3)}
-
-/* RESPONSIVE */
-@media(max-width:768px){
-  nav{padding:16px 20px}
-  .nav-links{display:none}
-  .about-grid,.index-layout{grid-template-columns:1fr;gap:40px}
-  section{padding:70px 20px}
-  #cookie-banner{padding:20px;flex-direction:column}
-}
-```
-
+    body{background:var(--bg);color:var(--text);font-family:'Exo 2',sans-serif;font-weight:300;line-height:1.7;overflow-x:hidden}
+    #starfield{position:fixed;inset:0;z-index:0;pointer-events:none}
+    #starfield canvas{width:100%;height:100%}
+    nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:18px 40px;background:rgba(0,0,0,0.55);backdrop-filter:blur(12px);border-bottom:1px solid rgba(0,229,255,0.08)}
+    .nav-logo{font-family:'Orbitron',monospace;font-weight:900;font-size:1.3rem;color:#fff;letter-spacing:0.08em;text-decoration:none;text-shadow:0 0 18px var(--cyan),0 0 40px rgba(0,229,255,0.3)}
+    .nav-links{display:flex;gap:32px;align-items:center}
+    .nav-links a{font-family:'Orbitron',monospace;font-size:0.65rem;font-weight:700;letter-spacing:0.18em;text-transform:uppercase;color:var(--muted);text-decoration:none;transition:color .2s}
+    .nav-links a:hover{color:var(--cyan)}
+    .nav-cta{background:transparent;border:1px solid var(--cyan);color:var(--cyan)!important;padding:8px 18px;border-radius:3px;transition:background .2s,color .2s!important}
+    .nav-cta:hover{background:var(--cyan);color:#000!important}
+    #hero{position:relative;z-index:1;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:120px 24px 80px}
+    .hero-logo{font-family:'Orbitron',monospace;font-weight:900;font-size:clamp(5rem,20vw,11rem);line-height:1;color:#fff;text-shadow:0 0 30px var(--cyan),0 0 80px rgba(0,229,255,0.35),0 0 160px rgba(0,229,255,0.15);letter-spacing:0.04em;animation:pulseLogo 4s ease-in-out infinite}
+    @keyframes pulseLogo{0%,100%{text-shadow:0 0 30px var(--cyan),0 0 80px rgba(0,229,255,.35),0 0 160px rgba(0,229,255,.15)}50%{text-shadow:0 0 50px var(--cyan),0 0 120px rgba(0,229,255,.5),0 0 220px rgba(0,229,255,.25)}}
+    .hero-redline{width:min(600px,80vw);height:2px;background:linear-gradient(90deg,transparent,var(--red) 15%,var(--red) 85%,transparent);box-shadow:0 0 14px var(--red),0 0 35px rgba(229,57,53,0.4);margin:24px 0 28px}
+    .hero-tagline{font-family:'Exo 2',sans-serif;font-size:clamp(1rem,3.5vw,1.5rem);font-weight:300;letter-spacing:0.25em;color:rgba(255,255,255,0.75);text-transform:uppercase}
+    .hero-sub{max-width:560px;margin:28px auto 0;font-size:clamp(0.88rem,2vw,1rem);color:var(--muted);line-height:1.85}
+    .hero-ctas{display:flex;gap:16px;flex-wrap:wrap;justify-content:center;margin-top:48px}
+    .btn-primary{font-family:'Orbitron',monospace;font-size:0.68rem;font-weight:700;letter-spacing:0.18em;text-transform:uppercase;padding:14px 32px;background:transparent;border:1px solid var(--cyan);color:var(--cyan);cursor:pointer;text-decoration:none;border-radius:3px;transition:background .25s,color .25s,box-shadow .25s}
+    .btn-primary:hover{background:var(--cyan);color:#000;box-shadow:0 0 20px rgba(0,229,255,.4)}
+    .btn-ghost{font-family:'Orbitron',monospace;font-size:0.68rem;font-weight:700;letter-spacing:0.18em;text-transform:uppercase;padding:14px 32px;background:transparent;border:1px solid rgba(255,255,255,0.15);color:var(--muted);cursor:pointer;text-decoration:none;border-radius:3px;transition:border-color .25s,color .25s}
+    .btn-ghost:hover{border-color:var(--muted);color:#fff}
+    .scroll-hint{position:absolute;bottom:36px;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:6px;color:var(--muted);font-size:0.7rem;letter-spacing:0.12em;animation:bounce 2.5s ease-in-out infinite}
+    .scroll-hint::after{content:'↓';font-size:1rem}
+    @keyframes bounce{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(6px)}}
+    section{position:relative;z-index:1;padding:100px 24px}
+    .section-inner{max-width:1080px;margin:0 auto}
+    .section-label{font-family:'Orbitron',monospace;font-size:0.65rem;font-weight:700;letter-spacing:0.3em;text-transform:uppercase;color:var(--cyan);margin-bottom:14px}
+    .section-title{font-family:'Orbitron',monospace;font-size:clamp(1.3rem,4vw,2rem);font-weight:900;color:#fff;line-height:1.2;margin-bottom:20px}
+    .section-line{width:60px;height:2px;background:var(--red);box-shadow:0 0 10px var(--red);margin-bottom:36px}
+    .section-intro{max-width:620px;font-size:1rem;color:var(--muted);line-height:1.85}
+    #about{background:rgba(0,229,255,0.015);border-top:1px solid var(--card-border);border-bottom:1px solid var(--card-border)}
+    .about-grid{display:grid;grid-template-columns:1fr 1fr;gap:64px;align-items:center;margin-top:60px}
+    .about-text p{color:var(--muted);font-size:0.97rem;margin-bottom:18px;line-height:1.9}
+    .about-text p strong{color:#fff;font-weight:600}
+    .about-stat-block{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+    .stat-card{background:var(--card);border:1px solid var(--card-border);border-radius:4px;padding:24px 20px;text-align:center;transition:border-color .3s,background .3s}
+    .stat-card:hover{border-color:rgba(0,229,255,.3);background:rgba(0,229,255,.05)}
+    .stat-num{font-family:'Orbitron',monospace;font-size:2rem;font-weight:900;color:var(--cyan);text-shadow:0 0 20px rgba(0,229,255,.5);display:block}
+    .stat-label{font-size:0.72rem;letter-spacing:0.12em;color:var(--muted);text-transform:uppercase;margin-top:6px;display:block;line-height:1.5}
+    .projects-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:24px;margin-top:60px}
+    .project-card{background:var(--card);border:1px solid var(--card-border);border-radius:6px;padding:36px 32px;position:relative;overflow:hidden;transition:border-color .3s,transform .3s,background .3s}
+    .project-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--cyan),transparent);opacity:0;transition:opacity .3s}
+    .project-card:hover{border-color:rgba(0,229,255,.3);transform:translateY(-4px);background:rgba(0,229,255,.04)}
+    .project-card:hover::before{opacity:1}
+    .card-icon{font-size:1.8rem;margin-bottom:18px;display:block}
+    .card-tag{font-family:'Orbitron',monospace;font-size:0.6rem;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:var(--cyan);margin-bottom:10px;display:block}
+    .card-title{font-family:'Orbitron',monospace;font-size:0.95rem;font-weight:700;color:#fff;margin-bottom:14px;line-height:1.3}
+    .card-desc{font-size:0.9rem;color:var(--muted);line-height:1.75}
+    .card-link{display:inline-flex;align-items:center;gap:6px;margin-top:24px;font-family:'Orbitron',monospace;font-size:0.65rem;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;color:var(--cyan);text-decoration:none;border-bottom:1px solid rgba(0,229,255,.25);padding-bottom:2px;transition:border-color .2s}
+    .card-link:hover{border-color:var(--cyan)}
+    .card-link::after{content:' →'}
+    #index-feature{background:rgba(0,229,255,.015);border-top:1px solid var(--card-border);border-bottom:1px solid var(--card-border)}
+    .index-layout{display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:center;margin-top:60px}
+    .index-visual{background:var(--card);border:1px solid var(--card-border);border-radius:6px;padding:40px 32px;position:relative}
+    .index-visual::after{content:'';position:absolute;bottom:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--red),transparent);box-shadow:0 0 10px var(--red)}
+    .index-name{font-family:'Orbitron',monospace;font-size:0.65rem;font-weight:700;letter-spacing:0.22em;color:var(--cyan);margin-bottom:10px;text-transform:uppercase}
+    .index-value{font-family:'Orbitron',monospace;font-size:clamp(2.5rem,7vw,4.5rem);font-weight:900;color:#fff;line-height:1;text-shadow:0 0 30px rgba(255,255,255,.2)}
+    .index-unit{color:var(--cyan);font-size:.45em;vertical-align:super}
+    .index-subtitle{font-size:.82rem;color:var(--muted);margin-top:12px;line-height:1.6}
+    .index-bars{margin-top:28px;display:flex;flex-direction:column;gap:10px}
+    .bar-row{display:flex;align-items:center;gap:12px}
+    .bar-label{color:var(--muted);min-width:100px;font-size:.75rem}
+    .bar-track{flex:1;height:4px;background:rgba(255,255,255,.08);border-radius:2px;overflow:hidden}
+    .bar-fill{height:100%;border-radius:2px;width:0;transition:width 1.5s ease}
+    .bar-fill.human{background:var(--cyan);box-shadow:0 0 8px var(--cyan)}
+    .bar-fill.ai{background:var(--red);box-shadow:0 0 8px var(--red)}
+    .bar-fill.hybrid{background:rgba(255,255,255,.3)}
+    .bar-val{color:#fff;font-family:'Orbitron',monospace;font-size:.72rem;min-width:40px;text-align:right}
+    .social-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px;margin-top:48px}
+    .social-card{display:flex;align-items:center;gap:16px;background:var(--card);border:1px solid var(--card-border);border-radius:4px;padding:22px 24px;text-decoration:none;transition:border-color .25s,transform .25s,background .25s}
+    .social-card:hover{border-color:rgba(0,229,255,.35);transform:translateX(4px);background:rgba(0,229,255,.04)}
+    .social-icon{font-size:1.4rem;min-width:28px;text-align:center}
+    .social-info{flex:1}
+    .social-platform{font-family:'Orbitron',monospace;font-size:.7rem;font-weight:700;letter-spacing:.15em;color:var(--cyan);text-transform:uppercase}
+    .social-handle{font-size:.82rem;color:var(--muted);margin-top:2px}
+    .social-arr{color:var(--muted);font-size:.9rem;transition:color .2s}
+    .social-card:hover .social-arr{color:var(--cyan)}
+    footer{position:relative;z-index:1;border-top:1px solid var(--card-border);padding:48px 24px 36px;text-align:center}
+    .footer-logo{font-family:'Orbitron',monospace;font-weight:900;font-size:1.6rem;color:#fff;letter-spacing:.08em;text-shadow:0 0 20px var(--cyan),0 0 50px rgba(0,229,255,.25);display:block;margin-bottom:6px}
+    .footer-tag{font-size:.75rem;letter-spacing:.2em;color:var(--muted);text-transform:uppercase}
+    .footer-links{display:flex;gap:28px;justify-content:center;margin:28px 0 20px;flex-wrap:wrap}
+    .footer-links a{font-family:'Orbitron',monospace;font-size:.62rem;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:var(--muted);text-decoration:none;transition:color .2s}
+    .footer-links a:hover{color:var(--cyan)}
+    .footer-copy{font-size:.75rem;color:rgba(255,255,255,.2);letter-spacing:.06em}
+    .diamond{display:inline-block;width:8px;height:8px;background:var(--cyan);transform:rotate(45deg);box-shadow:0 0 10px var(--cyan);margin:0 8px;vertical-align:middle}
+    #cookie-banner{position:fixed;bottom:0;left:0;right:0;z-index:999;background:rgba(5,5,5,.96);border-top:1px solid var(--card-border);backdrop-filter:blur(16px);padding:20px 32px;display:flex;align-items:center;justify-content:space-between;gap:24px;flex-wrap:wrap;transform:translateY(100%);transition:transform .4s ease}
+    #cookie-banner.show{transform:translateY(0)}
+    .cookie-text{font-size:.83rem;color:var(--muted);max-width:680px;line-height:1.6}
+    .cookie-text a{color:var(--cyan);text-decoration:none;border-bottom:1px solid rgba(0,229,255,.3)}
+    .cookie-btns{display:flex;gap:12px;flex-shrink:0}
+    .cookie-accept{font-family:'Orbitron',monospace;font-size:.65rem;font-weight:700;letter-spacing:.15em;text-transform:uppercase;padding:10px 24px;background:var(--cyan);color:#000;border:none;cursor:pointer;border-radius:3px}
+    .cookie-decline{font-family:'Orbitron',monospace;font-size:.65rem;font-weight:700;letter-spacing:.15em;text-transform:uppercase;padding:10px 24px;background:transparent;color:var(--muted);border:1px solid rgba(255,255,255,.12);cursor:pointer;border-radius:3px;transition:color .2s,border-color .2s}
+    .cookie-decline:hover{color:#fff;border-color:rgba(255,255,255,.3)}
+    @media(max-width:768px){nav{padding:16px 20px}.nav-links{display:none}.about-grid,.index-layout{grid-template-columns:1fr;gap:40px}section{padding:70px 20px}#cookie-banner{padding:20px;flex-direction:column}}
   </style>
 </head>
 <body>
-
 <div id="starfield"><canvas id="sc"></canvas></div>
-
 <nav>
   <a class="nav-logo" href="/">BJ</a>
   <div class="nav-links">
@@ -450,23 +126,17 @@ footer{
     <a href="#social" class="nav-cta">Esplora</a>
   </div>
 </nav>
-
 <section id="hero">
   <div class="hero-logo">BJ</div>
   <div class="hero-redline"></div>
   <div class="hero-tagline">One step beyond AI.</div>
-  <p class="hero-sub">
-    Intelligence è lo standard.<br>
-    Noi andiamo oltre. Arte, mercato, dati —<br>
-    nell'era in cui l'AI ridisegna il valore.
-  </p>
+  <p class="hero-sub">Intelligence è lo standard.<br>Noi andiamo oltre. Arte, mercato, dati —<br>nell'era in cui l'AI ridisegna il valore.</p>
   <div class="hero-ctas">
     <a href="#projects" class="btn-primary">Esplora i progetti</a>
     <a href="#index-feature" class="btn-ghost">Human Edge Index →</a>
   </div>
   <div class="scroll-hint"></div>
 </section>
-
 <section id="about">
   <div class="section-inner">
     <div class="section-label">Chi siamo</div>
@@ -479,27 +149,14 @@ footer{
         <p>Dalla sala d'aste al feed di TikTok, tracciamo la linea tra ciò che una macchina può fare e ciò che solo un essere umano sa vedere.</p>
       </div>
       <div class="about-stat-block">
-        <div class="stat-card">
-          <span class="stat-num">+62<span style="font-size:.5em;color:var(--muted)">%</span></span>
-          <span class="stat-label">Human Premium<br>Q1 2026</span>
-        </div>
-        <div class="stat-card">
-          <span class="stat-num">10</span>
-          <span class="stat-label">Storie vere<br>Pillole di Arte</span>
-        </div>
-        <div class="stat-card">
-          <span class="stat-num">89</span>
-          <span class="stat-label">Artisti Biennale<br>analizzati</span>
-        </div>
-        <div class="stat-card">
-          <span class="stat-num">∞</span>
-          <span class="stat-label">Step beyond<br>AI.</span>
-        </div>
+        <div class="stat-card"><span class="stat-num">+62<span style="font-size:.5em;color:var(--muted)">%</span></span><span class="stat-label">Human Premium<br>Q1 2026</span></div>
+        <div class="stat-card"><span class="stat-num">10</span><span class="stat-label">Storie vere<br>Pillole di Arte</span></div>
+        <div class="stat-card"><span class="stat-num">89</span><span class="stat-label">Artisti Biennale<br>analizzati</span></div>
+        <div class="stat-card"><span class="stat-num">&#x221E;</span><span class="stat-label">Step beyond<br>AI.</span></div>
       </div>
     </div>
   </div>
 </section>
-
 <section id="projects">
   <div class="section-inner">
     <div class="section-label">Cosa facciamo</div>
@@ -507,62 +164,15 @@ footer{
     <div class="section-line"></div>
     <p class="section-intro">Art market intelligence, storytelling data-driven, contenuti che interrogano il confine tra umano e artificiale.</p>
     <div class="projects-grid">
-
-```
-  <div class="project-card">
-    <span class="card-icon">📊</span>
-    <span class="card-tag">Report mensile</span>
-    <div class="card-title">Human Edge Index</div>
-    <p class="card-desc">Il primo indice che quantifica il premium che l'arte umana comanda sull'AI-generated. Dati d'asta, metodologia trasparente, pubblicato ogni mese.</p>
-    <a href="#index-feature" class="card-link">Scopri l'indice</a>
-  </div>
-
-  <div class="project-card">
-    <span class="card-icon">📖</span>
-    <span class="card-tag">Ebook · Italiano</span>
-    <div class="card-title">Pillole di Arte</div>
-    <p class="card-desc">Dieci storie vere dal mondo dell'arte contemporanea. Warhol, Kusama, Kapoor, Sehgal — le verità che le gallerie non raccontano.</p>
-    <a href="#" class="card-link">In uscita</a>
-  </div>
-
-  <div class="project-card">
-    <span class="card-icon">🎬</span>
-    <span class="card-tag">TikTok · Content</span>
-    <div class="card-title">Art Intelligence Daily</div>
-    <p class="card-desc">Il mercato dell'arte spiegato in 60 secondi. Scandali, record d'asta, il codice segreto di Kubrick — contenuti che nessun altro produce in Italia.</p>
-    <a href="https://www.tiktok.com/@bj_beyond" target="_blank" rel="noopener" class="card-link">Guarda su TikTok</a>
-  </div>
-
-  <div class="project-card">
-    <span class="card-icon">🏛️</span>
-    <span class="card-tag">Coverage · 2026</span>
-    <div class="card-title">Venice Biennale 2026</div>
-    <p class="card-desc">Analisi commerciale della Biennale — chi partecipa, quale valore muovono, dove guardano i collezionisti. Intelligence per chi compra, non solo per chi guarda.</p>
-    <a href="#" class="card-link">Prossimamente</a>
-  </div>
-
-  <div class="project-card">
-    <span class="card-icon">𝕏</span>
-    <span class="card-tag">X / Twitter</span>
-    <div class="card-title">@bj_artint</div>
-    <p class="card-desc">Thread giornalieri su mercato dell'arte, movimenti di prezzo, anomalie d'asta. L'account che i collezionisti seguono per capire prima degli altri.</p>
-    <a href="https://x.com/bj_artint" target="_blank" rel="noopener" class="card-link">Segui su X</a>
-  </div>
-
-  <div class="project-card">
-    <span class="card-icon">🔬</span>
-    <span class="card-tag">Research</span>
-    <div class="card-title">Art × AI Analysis</div>
-    <p class="card-desc">Studi sull'intersezione tra intelligenza artificiale e mercato dell'arte — provenienza, autenticità, dinamiche di prezzo nell'era della generazione automatizzata.</p>
-    <a href="#" class="card-link">Prossimamente</a>
-  </div>
-
-</div>
-```
-
+      <div class="project-card"><span class="card-icon">&#128202;</span><span class="card-tag">Report mensile</span><div class="card-title">Human Edge Index</div><p class="card-desc">Il primo indice che quantifica il premium che l'arte umana comanda sull'AI-generated. Dati d'asta, metodologia trasparente, pubblicato ogni mese.</p><a href="#index-feature" class="card-link">Scopri l'indice</a></div>
+      <div class="project-card"><span class="card-icon">&#128214;</span><span class="card-tag">Ebook · Italiano</span><div class="card-title">Pillole di Arte</div><p class="card-desc">Dieci storie vere dal mondo dell'arte contemporanea. Warhol, Kusama, Kapoor, Sehgal — le verità che le gallerie non raccontano.</p><a href="#" class="card-link">In uscita</a></div>
+      <div class="project-card"><span class="card-icon">&#127916;</span><span class="card-tag">TikTok · Content</span><div class="card-title">Art Intelligence Daily</div><p class="card-desc">Il mercato dell'arte spiegato in 60 secondi. Scandali, record d'asta, il codice segreto di Kubrick — contenuti che nessun altro produce in Italia.</p><a href="https://www.tiktok.com/@bj_beyond" target="_blank" rel="noopener" class="card-link">Guarda su TikTok</a></div>
+      <div class="project-card"><span class="card-icon">&#127963;</span><span class="card-tag">Coverage · 2026</span><div class="card-title">Venice Biennale 2026</div><p class="card-desc">Analisi commerciale della Biennale — chi partecipa, quale valore muovono, dove guardano i collezionisti. Intelligence per chi compra, non solo per chi guarda.</p><a href="#" class="card-link">Prossimamente</a></div>
+      <div class="project-card"><span class="card-icon">X</span><span class="card-tag">X / Twitter</span><div class="card-title">@bj_artint</div><p class="card-desc">Thread giornalieri su mercato dell'arte, movimenti di prezzo, anomalie d'asta. L'account che i collezionisti seguono per capire prima degli altri.</p><a href="https://x.com/bj_artint" target="_blank" rel="noopener" class="card-link">Segui su X</a></div>
+      <div class="project-card"><span class="card-icon">&#128300;</span><span class="card-tag">Research</span><div class="card-title">Art x AI Analysis</div><p class="card-desc">Studi sull'intersezione tra intelligenza artificiale e mercato dell'arte — provenienza, autenticità, dinamiche di prezzo nell'era della generazione automatizzata.</p><a href="#" class="card-link">Prossimamente</a></div>
+    </div>
   </div>
 </section>
-
 <section id="index-feature">
   <div class="section-inner">
     <div class="section-label">Flagship Report</div>
@@ -570,12 +180,8 @@ footer{
     <div class="section-line"></div>
     <div class="index-layout">
       <div>
-        <p class="section-intro" style="margin-bottom:28px">
-          Ogni mese misuriamo il premio che l'arte umana comanda sull'AI-generated nei segmenti comparabili del mercato secondario. Un numero. Metodologia trasparente. Nessuna narrativa — solo dati.
-        </p>
-        <p style="color:var(--muted);font-size:.92rem;line-height:1.85;margin-bottom:24px">
-          L'Edizione #1 (Q1 2026) ha rilevato un premium medio del <strong style="color:#fff">+62%</strong> per opere di artisti mid-career in segmenti comparabili — una divergenza che sfida la narrativa mainstream sulla convergenza AI/human.
-        </p>
+        <p class="section-intro" style="margin-bottom:28px">Ogni mese misuriamo il premio che l'arte umana comanda sull'AI-generated nei segmenti comparabili del mercato secondario. Un numero. Metodologia trasparente. Nessuna narrativa — solo dati.</p>
+        <p style="color:var(--muted);font-size:.92rem;line-height:1.85;margin-bottom:24px">L'Edizione #1 (Q1 2026) ha rilevato un premium medio del <strong style="color:#fff">+62%</strong> per opere di artisti mid-career in segmenti comparabili.</p>
         <a href="https://x.com/bj_artint" target="_blank" rel="noopener" class="btn-primary" style="display:inline-block">Leggi l'Edizione #1</a>
       </div>
       <div class="index-visual">
@@ -583,27 +189,14 @@ footer{
         <div class="index-value">+62<span class="index-unit">%</span></div>
         <div class="index-subtitle">Premium medio opere umane mid-career<br>vs AI-generated comparabili · Q1 2026</div>
         <div class="index-bars">
-          <div class="bar-row">
-            <span class="bar-label">Arte Umana</span>
-            <div class="bar-track"><div class="bar-fill human" data-w="85%"></div></div>
-            <span class="bar-val">85</span>
-          </div>
-          <div class="bar-row">
-            <span class="bar-label">AI-Generated</span>
-            <div class="bar-track"><div class="bar-fill ai" data-w="52%"></div></div>
-            <span class="bar-val">52</span>
-          </div>
-          <div class="bar-row">
-            <span class="bar-label">AI-Assisted</span>
-            <div class="bar-track"><div class="bar-fill hybrid" data-w="68%"></div></div>
-            <span class="bar-val">68</span>
-          </div>
+          <div class="bar-row"><span class="bar-label">Arte Umana</span><div class="bar-track"><div class="bar-fill human" data-w="85%"></div></div><span class="bar-val">85</span></div>
+          <div class="bar-row"><span class="bar-label">AI-Generated</span><div class="bar-track"><div class="bar-fill ai" data-w="52%"></div></div><span class="bar-val">52</span></div>
+          <div class="bar-row"><span class="bar-label">AI-Assisted</span><div class="bar-track"><div class="bar-fill hybrid" data-w="68%"></div></div><span class="bar-val">68</span></div>
         </div>
       </div>
     </div>
   </div>
 </section>
-
 <section id="social">
   <div class="section-inner">
     <div class="section-label">Seguici</div>
@@ -611,42 +204,13 @@ footer{
     <div class="section-line"></div>
     <p class="section-intro">Art market intelligence quotidiana — su ogni piattaforma, nel formato che preferisci.</p>
     <div class="social-grid">
-      <a href="https://x.com/bj_artint" target="_blank" rel="noopener" class="social-card">
-        <span class="social-icon">𝕏</span>
-        <div class="social-info">
-          <div class="social-platform">X / Twitter</div>
-          <div class="social-handle">@bj_artint</div>
-        </div>
-        <span class="social-arr">→</span>
-      </a>
-      <a href="https://www.tiktok.com/@bj_beyond" target="_blank" rel="noopener" class="social-card">
-        <span class="social-icon">▶</span>
-        <div class="social-info">
-          <div class="social-platform">TikTok</div>
-          <div class="social-handle">@bj_beyond</div>
-        </div>
-        <span class="social-arr">→</span>
-      </a>
-      <a href="https://www.reddit.com/user/bj_artint" target="_blank" rel="noopener" class="social-card">
-        <span class="social-icon">◈</span>
-        <div class="social-info">
-          <div class="social-platform">Reddit</div>
-          <div class="social-handle">u/bj_artint</div>
-        </div>
-        <span class="social-arr">→</span>
-      </a>
-      <a href="https://www.threads.net/@bj_beyond" target="_blank" rel="noopener" class="social-card">
-        <span class="social-icon">@</span>
-        <div class="social-info">
-          <div class="social-platform">Threads</div>
-          <div class="social-handle">@bj_beyond</div>
-        </div>
-        <span class="social-arr">→</span>
-      </a>
+      <a href="https://x.com/bj_artint" target="_blank" rel="noopener" class="social-card"><span class="social-icon">X</span><div class="social-info"><div class="social-platform">X / Twitter</div><div class="social-handle">@bj_artint</div></div><span class="social-arr">&#8594;</span></a>
+      <a href="https://www.tiktok.com/@bj_beyond" target="_blank" rel="noopener" class="social-card"><span class="social-icon">&#9654;</span><div class="social-info"><div class="social-platform">TikTok</div><div class="social-handle">@bj_beyond</div></div><span class="social-arr">&#8594;</span></a>
+      <a href="https://www.reddit.com/user/bj_artint" target="_blank" rel="noopener" class="social-card"><span class="social-icon">R</span><div class="social-info"><div class="social-platform">Reddit</div><div class="social-handle">u/bj_artint</div></div><span class="social-arr">&#8594;</span></a>
+      <a href="https://www.threads.net/@bj_beyond" target="_blank" rel="noopener" class="social-card"><span class="social-icon">@</span><div class="social-info"><div class="social-platform">Threads</div><div class="social-handle">@bj_beyond</div></div><span class="social-arr">&#8594;</span></a>
     </div>
   </div>
 </section>
-
 <footer>
   <span class="footer-logo">BJ</span>
   <div class="footer-tag">One step beyond AI.</div>
@@ -654,581 +218,35 @@ footer{
     <a href="#about">Mission</a>
     <a href="#projects">Progetti</a>
     <a href="#index-feature">Human Edge Index</a>
-    <a href="/privacy.html">Privacy & Cookie</a>
+    <a href="/privacy.html">Privacy &amp; Cookie</a>
   </div>
-  <div class="footer-copy">
-    <span class="diamond"></span>
-    © 2026 BJ Beyond · bjbeyond.it · Tutti i diritti riservati
-    <span class="diamond"></span>
-  </div>
+  <div class="footer-copy"><span class="diamond"></span>&#169; 2026 BJ Beyond &middot; bjbeyond.it &middot; Tutti i diritti riservati<span class="diamond"></span></div>
 </footer>
-
 <div id="cookie-banner">
-  <div class="cookie-text">
-    Utilizziamo cookie tecnici necessari al funzionamento del sito. Nessun cookie di profilazione o analytics.
-    <a href="/privacy.html">Privacy & Cookie Policy</a>
-  </div>
+  <div class="cookie-text">Utilizziamo cookie tecnici necessari al funzionamento del sito. Nessun cookie di profilazione o analytics. <a href="/privacy.html">Privacy &amp; Cookie Policy</a></div>
   <div class="cookie-btns">
     <button class="cookie-accept" onclick="cookieConsent(true)">Accetta</button>
     <button class="cookie-decline" onclick="cookieConsent(false)">Solo necessari</button>
   </div>
 </div>
-
 <script>
-/* STARFIELD */
 (function(){
   const c=document.getElementById('sc');
   const ctx=c.getContext('2d');
   let stars=[];
   function resize(){c.width=window.innerWidth;c.height=window.innerHeight}
-  function init(){
-    stars=[];
-    for(let i=0;i<280;i++){
-      stars.push({x:Math.random()*c.width,y:Math.random()*c.height,r:Math.random()*1.3+.2,a:Math.random()*Math.PI*2,spd:Math.random()*.003+.001});
-    }
-  }
-  function draw(){
-    ctx.clearRect(0,0,c.width,c.height);
-    stars.forEach(s=>{
-      s.a+=s.spd;
-      const al=(Math.sin(s.a)+1)/2*.65+.1;
-      ctx.beginPath();ctx.arc(s.x,s.y,s.r,0,Math.PI*2);
-      ctx.fillStyle=`rgba(255,255,255,${al})`;ctx.fill();
-    });
-    requestAnimationFrame(draw);
-  }
+  function init(){stars=[];for(let i=0;i<280;i++){stars.push({x:Math.random()*c.width,y:Math.random()*c.height,r:Math.random()*1.3+.2,a:Math.random()*Math.PI*2,spd:Math.random()*.003+.001})}}
+  function draw(){ctx.clearRect(0,0,c.width,c.height);stars.forEach(s=>{s.a+=s.spd;const al=(Math.sin(s.a)+1)/2*.65+.1;ctx.beginPath();ctx.arc(s.x,s.y,s.r,0,Math.PI*2);ctx.fillStyle='rgba(255,255,255,'+al+')';ctx.fill()});requestAnimationFrame(draw)}
   resize();init();draw();
   window.addEventListener('resize',()=>{resize();init()});
 })();
-
-/* COOKIE */
-function cookieConsent(accepted){
-  localStorage.setItem('bj_cookie_consent',accepted?'accepted':'declined');
-  document.getElementById('cookie-banner').classList.remove('show');
-}
-window.addEventListener('DOMContentLoaded',()=>{
-  if(!localStorage.getItem('bj_cookie_consent')){
-    setTimeout(()=>document.getElementById('cookie-banner').classList.add('show'),1200);
-  }
-});
-
-/* BAR ANIMATION */
-const obs=new IntersectionObserver(entries=>{
-  entries.forEach(e=>{
-    if(e.isIntersecting){
-      document.querySelectorAll('.bar-fill').forEach(b=>{b.style.width=b.getAttribute('data-w')});
-      obs.disconnect();
-    }
-  });
-},{threshold:.3});
-const ix=document.getElementById('index-feature');
-if(ix) obs.observe(ix);
-
-/* NAV HIGHLIGHT */
+function cookieConsent(accepted){localStorage.setItem('bj_cookie_consent',accepted?'accepted':'declined');document.getElementById('cookie-banner').classList.remove('show')}
+window.addEventListener('DOMContentLoaded',()=>{if(!localStorage.getItem('bj_cookie_consent')){setTimeout(()=>document.getElementById('cookie-banner').classList.add('show'),1200)}});
+const obs=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting){document.querySelectorAll('.bar-fill').forEach(b=>{b.style.width=b.getAttribute('data-w')});obs.disconnect()}})},{threshold:.3});
+const ix=document.getElementById('index-feature');if(ix)obs.observe(ix);
 const secs=document.querySelectorAll('section[id]');
 const navAs=document.querySelectorAll('.nav-links a');
-window.addEventListener('scroll',()=>{
-  let cur='';
-  secs.forEach(s=>{if(window.scrollY>=s.offsetTop-120)cur=s.id});
-  navAs.forEach(a=>{a.style.color=a.getAttribute('href')==='#'+cur?'var(--cyan)':''});
-},{passive:true});
+window.addEventListener('scroll',()=>{let cur='';secs.forEach(s=>{if(window.scrollY>=s.offsetTop-120)cur=s.id});navAs.forEach(a=>{a.style.color=a.getAttribute('href')==='#'+cur?'var(--cyan)':''})},{passive:true});
 </script>
-
-</body>
-</html>
-
-<html lang="it">
-<head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <meta name="description" content="BJ Beyond — Art market intelligence e AI. One step beyond AI."/>
-  <meta property="og:title" content="BJ Beyond — One step beyond AI."/>
-  <meta property="og:description" content="Art market intelligence. AI analysis. Human creativity."/>
-  <meta property="og:url" content="https://bjbeyond.it"/>
-  <meta property="og:type" content="website"/>
-  <title>BJ Beyond — One step beyond AI.</title>
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Exo+2:ital,wght@0,300;0,400;0,600;0,700;1,300&display=swap" rel="stylesheet"/>
-  <style>
-    :root{--cyan:#00e5ff;--cyan-dim:rgba(0,229,255,.5);--cyan-faint:rgba(0,229,255,.07);--red:#e53935;--bg:#000;--card:rgba(255,255,255,.03);--border:rgba(0,229,255,.13);--text:rgba(255,255,255,.88);--muted:rgba(255,255,255,.42);--wh:#fff}
-    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-    html{scroll-behavior:smooth}
-    body{background:var(--bg);color:var(--text);font-family:'Exo 2',sans-serif;font-weight:300;line-height:1.7;overflow-x:hidden}
-    ::selection{background:var(--cyan);color:#000}
-    #starfield{position:fixed;inset:0;z-index:0;pointer-events:none}
-    body::after{content:'';position:fixed;inset:0;z-index:1;pointer-events:none;background:repeating-linear-gradient(to bottom,transparent 0,transparent 3px,rgba(0,0,0,.04) 3px,rgba(0,0,0,.04) 4px)}
-
-```
-/* NAV */
-nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:16px 40px;background:rgba(0,0,0,.75);backdrop-filter:blur(14px);border-bottom:1px solid rgba(0,229,255,.07);transition:border-color .3s}
-nav.scrolled{border-bottom-color:rgba(0,229,255,.22)}
-.nav-logo{font-family:'Orbitron',monospace;font-weight:900;font-size:1.25rem;color:var(--wh);text-decoration:none;letter-spacing:.08em;text-shadow:0 0 18px var(--cyan)}
-.nav-logo span{color:var(--cyan)}
-.nav-links{display:flex;align-items:center;gap:30px;list-style:none}
-.nav-links a{font-family:'Orbitron',monospace;font-size:.62rem;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);text-decoration:none;transition:color .2s}
-.nav-links a:hover{color:var(--cyan)}
-.nav-cta{color:var(--cyan)!important;border:1px solid var(--cyan-dim)!important;padding:7px 18px;border-radius:3px;transition:background .2s,color .2s!important}
-.nav-cta:hover{background:var(--cyan)!important;color:#000!important}
-.nav-hamburger{display:none;cursor:pointer;flex-direction:column;gap:5px}
-.nav-hamburger span{display:block;width:24px;height:2px;background:var(--cyan)}
-
-/* HERO */
-#hero{position:relative;z-index:2;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:120px 24px 80px}
-.hero-bj{font-family:'Orbitron',monospace;font-weight:900;font-size:clamp(5rem,18vw,10rem);line-height:1;color:var(--wh);letter-spacing:-.02em;text-shadow:0 0 30px var(--cyan),0 0 80px rgba(0,229,255,.3),0 0 160px rgba(0,229,255,.1);position:relative;animation:fadeUp 1s ease both}
-.hero-bj::before,.hero-bj::after{content:attr(data-text);position:absolute;inset:0;font-family:inherit;font-weight:inherit;font-size:inherit}
-.hero-bj::before{color:var(--red);clip-path:polygon(0 20%,100% 20%,100% 40%,0 40%);animation:g1 5s infinite}
-.hero-bj::after{color:var(--cyan);clip-path:polygon(0 62%,100% 62%,100% 80%,0 80%);animation:g2 5s infinite}
-@keyframes g1{0%,94%,100%{transform:none;opacity:0}95%{transform:translateX(-4px);opacity:.55}96%{transform:translateX(3px);opacity:0}97%{transform:translateX(-2px);opacity:.4}}
-@keyframes g2{0%,93%,100%{transform:none;opacity:0}94%{transform:translateX(3px);opacity:.55}95.5%{transform:none;opacity:0}96.5%{transform:translateX(-3px);opacity:.4}}
-.hero-tag{font-family:'Exo 2',sans-serif;font-size:clamp(.75rem,2vw,.9rem);font-weight:300;letter-spacing:.35em;text-transform:uppercase;color:var(--cyan);margin-bottom:8px;animation:fadeUp 1s .2s ease both}
-.hero-red{width:min(500px,88vw);height:2px;background:linear-gradient(90deg,transparent,var(--red) 20%,var(--red) 80%,transparent);box-shadow:0 0 14px var(--red),0 0 40px rgba(229,57,53,.3);margin:26px auto;animation:fadeUp 1s .35s ease both}
-.hero-sub{font-size:clamp(.9rem,2vw,1.1rem);max-width:540px;color:var(--text);line-height:1.8;animation:fadeUp 1s .5s ease both}
-.hero-sub strong{color:var(--wh);font-weight:600}
-.hero-btns{display:flex;flex-wrap:wrap;gap:14px;justify-content:center;margin-top:42px;animation:fadeUp 1s .65s ease both}
-.btn{display:inline-block;font-family:'Orbitron',monospace;font-size:.7rem;font-weight:700;letter-spacing:.18em;text-transform:uppercase;text-decoration:none;padding:14px 30px;border-radius:3px;transition:all .25s;border:none;cursor:pointer}
-.btn-p{background:var(--cyan);color:#000;box-shadow:0 0 28px rgba(0,229,255,.35)}
-.btn-p:hover{background:var(--wh);box-shadow:0 0 50px rgba(0,229,255,.5);transform:translateY(-2px)}
-.btn-o{background:transparent;color:var(--cyan);border:1px solid var(--cyan-dim)}
-.btn-o:hover{background:rgba(0,229,255,.09);border-color:var(--cyan);transform:translateY(-2px)}
-.hero-scroll{position:absolute;bottom:32px;display:flex;flex-direction:column;align-items:center;gap:8px;animation:fadeUp 1s 1s ease both}
-.hero-scroll span{font-family:'Orbitron',monospace;font-size:.58rem;letter-spacing:.2em;color:var(--muted)}
-.scroll-line{width:1px;height:38px;background:linear-gradient(to bottom,var(--cyan),transparent);animation:sp 1.5s ease-in-out infinite}
-@keyframes sp{0%,100%{opacity:.35;transform:scaleY(1)}50%{opacity:1;transform:scaleY(1.2)}}
-
-/* SECTIONS */
-section{position:relative;z-index:2;padding:96px 24px}
-.container{max-width:1060px;margin:0 auto}
-.lbl{font-family:'Orbitron',monospace;font-size:.62rem;font-weight:700;letter-spacing:.3em;text-transform:uppercase;color:var(--cyan);margin-bottom:10px;opacity:.75}
-.s-title{font-family:'Orbitron',monospace;font-weight:900;font-size:clamp(1.5rem,4vw,2.6rem);color:var(--wh);line-height:1.15;margin-bottom:18px}
-.s-title em{color:var(--cyan);font-style:normal}
-.sep{width:56px;height:2px;background:var(--red);box-shadow:0 0 10px var(--red);margin:20px 0}
-.s-intro{font-size:1rem;font-weight:300;color:var(--text);max-width:580px;line-height:1.8}
-.reveal{opacity:0;transform:translateY(26px);transition:opacity .7s ease,transform .7s ease}
-.reveal.visible{opacity:1;transform:none}
-
-/* IDENTITY */
-#identity{background:rgba(0,229,255,.02);border-top:1px solid var(--border);border-bottom:1px solid var(--border)}
-.id-grid{display:grid;grid-template-columns:1fr 1fr;gap:56px;align-items:center;margin-top:56px}
-.code-block{background:rgba(0,0,0,.65);border:1px solid var(--border);border-radius:6px;padding:32px}
-.code-yr{font-family:'Orbitron',monospace;font-size:.62rem;letter-spacing:.2em;color:var(--muted);margin-bottom:20px}
-.code-row{display:flex;align-items:center;gap:14px;margin-bottom:18px}
-.c-from{font-family:'Orbitron',monospace;font-size:2rem;font-weight:900;color:var(--muted);text-decoration:line-through;text-decoration-color:var(--red)}
-.c-arr{color:var(--red);font-size:1.1rem}
-.c-to{font-family:'Orbitron',monospace;font-size:2rem;font-weight:900;color:var(--cyan);text-shadow:0 0 20px var(--cyan)}
-.c-lbl{font-family:'Orbitron',monospace;font-size:.55rem;letter-spacing:.15em;color:var(--muted);margin-top:2px}
-.c-div{width:100%;height:1px;background:var(--border);margin:20px 0}
-.c-res{font-family:'Orbitron',monospace;font-size:1.7rem;font-weight:900;color:var(--wh);text-shadow:0 0 28px var(--cyan),0 0 60px rgba(0,229,255,.15);letter-spacing:.1em}
-.c-res-lbl{font-family:'Orbitron',monospace;font-size:.6rem;letter-spacing:.2em;color:var(--cyan);margin-top:6px}
-.id-text p{margin-bottom:16px;font-size:1rem;line-height:1.8}
-.id-text strong{color:var(--wh);font-weight:600}
-.id-quote{color:var(--cyan);font-style:italic;font-size:.9rem;border-left:2px solid var(--cyan);padding-left:16px;margin-top:8px}
-
-/* TOPICS */
-.t-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:54px}
-.t-card{background:var(--card);border:1px solid var(--border);border-radius:6px;padding:28px 24px;transition:border-color .3s,transform .3s;position:relative;overflow:hidden}
-.t-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--cyan);transform:scaleX(0);transform-origin:left;transition:transform .4s}
-.t-card:hover{border-color:rgba(0,229,255,.3);transform:translateY(-4px)}
-.t-card:hover::before{transform:scaleX(1)}
-.t-icon{font-size:1.6rem;margin-bottom:14px}
-.t-name{font-family:'Orbitron',monospace;font-size:.75rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--wh);margin-bottom:10px}
-.t-desc{font-size:.85rem;color:var(--muted);line-height:1.65}
-
-/* HEI */
-#hei{background:rgba(0,0,0,.5);border-top:1px solid rgba(229,57,53,.18);border-bottom:1px solid rgba(229,57,53,.18)}
-.hei-grid{display:grid;grid-template-columns:1fr 1fr;gap:56px;align-items:center}
-.hei-stats{display:flex;flex-direction:column;gap:20px}
-.hei-stat{background:var(--card);border:1px solid rgba(229,57,53,.18);border-radius:6px;padding:22px 26px;position:relative;overflow:hidden}
-.hei-stat::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--red);box-shadow:0 0 12px var(--red)}
-.hei-num{font-family:'Orbitron',monospace;font-size:2.2rem;font-weight:900;color:var(--wh);line-height:1}
-.hei-num span{color:var(--red)}
-.hei-lbl{font-size:.8rem;color:var(--muted);margin-top:5px;letter-spacing:.04em}
-
-/* PLATFORMS */
-.p-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin-top:50px}
-.p-card{background:var(--card);border:1px solid var(--border);border-radius:6px;padding:26px 28px;display:flex;align-items:flex-start;gap:18px;text-decoration:none;color:inherit;transition:border-color .3s,transform .3s,background .3s}
-.p-card:hover{border-color:var(--cyan-dim);background:rgba(0,229,255,.04);transform:translateX(4px)}
-.p-icon{width:46px;height:46px;border-radius:50%;background:rgba(0,229,255,.07);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:1.25rem;flex-shrink:0;transition:background .3s}
-.p-card:hover .p-icon{background:rgba(0,229,255,.15)}
-.p-name{font-family:'Orbitron',monospace;font-size:.78rem;font-weight:700;letter-spacing:.1em;color:var(--wh);margin-bottom:5px}
-.p-handle{font-size:.75rem;color:var(--cyan);margin-bottom:7px}
-.p-desc{font-size:.82rem;color:var(--muted);line-height:1.6}
-.p-arr{margin-left:auto;color:var(--muted);align-self:center;font-size:1.1rem;transition:color .2s;flex-shrink:0}
-.p-card:hover .p-arr{color:var(--cyan)}
-
-/* SHOP */
-#shop{background:var(--cyan-faint);border-top:1px solid var(--border);border-bottom:1px solid var(--border)}
-.sh-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:54px}
-.sh-card{background:var(--card);border:1px solid var(--border);border-radius:6px;overflow:hidden;text-decoration:none;color:inherit;transition:border-color .3s,transform .3s;display:flex;flex-direction:column}
-.sh-card:hover{border-color:var(--cyan-dim);transform:translateY(-5px)}
-.sh-thumb{height:130px;display:flex;align-items:center;justify-content:center;font-size:2.8rem}
-.th-fire{background:radial-gradient(circle at 50% 30%,rgba(255,100,0,.4),rgba(180,0,0,.25),transparent 70%),rgba(0,0,0,.5)}
-.th-art{background:radial-gradient(circle at 50% 60%,rgba(229,57,53,.3),transparent 60%),rgba(0,0,0,.5)}
-.th-ebook{background:radial-gradient(circle at 50% 40%,rgba(0,229,255,.2),transparent 60%),rgba(0,0,0,.5)}
-.th-book{background:radial-gradient(ellipse at 30% 50%,rgba(0,229,255,.15),rgba(229,57,53,.1),transparent),rgba(0,0,0,.5)}
-.th-session{background:radial-gradient(circle at 50% 50%,rgba(0,229,255,.15),transparent 60%),rgba(0,0,0,.5)}
-.th-amazon{background:radial-gradient(circle at 70% 50%,rgba(255,165,0,.2),transparent 60%),rgba(0,0,0,.5)}
-.sh-body{padding:20px 22px;flex:1;display:flex;flex-direction:column}
-.sh-tag{font-family:'Orbitron',monospace;font-size:.58rem;letter-spacing:.2em;text-transform:uppercase;color:var(--cyan);margin-bottom:7px}
-.sh-title{font-family:'Orbitron',monospace;font-size:.78rem;font-weight:700;color:var(--wh);line-height:1.4;margin-bottom:9px}
-.sh-desc{font-size:.8rem;color:var(--muted);line-height:1.6;flex:1}
-.sh-foot{display:flex;align-items:center;justify-content:space-between;padding:12px 22px;border-top:1px solid var(--border)}
-.sh-price{font-family:'Orbitron',monospace;font-size:.85rem;font-weight:700;color:var(--cyan)}
-.sh-cta{font-size:.68rem;letter-spacing:.1em;color:var(--muted);transition:color .2s}
-.sh-card:hover .sh-cta{color:var(--cyan)}
-
-/* PHOENIX */
-#phoenix{padding:0;border-top:1px solid rgba(229,57,53,.14);border-bottom:1px solid rgba(229,57,53,.14)}
-.ph-inner{position:relative;overflow:hidden;background:radial-gradient(ellipse at 50% 0%,rgba(229,57,53,.22),rgba(200,80,0,.12) 40%,transparent 70%),#000;padding:80px 40px;text-align:center}
-.ph-fire{font-size:clamp(3rem,9vw,5.5rem);line-height:1;margin-bottom:20px;animation:flk 3s ease-in-out infinite}
-@keyframes flk{0%,100%{filter:brightness(1) drop-shadow(0 0 20px rgba(255,100,0,.8))}35%{filter:brightness(1.4) drop-shadow(0 0 45px rgba(255,150,0,1))}65%{filter:brightness(.85) drop-shadow(0 0 10px rgba(255,70,0,.5))}}
-.ph-title{font-family:'Orbitron',monospace;font-size:clamp(1.3rem,5vw,2.5rem);font-weight:900;color:var(--wh);letter-spacing:.04em;text-shadow:0 0 30px rgba(255,100,0,.6);margin-bottom:14px}
-.ph-sub{font-size:.95rem;color:rgba(255,200,150,.7);max-width:480px;margin:0 auto 32px;font-weight:300}
-.btn-fire{background:transparent;border:1px solid rgba(255,100,0,.55);color:rgba(255,185,100,.9);letter-spacing:.15em}
-.btn-fire:hover{background:rgba(255,100,0,.15);border-color:rgba(255,150,0,.8);color:rgba(255,200,120,1);transform:translateY(-2px)}
-
-/* CONNECT */
-.lt-box{margin-top:56px;background:var(--card);border:1px solid var(--border);border-radius:8px;padding:48px 40px;text-align:center;position:relative;overflow:hidden}
-.lt-box::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 50% 0%,rgba(0,229,255,.08),transparent 60%);pointer-events:none}
-.lt-bj{font-family:'Orbitron',monospace;font-size:2.8rem;font-weight:900;color:var(--wh);text-shadow:0 0 28px var(--cyan);margin-bottom:6px}
-.lt-tag{font-size:.75rem;letter-spacing:.2em;color:var(--cyan);text-transform:uppercase;margin-bottom:24px}
-.lt-desc{font-size:.98rem;color:var(--text);max-width:460px;margin:0 auto 32px;line-height:1.8}
-.pills{display:flex;flex-wrap:wrap;justify-content:center;gap:12px;margin-bottom:36px}
-.pill{display:inline-flex;align-items:center;gap:7px;font-family:'Orbitron',monospace;font-size:.62rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;text-decoration:none;padding:9px 18px;border:1px solid var(--border);border-radius:99px;color:var(--muted);transition:all .2s}
-.pill:hover{border-color:var(--cyan);color:var(--cyan);background:rgba(0,229,255,.06)}
-.lt-btn{display:inline-block;font-family:'Orbitron',monospace;font-size:.75rem;font-weight:700;letter-spacing:.18em;text-transform:uppercase;text-decoration:none;padding:15px 42px;background:var(--cyan);color:#000;border-radius:3px;box-shadow:0 0 28px rgba(0,229,255,.4);transition:all .25s}
-.lt-btn:hover{background:var(--wh);box-shadow:0 0 50px rgba(0,229,255,.6);transform:translateY(-3px)}
-
-/* FOOTER */
-footer{position:relative;z-index:2;border-top:1px solid var(--border);padding:48px 24px 32px;text-align:center}
-.ft-logo{font-family:'Orbitron',monospace;font-weight:900;font-size:1.5rem;color:var(--wh);text-shadow:0 0 18px var(--cyan);margin-bottom:6px}
-.ft-tag{font-size:.68rem;letter-spacing:.2em;color:var(--cyan);text-transform:uppercase;margin-bottom:26px}
-.ft-red{width:72px;height:2px;background:linear-gradient(90deg,transparent,var(--red),transparent);margin:0 auto 24px}
-.ft-links{display:flex;flex-wrap:wrap;justify-content:center;gap:22px;margin-bottom:22px}
-.ft-links a{font-size:.75rem;color:var(--muted);text-decoration:none;letter-spacing:.06em;transition:color .2s}
-.ft-links a:hover{color:var(--cyan)}
-.ft-copy{font-size:.7rem;color:var(--muted);letter-spacing:.06em}
-.dia{display:inline-block;width:7px;height:7px;background:var(--cyan);transform:rotate(45deg);box-shadow:0 0 8px var(--cyan);margin:0 8px;vertical-align:middle}
-
-/* COOKIE */
-#cookie-banner{position:fixed;bottom:0;left:0;right:0;z-index:9999;background:rgba(0,0,0,.95);backdrop-filter:blur(16px);border-top:1px solid var(--border);padding:18px 32px;display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:14px;transition:transform .4s ease}
-#cookie-banner.hidden{transform:translateY(110%)}
-.ck-txt{font-size:.8rem;color:var(--muted);max-width:640px;line-height:1.6}
-.ck-txt a{color:var(--cyan);text-decoration:none;border-bottom:1px solid rgba(0,229,255,.3)}
-.ck-btns{display:flex;gap:10px;flex-shrink:0}
-.ck-acc{font-family:'Orbitron',monospace;font-size:.62rem;font-weight:700;letter-spacing:.15em;text-transform:uppercase;padding:10px 22px;border:none;cursor:pointer;background:var(--cyan);color:#000;border-radius:3px;transition:background .2s}
-.ck-acc:hover{background:var(--wh)}
-.ck-rej{font-family:'Orbitron',monospace;font-size:.62rem;font-weight:700;letter-spacing:.15em;text-transform:uppercase;padding:10px 22px;cursor:pointer;background:transparent;color:var(--muted);border:1px solid rgba(255,255,255,.14);border-radius:3px;transition:all .2s}
-.ck-rej:hover{border-color:var(--muted);color:var(--wh)}
-
-@keyframes fadeUp{from{opacity:0;transform:translateY(22px)}to{opacity:1;transform:none}}
-
-/* RESPONSIVE */
-@media(max-width:900px){
-  .t-grid{grid-template-columns:1fr 1fr}
-  .sh-grid{grid-template-columns:1fr 1fr}
-  .id-grid{grid-template-columns:1fr}
-  .hei-grid{grid-template-columns:1fr}
-  .p-grid{grid-template-columns:1fr}
-}
-@media(max-width:640px){
-  nav{padding:14px 18px}
-  .nav-links{display:none}
-  .nav-links.open{display:flex;flex-direction:column;position:fixed;inset:58px 0 0;background:rgba(0,0,0,.97);padding:40px 24px;gap:28px;z-index:99;align-items:center;justify-content:center}
-  .nav-hamburger{display:flex}
-  .t-grid,.sh-grid{grid-template-columns:1fr}
-  .lt-box{padding:32px 18px}
-  #cookie-banner{padding:14px 18px}
-  .ck-btns{width:100%}
-  .ck-acc,.ck-rej{flex:1;text-align:center}
-  .ph-inner{padding:60px 20px}
-}
-```
-
-  </style>
-</head>
-<body>
-
-<canvas id="starfield"></canvas>
-
-<!-- NAV -->
-
-<nav id="navbar">
-  <a href="#" class="nav-logo">BJ <span>Beyond</span></a>
-  <ul class="nav-links" id="navLinks">
-    <li><a href="#identity">Identity</a></li>
-    <li><a href="#topics">Topics</a></li>
-    <li><a href="#platforms">Content</a></li>
-    <li><a href="#shop">Shop</a></li>
-    <li><a href="#connect" class="nav-cta">Connect</a></li>
-  </ul>
-  <div class="nav-hamburger" id="hamburger" onclick="toggleMenu()">
-    <span></span><span></span><span></span>
-  </div>
-</nav>
-
-<!-- HERO -->
-
-<section id="hero">
-  <div class="hero-bj" data-text="BJ">BJ</div>
-  <div class="hero-tag">One step beyond AI.</div>
-  <div class="hero-red"></div>
-  <p class="hero-sub"><strong>Art market intelligence.</strong> AI analysis. Human creativity.<br>Dove il mercato dell'arte incontra il futuro dell'intelligenza.</p>
-  <div class="hero-btns">
-    <a href="#connect" class="btn btn-p">Scopri BJ Beyond</a>
-    <a href="https://linktr.ee/Bj_Beyond" target="_blank" rel="noopener" class="btn btn-o">All Links ↗</a>
-  </div>
-  <div class="hero-scroll"><span>Scroll</span><div class="scroll-line"></div></div>
-</section>
-
-<!-- IDENTITY -->
-
-<section id="identity">
-  <div class="container">
-    <div class="reveal">
-      <div class="lbl">Brand Identity</div>
-      <h2 class="s-title">2026: L'Evoluzione <em>Logica.</em></h2>
-      <div class="sep"></div>
-      <p class="s-intro">L'intelligenza artificiale è lo standard di oggi. Ma nel codice del progresso, non ci si ferma alla A.</p>
-    </div>
-    <div class="id-grid">
-      <div class="code-block reveal">
-        <div class="code-yr">// ALPHABET OF INTELLIGENCE — 2026</div>
-        <div class="code-row">
-          <div><div class="c-from">A</div><div class="c-lbl">Artificial</div></div>
-          <div class="c-arr">→</div>
-          <div><div class="c-to">B</div><div class="c-lbl">Beyond</div></div>
-        </div>
-        <div class="code-row">
-          <div><div class="c-from">I</div><div class="c-lbl">Intelligence</div></div>
-          <div class="c-arr">→</div>
-          <div><div class="c-to">J</div><div class="c-lbl">Judgment</div></div>
-        </div>
-        <div class="c-div"></div>
-        <div class="c-res">BJ = AI + 1</div>
-        <div class="c-res-lbl">The next step. L'intelligenza che viene dopo.</div>
-      </div>
-      <div class="id-text reveal">
-        <p>Dopo la <strong>A</strong> c'è la <strong style="color:var(--cyan)">B</strong>. Dopo la <strong>I</strong> c'è la <strong style="color:var(--cyan)">J</strong>.</p>
-        <p><strong>BJ</strong> non è solo un brand. È una posizione nel tempo: il passo successivo nell'evoluzione dell'intelligenza.</p>
-        <p>Mentre tutti parlano di AI, BJ Beyond analizza ciò che l'AI non può vedere — il valore umano nell'arte, le anomalie nei mercati, le storie che i dati non raccontano.</p>
-        <p class="id-quote">"Finance meets creativity. Art market intelligence for the age of artificial minds."</p>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- TOPICS -->
-
-<section id="topics">
-  <div class="container">
-    <div class="reveal">
-      <div class="lbl">What We Cover</div>
-      <h2 class="s-title">Tre universi. <em>Un'unica visione.</em></h2>
-      <div class="sep"></div>
-    </div>
-    <div class="t-grid">
-      <div class="t-card reveal"><div class="t-icon">🎨</div><div class="t-name">Art Market Intelligence</div><p class="t-desc">Analisi dei mercati d'asta, dinamiche di prezzo, provenance e valutazione artistica. Dati, non opinioni.</p></div>
-      <div class="t-card reveal"><div class="t-icon">🤖</div><div class="t-name">AI vs. Human Edge</div><p class="t-desc">L'Human Edge Index — il premium mensile che l'arte umana comanda sull'AI generativa. Quantificato, verificato, pubblicato.</p></div>
-      <div class="t-card reveal"><div class="t-icon">📊</div><div class="t-name">Contemporary Collecting</div><p class="t-desc">Strategie di collezionismo, artisti emergenti, cicli di mercato. La differenza tra comprare arte e investire in arte.</p></div>
-      <div class="t-card reveal"><div class="t-icon">🔭</div><div class="t-name">Venice Biennale 2026</div><p class="t-desc">Copertura commerciale di <em>In Minor Keys</em>. I 10 artisti più preziosi ranked by auction record. Analisi esclusiva.</p></div>
-      <div class="t-card reveal"><div class="t-icon">💡</div><div class="t-name">Pillole di Arte</div><p class="t-desc">Dieci storie vere dall'arte contemporanea. Warhol, Kusama, Kapoor, Kounellis, Sehgal. Disponibile come ebook.</p></div>
-      <div class="t-card reveal"><div class="t-icon">⚡</div><div class="t-name">Digital Art & Soulfire</div><p class="t-desc">#PhoenixSoulfire — arte digitale originale, edizioni limitate firmate. Dove la creatività brucia più dell'algoritmo.</p></div>
-    </div>
-  </div>
-</section>
-
-<!-- HUMAN EDGE INDEX -->
-
-<section id="hei">
-  <div class="container">
-    <div class="hei-grid">
-      <div class="reveal">
-        <div class="lbl">Flagship Report</div>
-        <h2 class="s-title">Human Edge <em>Index</em></h2>
-        <div class="sep" style="background:var(--red);box-shadow:0 0 10px var(--red)"></div>
-        <p class="s-intro" style="margin-bottom:28px">Il report mensile che quantifica il premium dell'arte umana sull'AI. Dati d'asta. Metodologia rigorosa. Pubblicato su X ogni mese.</p>
-        <a href="https://x.com/bj_artint" target="_blank" rel="noopener" class="btn btn-o" style="border-color:rgba(229,57,53,.5);color:var(--red)">Leggi su X →</a>
-      </div>
-      <div class="hei-stats reveal">
-        <div class="hei-stat"><div class="hei-num">#<span>1</span></div><div class="hei-lbl">Prima edizione — Aprile 2026</div></div>
-        <div class="hei-stat"><div class="hei-num" style="font-size:1.6rem">Premium<span>+</span></div><div class="hei-lbl">Human-made art vs. AI-generated works</div></div>
-        <div class="hei-stat"><div class="hei-num">Data<span>.</span></div><div class="hei-lbl">Christie's · Sotheby's · Artsy · Auction records</div></div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- PLATFORMS -->
-
-<section id="platforms">
-  <div class="container">
-    <div class="reveal">
-      <div class="lbl">Where to Find Us</div>
-      <h2 class="s-title">Contenuti <em>Ogni Giorno.</em></h2>
-      <div class="sep"></div>
-      <p class="s-intro">Art market intelligence quotidiana su X, TikTok, YouTube e Instagram. Italiano e inglese. Dark editorial, data-driven, provocatorio.</p>
-    </div>
-    <div class="p-grid">
-      <a href="https://www.tiktok.com/@bj_beyond" target="_blank" rel="noopener" class="p-card reveal">
-        <div class="p-icon">🎵</div>
-        <div><div class="p-name">TikTok</div><div class="p-handle">@bj_beyond</div><div class="p-desc">Video brevi sul mercato dell'arte, storie vere, AI vs. umano. Il canale italiano sull'art market ancora inesplorato.</div></div>
-        <div class="p-arr">→</div>
-      </a>
-      <a href="https://x.com/bj_artint" target="_blank" rel="noopener" class="p-card reveal">
-        <div class="p-icon">✖️</div>
-        <div><div class="p-name">X / Twitter</div><div class="p-handle">@bj_artint</div><div class="p-desc">Human Edge Index, thread su aste, analisi di mercato. Il feed più denso di dati sull'arte contemporanea in italiano.</div></div>
-        <div class="p-arr">→</div>
-      </a>
-      <a href="https://linktr.ee/Bj_Beyond" target="_blank" rel="noopener" class="p-card reveal">
-        <div class="p-icon">📺</div>
-        <div><div class="p-name">YouTube</div><div class="p-handle">BJ Beyond</div><div class="p-desc">The Resistance of the Soul — contenuti video approfonditi. Arte, AI, mercato. La versione long-form del progetto.</div></div>
-        <div class="p-arr">→</div>
-      </a>
-      <a href="https://linktr.ee/Bj_Beyond" target="_blank" rel="noopener" class="p-card reveal">
-        <div class="p-icon">📸</div>
-        <div><div class="p-name">Instagram</div><div class="p-handle">BJ Beyond</div><div class="p-desc">#PhoenixSoulfire, arte digitale, visual content. Il lato creativo e visivo del brand BJ Beyond.</div></div>
-        <div class="p-arr">→</div>
-      </a>
-    </div>
-  </div>
-</section>
-
-<!-- SHOP -->
-
-<section id="shop">
-  <div class="container">
-    <div class="reveal">
-      <div class="lbl">Shop & Products</div>
-      <h2 class="s-title">Arte, <em>Ebook</em>, Sessioni.</h2>
-      <div class="sep"></div>
-    </div>
-    <div class="sh-grid">
-      <a href="https://linktr.ee/Bj_Beyond" target="_blank" rel="noopener" class="sh-card reveal">
-        <div class="sh-thumb th-fire">🔥</div>
-        <div class="sh-body"><div class="sh-tag">Digital Art</div><div class="sh-title">#PhoenixSoulfire Prints</div><p class="sh-desc">Edizioni limitate firmate BJ + Grok. Phase 1, 2 e 3. Arte digitale originale.</p></div>
-        <div class="sh-foot"><div class="sh-price">da €25</div><div class="sh-cta">Sfoglia →</div></div>
-      </a>
-      <a href="https://linktr.ee/Bj_Beyond" target="_blank" rel="noopener" class="sh-card reveal">
-        <div class="sh-thumb th-art">🖼️</div>
-        <div class="sh-body"><div class="sh-tag">Digital Artwork</div><div class="sh-title">Digital Artwork by BJ</div><p class="sh-desc">Collezione di opere digitali originali. 8 file. Creatività e intelligenza artificiale.</p></div>
-        <div class="sh-foot"><div class="sh-price">€100</div><div class="sh-cta">Scopri →</div></div>
-      </a>
-      <a href="https://linktr.ee/Bj_Beyond" target="_blank" rel="noopener" class="sh-card reveal">
-        <div class="sh-thumb th-ebook">📖</div>
-        <div class="sh-body"><div class="sh-tag">Ebook</div><div class="sh-title">Pillole di Arte</div><p class="sh-desc">Dieci storie vere dall'arte contemporanea. Warhol, Kusama, Kapoor. In italiano.</p></div>
-        <div class="sh-foot"><div class="sh-price">Ebook</div><div class="sh-cta">Leggi →</div></div>
-      </a>
-      <a href="https://linktr.ee/Bj_Beyond" target="_blank" rel="noopener" class="sh-card reveal">
-        <div class="sh-thumb th-book">📚</div>
-        <div class="sh-body"><div class="sh-tag">Ebook Collection</div><div class="sh-title">Ebook Library by BJ</div><p class="sh-desc">X strategy, art market, AI tips. 8 titoli disponibili per tutti i livelli.</p></div>
-        <div class="sh-foot"><div class="sh-price">8 titoli</div><div class="sh-cta">Esplora →</div></div>
-      </a>
-      <a href="https://linktr.ee/Bj_Beyond" target="_blank" rel="noopener" class="sh-card reveal">
-        <div class="sh-thumb th-session">🎯</div>
-        <div class="sh-body"><div class="sh-tag">1:1 Session</div><div class="sh-title">Book a Session with BJ</div><p class="sh-desc">AI tips, art market insight e social media strategy. Sessione diretta con BJ.</p></div>
-        <div class="sh-foot"><div class="sh-price">Booking</div><div class="sh-cta">Prenota →</div></div>
-      </a>
-      <a href="https://linktr.ee/Bj_Beyond" target="_blank" rel="noopener" class="sh-card reveal">
-        <div class="sh-thumb th-amazon">🛒</div>
-        <div class="sh-body"><div class="sh-tag">Amazon Deals</div><div class="sh-title">Deal of the Day</div><p class="sh-desc">Le migliori offerte Amazon selezionate da BJ. Arte, tech, design. Aggiornate.</p></div>
-        <div class="sh-foot"><div class="sh-price">Offerte</div><div class="sh-cta">Vedi →</div></div>
-      </a>
-    </div>
-  </div>
-</section>
-
-<!-- PHOENIX -->
-
-<section id="phoenix">
-  <div class="ph-inner">
-    <div class="ph-fire reveal">🔥</div>
-    <div class="ph-title reveal">#PhoenixSoulfire</div>
-    <p class="ph-sub reveal">Arte digitale originale. Edizioni limitate. Firmate da BJ.<br>Dove la creatività brucia più dell'algoritmo.</p>
-    <a href="https://linktr.ee/Bj_Beyond" target="_blank" rel="noopener" class="btn btn-fire reveal">Esplora il Print Shop →</a>
-  </div>
-</section>
-
-<!-- CONNECT -->
-
-<section id="connect">
-  <div class="container">
-    <div class="reveal">
-      <div class="lbl">All Links</div>
-      <h2 class="s-title">Tutto BJ Beyond. <em>In un posto solo.</em></h2>
-      <div class="sep"></div>
-    </div>
-    <div class="lt-box reveal">
-      <div class="lt-bj">BJ</div>
-      <div class="lt-tag">One step beyond AI. — bjbeyond.it</div>
-      <p class="lt-desc">TikTok · X · YouTube · Instagram · Shop · Ebook · Booking.<br>Tutti i link di BJ Beyond in un unico hub.</p>
-      <div class="pills">
-        <a href="https://www.tiktok.com/@bj_beyond" target="_blank" rel="noopener" class="pill">🎵 TikTok</a>
-        <a href="https://x.com/bj_artint" target="_blank" rel="noopener" class="pill">✖ X · Twitter</a>
-        <a href="https://linktr.ee/Bj_Beyond" target="_blank" rel="noopener" class="pill">📺 YouTube</a>
-        <a href="https://linktr.ee/Bj_Beyond" target="_blank" rel="noopener" class="pill">📸 Instagram</a>
-        <a href="https://linktr.ee/Bj_Beyond" target="_blank" rel="noopener" class="pill">🔥 PhoenixSoulfire</a>
-        <a href="https://linktr.ee/Bj_Beyond" target="_blank" rel="noopener" class="pill">📖 Ebook</a>
-        <a href="https://linktr.ee/Bj_Beyond" target="_blank" rel="noopener" class="pill">🎯 Book a Session</a>
-      </div>
-      <a href="https://linktr.ee/Bj_Beyond" target="_blank" rel="noopener" class="lt-btn">Apri il Linktree BJ Beyond ↗</a>
-    </div>
-  </div>
-</section>
-
-<!-- FOOTER -->
-
-<footer>
-  <div class="ft-logo">BJ Beyond</div>
-  <div class="ft-tag">One step beyond AI.</div>
-  <div class="ft-red"></div>
-  <div class="ft-links">
-    <a href="/">Home</a>
-    <a href="#identity">Identity</a>
-    <a href="#topics">Topics</a>
-    <a href="#shop">Shop</a>
-    <a href="https://linktr.ee/Bj_Beyond" target="_blank" rel="noopener">Linktree</a>
-    <a href="/privacy.html">Privacy &amp; Cookie Policy</a>
-  </div>
-  <p class="ft-copy"><span class="dia"></span>© 2026 BJ Beyond — bjbeyond.it<span class="dia"></span></p>
-</footer>
-
-<!-- COOKIE BANNER -->
-
-<div id="cookie-banner">
-  <p class="ck-txt">Questo sito utilizza esclusivamente cookie tecnici. Nessun tracciamento. Consulta la nostra <a href="/privacy.html">Privacy &amp; Cookie Policy</a>.</p>
-  <div class="ck-btns">
-    <button class="ck-rej" onclick="setCookieConsent('rejected')">Solo tecnici</button>
-    <button class="ck-acc" onclick="setCookieConsent('accepted')">Ho capito ✓</button>
-  </div>
-</div>
-
-<script>
-/* STARFIELD */
-(function(){
-  const c=document.getElementById('starfield');
-  const ctx=c.getContext('2d');
-  let stars=[],W,H;
-  function resize(){W=c.width=window.innerWidth;H=c.height=window.innerHeight}
-  function init(){stars=[];for(let i=0;i<300;i++)stars.push({x:Math.random()*W,y:Math.random()*H,r:Math.random()*1.3+.15,a:Math.random()*Math.PI*2,spd:Math.random()*.005+.001,base:Math.random()*.5+.08})}
-  function draw(){ctx.clearRect(0,0,W,H);stars.forEach(s=>{s.a+=s.spd;const al=s.base+(Math.sin(s.a)+1)/2*(1-s.base)*.75;ctx.beginPath();ctx.arc(s.x,s.y,s.r,0,Math.PI*2);ctx.fillStyle=`rgba(255,255,255,${al})`;ctx.fill()});requestAnimationFrame(draw)}
-  resize();init();draw();
-  window.addEventListener('resize',()=>{resize();init()});
-})();
-
-/* NAV */
-window.addEventListener('scroll',()=>document.getElementById('navbar').classList.toggle('scrolled',window.scrollY>40));
-function toggleMenu(){document.getElementById('navLinks').classList.toggle('open')}
-document.querySelectorAll('#navLinks a').forEach(a=>a.addEventListener('click',()=>document.getElementById('navLinks').classList.remove('open')));
-
-/* REVEAL */
-const io=new IntersectionObserver((entries)=>{
-  entries.forEach((e,i)=>{if(e.isIntersecting){setTimeout(()=>e.target.classList.add('visible'),i*55);io.unobserve(e.target)}});
-},{threshold:.1});
-document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
-
-/* COOKIE */
-(function(){if(document.cookie.split(';').some(c=>c.trim().startsWith('bj_cookie_consent=')))document.getElementById('cookie-banner').classList.add('hidden')})();
-function setCookieConsent(v){const d=new Date();d.setFullYear(d.getFullYear()+1);document.cookie=`bj_cookie_consent=${v};expires=${d.toUTCString()};path=/;SameSite=Lax`;document.getElementById('cookie-banner').classList.add('hidden')}
-</script>
-
 </body>
 </html>
