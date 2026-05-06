@@ -1,396 +1,245 @@
 <!DOCTYPE html>
-
 <html lang="it">
 <head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <meta name="description" content="BJ Beyond — Art Market Intelligence. One step beyond AI."/>
-  <meta property="og:title" content="BJ Beyond — One step beyond AI."/>
-  <meta property="og:description" content="Art Market Intelligence. Intelligence è lo standard. Noi andiamo oltre."/>
-  <meta property="og:type" content="website"/>
-  <meta property="og:url" content="https://bjbeyond.it"/>
-  <meta property="og:image" content="https://bjbeyond.it/og-image.jpg"/>
-  <meta name="twitter:card" content="summary_large_image"/>
-  <meta name="twitter:title" content="BJ Beyond"/>
-  <meta name="twitter:description" content="Art Market Intelligence. One step beyond AI."/>
-  <meta name="theme-color" content="#000000"/>
-  <title>BJ Beyond — One step beyond AI.</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com"/>
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Exo+2:ital,wght@0,300;0,400;0,600;0,700;1,300&display=swap" rel="stylesheet"/>
-  <style>
-    :root{--cyan:#00e5ff;--red:#e53935;--bg:#000;--card:rgba(255,255,255,0.03);--card-border:rgba(0,229,255,0.12);--text:rgba(255,255,255,0.85);--muted:rgba(255,255,255,0.4)}
-    *{margin:0;padding:0;box-sizing:border-box}
-    html{scroll-behavior:smooth}
-    body{background:var(--bg);color:var(--text);font-family:'Exo 2',sans-serif;font-weight:300;line-height:1.7;overflow-x:hidden}
-    #starfield{position:fixed;inset:0;z-index:0;pointer-events:none}
-    #starfield canvas{width:100%;height:100%}
-    nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:18px 40px;background:rgba(0,0,0,0.55);backdrop-filter:blur(12px);border-bottom:1px solid var(--card-border)}
-    .nav-logo{font-family:'Orbitron',monospace;font-weight:900;font-size:1.3rem;color:#fff;letter-spacing:0.08em;text-decoration:none;text-shadow:0 0 18px var(--cyan),0 0 40px rgba(0,229,255,0.3)}
-    .nav-links{display:flex;gap:32px;align-items:center}
-    .nav-links a{font-family:'Orbitron',monospace;font-size:0.65rem;font-weight:700;letter-spacing:0.18em;text-transform:uppercase;color:var(--muted);text-decoration:none;transition:color .2s}
-    .nav-links a:hover{color:var(--cyan)}
-    .nav-cta{background:transparent;border:1px solid var(--cyan);color:var(--cyan)!important;padding:8px 18px;border-radius:3px}
-    .nav-cta:hover{background:var(--cyan);color:#000!important}
-    .skip-to-content{position:absolute;top:-40px;left:0;background:var(--cyan);color:#000;padding:8px 16px;text-decoration:none;z-index:100;font-weight:700}
-    .skip-to-content:focus{top:0}
-
-    /* HERO */
-    #hero{position:relative;z-index:1;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:120px 24px 80px;overflow:hidden}
-    .hero-phoenix-bg{position:absolute;inset:0;z-index:0;background-image:url('data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAkGBwgHBgkIBwgKCgkLDRYPDQwMDRsUFRAWIB0iIiAdHx8kKDQsJCYxJx8fLT0tMTU3Oj4kMzwsJCYxJx8fLT0tMTU3Oj4kMzwsJCYxJx8fLT0tMTU3Oj4kMzwsJCYxJx8fLT0tMTU3Oj4kMzwsJCYxJx8fLT0tMTU3Oj4kMzwsJCYxJx8fLT0tMTU3Oj4kMzwsJCYxJx8fLT0tMTU3Oj4k/2wBDAAkGBwgHBgkIBwgKCgkLDRYPDQwMDRsUFRAWIB0iIiAdHx8kKDQsJCYxJx8fLT0tMTU3Oj4kMzwsJCYxJx8fLT0tMTU3Oj4kMzwsJCYxJx8fLT0tMTU3Oj4kMzwsJCYxJx8fLT0tMTU3Oj4kMzwsJCYxJx8fLT0tMTU3Oj4kMzwsJCYxJx8fLT0tMTU3Oj4kMzwsJCYxJx8fLT0tMTU3Oj4kMzwsJCYxJx8fLT0tMTU3Oj4k/Z');background-size:cover;background-position:center}
-    .hero-phoenix-overlay{position:absolute;inset:0;z-index:1;background:linear-gradient(to bottom,rgba(0,0,0,0.6) 0%,rgba(0,0,0,0.3) 40%,rgba(0,0,0,0.7) 80%,rgba(0,0,0,0.95) 100%)}
-    .hero-content{position:relative;z-index:2}
-    .hero-logo{font-family:'Orbitron',monospace;font-weight:900;font-size:clamp(5rem,20vw,11rem);line-height:1;color:#fff;text-shadow:0 0 30px var(--cyan),0 0 80px rgba(0,229,255,0.35),0 0 160px rgba(0,229,255,0.15);animation:pulseLogo 4s ease-in-out infinite}
-    @keyframes pulseLogo{0%,100%{text-shadow:0 0 30px var(--cyan),0 0 80px rgba(0,229,255,.35),0 0 160px rgba(0,229,255,.15)}50%{text-shadow:0 0 50px var(--cyan),0 0 120px rgba(0,229,255,.5),0 0 220px rgba(0,229,255,.25)}}
-    .hero-redline{width:min(600px,80vw);height:2px;background:linear-gradient(90deg,transparent,var(--red) 15%,var(--red) 85%,transparent);box-shadow:0 0 14px var(--red),0 0 35px rgba(229,57,53,0.4);margin:20px auto}
-    .hero-tagline{font-family:'Exo 2',sans-serif;font-size:clamp(0.9rem,3.5vw,1.5rem);font-weight:300;letter-spacing:0.2em;color:rgba(255,255,255,0.85);text-transform:uppercase}
-    .hero-sub{max-width:560px;margin:20px auto 0;font-size:clamp(0.85rem,2vw,1rem);color:rgba(255,255,255,0.6);line-height:1.85}
-    .hero-ctas{display:flex;gap:16px;flex-wrap:wrap;justify-content:center;margin-top:36px}
-    .btn-primary{font-family:'Orbitron',monospace;font-size:0.68rem;font-weight:700;letter-spacing:0.18em;text-transform:uppercase;padding:14px 32px;background:transparent;border:1px solid var(--cyan);color:var(--cyan);cursor:pointer;transition:all .3s;border-radius:3px}
-    .btn-primary:hover{background:var(--cyan);color:#000;box-shadow:0 0 20px rgba(0,229,255,.4)}
-    .btn-primary:focus{outline:2px solid var(--cyan);outline-offset:2px}
-    .btn-ghost{font-family:'Orbitron',monospace;font-size:0.68rem;font-weight:700;letter-spacing:0.18em;text-transform:uppercase;padding:14px 32px;background:transparent;border:1px solid rgba(255,255,255,0.2);color:var(--text);cursor:pointer;transition:all .3s;border-radius:3px}
-    .btn-ghost:hover{border-color:var(--muted);color:#fff}
-    .btn-ghost:focus{outline:2px solid var(--muted);outline-offset:2px}
-    .scroll-hint{position:absolute;bottom:24px;left:50%;transform:translateX(-50%);color:var(--muted);font-size:0.7rem;letter-spacing:0.12em;animation:bounce 2.5s ease-in-out infinite;z-index:2}
-    .scroll-hint::after{content:'↓';font-size:1rem;display:block;text-align:center}
-    @keyframes bounce{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(6px)}}
-
-    section{position:relative;z-index:1;padding:100px 24px}
-    .section-inner{max-width:1080px;margin:0 auto}
-    .section-label{font-family:'Orbitron',monospace;font-size:0.65rem;font-weight:700;letter-spacing:0.3em;text-transform:uppercase;color:var(--cyan);margin-bottom:14px}
-    .section-title{font-family:'Orbitron',monospace;font-size:clamp(1.3rem,4vw,2rem);font-weight:900;color:#fff;line-height:1.2;margin-bottom:20px}
-    .section-line{width:60px;height:2px;background:var(--red);box-shadow:0 0 10px var(--red);margin-bottom:36px}
-    .section-intro{max-width:620px;font-size:1rem;color:var(--muted);line-height:1.85}
-
-    /* VIDEO SECTION */
-    #soundtrack{background:rgba(0,229,255,.015);border-top:1px solid var(--card-border);border-bottom:1px solid var(--card-border)}
-    .video-container{position:relative;width:100%;max-width:800px;margin:60px auto 0;border-radius:8px;overflow:hidden;border:1px solid var(--card-border);background:rgba(0,0,0,0.5)}
-    video{width:100%;height:auto;display:block;background:#000}
-    .video-controls{background:rgba(0,0,0,0.7);padding:16px 20px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
-    .video-info{font-size:0.85rem;color:var(--muted)}
-    .video-info strong{color:var(--cyan)}
-    .video-buttons{display:flex;gap:12px;flex-wrap:wrap}
-    .video-btn{font-family:'Orbitron',monospace;font-size:0.65rem;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;padding:8px 16px;background:transparent;border:1px solid var(--cyan);color:var(--cyan);cursor:pointer;transition:all .2s;border-radius:2px}
-    .video-btn:hover{background:var(--cyan);color:#000}
-    .video-btn:focus{outline:2px solid var(--cyan);outline-offset:2px}
-
-    #about{background:rgba(0,229,255,0.015);border-top:1px solid var(--card-border);border-bottom:1px solid var(--card-border)}
-    .about-grid{display:grid;grid-template-columns:1fr 1fr;gap:64px;align-items:center;margin-top:60px}
-    .about-text p{color:var(--muted);font-size:0.97rem;margin-bottom:18px;line-height:1.9}
-    .about-text p strong{color:#fff;font-weight:600}
-    .about-stat-block{display:grid;grid-template-columns:1fr 1fr;gap:20px}
-    .stat-card{background:var(--card);border:1px solid var(--card-border);border-radius:4px;padding:24px 20px;text-align:center;transition:border-color .3s,background .3s}
-    .stat-card:hover{border-color:rgba(0,229,255,.3);background:rgba(0,229,255,.05)}
-    .stat-num{font-family:'Orbitron',monospace;font-size:2rem;font-weight:900;color:var(--cyan);text-shadow:0 0 20px rgba(0,229,255,.5);display:block}
-    .stat-label{font-size:0.72rem;letter-spacing:0.12em;color:var(--muted);text-transform:uppercase;margin-top:6px;display:block;line-height:1.5}
-
-    .projects-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:24px;margin-top:60px}
-    .project-card{background:var(--card);border:1px solid var(--card-border);border-radius:6px;padding:36px 32px;position:relative;overflow:hidden;transition:border-color .3s,transform .3s,background .3s}
-    .project-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--cyan),transparent);opacity:0;transition:opacity .3s}
-    .project-card:hover{border-color:rgba(0,229,255,.3);transform:translateY(-4px);background:rgba(0,229,255,.04)}
-    .project-card:hover::before{opacity:1}
-    .card-icon{font-size:1.8rem;margin-bottom:18px;display:block}
-    .card-tag{font-family:'Orbitron',monospace;font-size:0.6rem;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:var(--cyan);margin-bottom:10px;display:block}
-    .card-title{font-family:'Orbitron',monospace;font-size:0.95rem;font-weight:700;color:#fff;margin-bottom:14px;line-height:1.3}
-    .card-desc{font-size:0.9rem;color:var(--muted);line-height:1.75}
-    .card-link{display:inline-flex;align-items:center;gap:6px;margin-top:24px;font-family:'Orbitron',monospace;font-size:0.65rem;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;color:var(--cyan);text-decoration:none;border-bottom:1px solid transparent;transition:border-color .2s}
-    .card-link:hover{border-color:var(--cyan)}
-    .card-link::after{content:' →'}
-
-    #index-feature{background:rgba(0,229,255,.015);border-top:1px solid var(--card-border);border-bottom:1px solid var(--card-border)}
-    .index-layout{display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:center;margin-top:60px}
-    .index-visual{background:var(--card);border:1px solid var(--card-border);border-radius:6px;padding:40px 32px;position:relative}
-    .index-visual::after{content:'';position:absolute;bottom:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--red),transparent);box-shadow:0 0 10px var(--red)}
-    .index-name{font-family:'Orbitron',monospace;font-size:0.65rem;font-weight:700;letter-spacing:0.22em;color:var(--cyan);margin-bottom:10px;text-transform:uppercase}
-    .index-value{font-family:'Orbitron',monospace;font-size:clamp(2.5rem,7vw,4.5rem);font-weight:900;color:#fff;line-height:1;text-shadow:0 0 30px rgba(255,255,255,.2)}
-    .index-unit{color:var(--cyan);font-size:.45em;vertical-align:super}
-    .index-subtitle{font-size:.82rem;color:var(--muted);margin-top:12px;line-height:1.6}
-    .index-bars{margin-top:28px;display:flex;flex-direction:column;gap:10px}
-    .bar-row{display:flex;align-items:center;gap:12px}
-    .bar-label{color:var(--muted);min-width:100px;font-size:.75rem}
-    .bar-track{flex:1;height:4px;background:rgba(255,255,255,.08);border-radius:2px;overflow:hidden}
-    .bar-fill{height:100%;border-radius:2px;width:0;transition:width 1.5s ease}
-    .bar-fill.human{background:var(--cyan);box-shadow:0 0 8px var(--cyan)}
-    .bar-fill.ai{background:var(--red);box-shadow:0 0 8px var(--red)}
-    .bar-fill.hybrid{background:rgba(255,255,255,.3)}
-    .bar-val{color:#fff;font-family:'Orbitron',monospace;font-size:.72rem;min-width:40px;text-align:right}
-
-    #social{padding:80px 24px}
-    .social-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px;margin-top:48px}
-    .social-card{display:flex;align-items:center;gap:16px;background:var(--card);border:1px solid var(--card-border);border-radius:4px;padding:22px 24px;text-decoration:none;transition:border-color .25s,transform .25s,background .25s}
-    .social-card:hover{border-color:rgba(0,229,255,.35);transform:translateX(4px);background:rgba(0,229,255,.04)}
-    .social-icon{font-size:1.4rem;min-width:28px;text-align:center}
-    .social-info{flex:1}
-    .social-platform{font-family:'Orbitron',monospace;font-size:.7rem;font-weight:700;letter-spacing:.15em;color:var(--cyan);text-transform:uppercase}
-    .social-handle{font-size:.82rem;color:var(--muted);margin-top:2px}
-    .social-arr{color:var(--muted);font-size:.9rem;transition:color .2s}
-    .social-card:hover .social-arr{color:var(--cyan)}
-
-    footer{position:relative;z-index:1;border-top:1px solid var(--card-border);padding:48px 24px 36px;text-align:center}
-    .footer-logo{font-family:'Orbitron',monospace;font-weight:900;font-size:1.6rem;color:#fff;letter-spacing:.08em;text-shadow:0 0 20px var(--cyan),0 0 50px rgba(0,229,255,.25);display:block;margin-bottom:10px}
-    .footer-tag{font-size:.75rem;letter-spacing:.2em;color:var(--muted);text-transform:uppercase}
-    .footer-links{display:flex;gap:28px;justify-content:center;margin:28px 0 20px;flex-wrap:wrap}
-    .footer-links a{font-family:'Orbitron',monospace;font-size:.62rem;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:var(--muted);text-decoration:none;transition:color .2s}
-    .footer-links a:hover{color:var(--cyan)}
-    .footer-copy{font-size:.75rem;color:rgba(255,255,255,.2);letter-spacing:.06em}
-    .diamond{display:inline-block;width:8px;height:8px;background:var(--cyan);transform:rotate(45deg);box-shadow:0 0 10px var(--cyan);margin:0 8px;vertical-align:middle}
-
-    #cookie-banner{position:fixed;bottom:0;left:0;right:0;z-index:999;background:rgba(5,5,5,.96);border-top:1px solid var(--card-border);backdrop-filter:blur(16px);padding:20px 32px;display:flex;align-items:center;justify-content:space-between;transform:translateY(100%);transition:transform .3s}
-    #cookie-banner.show{transform:translateY(0)}
-    .cookie-text{font-size:.83rem;color:var(--muted);max-width:680px;line-height:1.6}
-    .cookie-text a{color:var(--cyan);text-decoration:none;border-bottom:1px solid rgba(0,229,255,.3)}
-    .cookie-btns{display:flex;gap:12px;flex-shrink:0}
-    .cookie-accept{font-family:'Orbitron',monospace;font-size:.65rem;font-weight:700;letter-spacing:.15em;text-transform:uppercase;padding:10px 24px;background:var(--cyan);color:#000;border:none;cursor:pointer;border-radius:2px;transition:all .2s}
-    .cookie-accept:hover{box-shadow:0 0 15px rgba(0,229,255,.5)}
-    .cookie-accept:focus{outline:2px solid #000;outline-offset:2px}
-    .cookie-decline{font-family:'Orbitron',monospace;font-size:.65rem;font-weight:700;letter-spacing:.15em;text-transform:uppercase;padding:10px 24px;background:transparent;color:var(--muted);border:1px solid var(--muted);cursor:pointer;border-radius:2px;transition:all .2s}
-    .cookie-decline:hover{color:#fff;border-color:rgba(255,255,255,.3)}
-    .cookie-decline:focus{outline:2px solid var(--cyan);outline-offset:2px}
-
-    @media(max-width:768px){
-      nav{padding:16px 20px}.nav-links{display:none}
-      #hero{justify-content:flex-start;padding-top:90px;padding-bottom:40px;min-height:100vh}
-      .hero-logo{font-size:clamp(4rem,22vw,6rem)}
-      .hero-sub{display:none}
-      .about-grid,.index-layout{grid-template-columns:1fr;gap:40px}
-      section{padding:70px 20px}
-      #cookie-banner{padding:20px;flex-direction:column}
-      .video-controls{flex-direction:column;align-items:flex-start}
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BJ Beyond — One step beyond AI</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        body { font-family: 'Inter', system_ui, sans-serif; }
+        .font-display { font-family: 'Space Grotesk', 'Inter', sans-serif; font-weight: 600; }
+        .section { scroll-margin-top: 80px; }
+        .metric-card { transition: transform 0.2s ease; }
+        .metric-card:hover { transform: translateY(-4px); }
+        .lang-active { background-color: #6366f1 !important; color: white !important; }
+    </style>
 </head>
-<body>
-
-<a href="#hero" class="skip-to-content">Salta al contenuto principale</a>
-
-<div id="starfield"><canvas id="sc"></canvas></div>
-
-<nav role="navigation" aria-label="Navigazione principale">
-  <a class="nav-logo" href="/">BJ</a>
-  <div class="nav-links">
-    <a href="#soundtrack">Soundtrack</a>
-    <a href="#about">Mission</a>
-    <a href="#projects">Progetti</a>
-    <a href="#index-feature">Human Edge</a>
-    <a href="#social">Seguici</a>
-    <a href="https://linktr.ee/Bj_Beyond" target="_blank" rel="noopener noreferrer" class="nav-cta">Esplora</a>
-  </div>
-</nav>
-
-<section id="hero">
-  <div class="hero-phoenix-bg"></div>
-  <div class="hero-phoenix-overlay"></div>
-  <div class="hero-content">
-    <h1 class="hero-logo">BJ</h1>
-    <div class="hero-redline"></div>
-    <div class="hero-tagline">One step beyond AI.</div>
-    <p class="hero-sub">Intelligence è lo standard.<br>Noi andiamo oltre. Arte, mercato, dati —<br>nell'era in cui l'AI ridisegna il valore.</p>
-    <div class="hero-ctas">
-      <a href="https://linktr.ee/Bj_Beyond" target="_blank" rel="noopener noreferrer" class="btn-primary">Entra nel mondo BJ →</a>
-      <a href="#projects" class="btn-ghost">Esplora i progetti</a>
-    </div>
-  </div>
-  <div class="scroll-hint" aria-label="Scorri verso il basso"></div>
-</section>
-
-<section id="soundtrack">
-  <div class="section-inner">
-    <div class="section-label">Audio Experience</div>
-    <h2 class="section-title">Official Music Soundtrack</h2>
-    <div class="section-line"></div>
-    <p class="section-intro">Immergiti nel suono ufficiale di BJ Beyond. La colonna sonora che accompagna il tuo viaggio oltre l'intelligenza artificiale.</p>
-    <div class="video-container">
-      <video id="bgVideo" controls preload="metadata" loading="lazy" aria-label="Official Music Soundtrack">
-        <source src="Official Music Soundtrack.mp4" type="video/mp4"/>
-        <p>Il tuo browser non supporta i video HTML5. <a href="Official Music Soundtrack.mp4" download>Scarica il file</a></p>
-      </video>
-    </div>
-    <div class="video-controls">
-      <div class="video-info">
-        <strong>Official Music Soundtrack</strong> — Durata: 15.4 MB
-      </div>
-      <div class="video-buttons">
-        <button class="video-btn" onclick="document.getElementById('bgVideo').play()" aria-label="Riproduci video">▶ Play</button>
-        <button class="video-btn" onclick="document.getElementById('bgVideo').pause()" aria-label="Pausa video">⏸ Pausa</button>
-        <a href="Official Music Soundtrack.mp4" download class="video-btn" style="text-decoration:none">⬇ Download</a>
-      </div>
-    </div>
-  </div>
-</section>
-
-<section id="about">
-  <div class="section-inner">
-    <div class="section-label">Chi siamo</div>
-    <h2 class="section-title">L'intelligenza<br>che viene dopo.</h2>
-    <div class="section-line"></div>
-    <div class="about-grid">
-      <div class="about-text">
-        <p><strong>BJ Beyond</strong> nasce all'incrocio tra mercato dell'arte contemporanea e intelligenza artificiale. Produciamo intelligence, dati e analisi per chi vuole capire dove va davvero il valore.</p>
-        <p>In un mondo in cui l'AI è diventata lo standard — <strong>dopo la A c'è la B, dopo la I c'è la J</strong> — BJ è il passo successivo. L'intelligenza umana potenziata, non sostituita.</p>
-        <p>Dalla sala d'aste al feed di TikTok, tracciamo la linea tra ciò che una macchina può fare e ciò che solo un essere umano sa vedere.</p>
-      </div>
-      <div class="about-stat-block">
-        <div class="stat-card"><span class="stat-num">+62<span style="font-size:.5em;color:var(--muted)">%</span></span><span class="stat-label">Human Premium<br>Q1 2026</span></div>
-        <div class="stat-card"><span class="stat-num">10</span><span class="stat-label">Storie vere<br>Pillole di Arte</span></div>
-        <div class="stat-card"><span class="stat-num">89</span><span class="stat-label">Artisti Biennale<br>analizzati</span></div>
-        <div class="stat-card"><span class="stat-num">∞</span><span class="stat-label">Step beyond<br>AI.</span></div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<section id="projects">
-  <div class="section-inner">
-    <div class="section-label">Cosa facciamo</div>
-    <h2 class="section-title">Progetti</h2>
-    <div class="section-line"></div>
-    <p class="section-intro">Art market intelligence, storytelling data-driven, contenuti che interrogano il confine tra umano e artificiale.</p>
-    <div class="projects-grid">
-      <div class="project-card"><span class="card-icon">📊</span><span class="card-tag">Report mensile</span><div class="card-title">Human Edge Index</div><p class="card-desc">Il primo indice che misura il valore aggiunto dell'arte umana rispetto all'AI-generated nel mercato secondario.</p><a href="#index-feature" class="card-link">Scopri</a></div>
-      <div class="project-card"><span class="card-icon">📖</span><span class="card-tag">Ebook · Italiano</span><div class="card-title">Pillole di Arte</div><p class="card-desc">Dieci storie vere di artisti, mercato e intelligenza. Narrazioni che spiegano dove va il valore nell'era dell'AI.</p><a href="https://linktr.ee/Bj_Beyond" target="_blank" rel="noopener noreferrer" class="card-link">Leggi</a></div>
-      <div class="project-card"><span class="card-icon">🎵</span><span class="card-tag">TikTok · Content</span><div class="card-title">Art Intelligence Daily</div><p class="card-desc">Il mercato dell'arte in 60 secondi. Analisi quotidiane, trend, curve dei prezzi, opportunità — dal nostro sguardo.</p><a href="https://www.tiktok.com/@bj_beyond" target="_blank" rel="noopener noreferrer" class="card-link">Guarda</a></div>
-      <div class="project-card"><span class="card-icon">🏛️</span><span class="card-tag">Coverage · 2026</span><div class="card-title">Venice Biennale 2026</div><p class="card-desc">Analisi completa della prossima Biennale di Venezia: artisti emergenti, movimenti, e cosa dice il mercato.</p><a href="https://linktr.ee/Bj_Beyond" target="_blank" rel="noopener noreferrer" class="card-link">Scopri</a></div>
-      <div class="project-card"><span class="card-icon">X</span><span class="card-tag">X / Twitter</span><div class="card-title">@Bj_Beyond</div><p class="card-desc">Thread giornalieri su mercato dell'arte, intelligenza artificiale e il valore della sensibilità umana nel digitale.</p><a href="https://x.com/Bj_Beyond" target="_blank" rel="noopener noreferrer" class="card-link">Segui</a></div>
-      <div class="project-card"><span class="card-icon">🔍</span><span class="card-tag">Research</span><div class="card-title">Art x AI Analysis</div><p class="card-desc">Studi sull'intersezione tra mercato dell'arte e intelligenza artificiale. Dati, trend, e il futuro della bellezza.</p><a href="https://linktr.ee/Bj_Beyond" target="_blank" rel="noopener noreferrer" class="card-link">Leggi</a></div>
-    </div>
-  </div>
-</section>
-
-<section id="index-feature">
-  <div class="section-inner">
-    <div class="section-label">Flagship Report</div>
-    <h2 class="section-title">Human Edge Index</h2>
-    <div class="section-line"></div>
-    <div class="index-layout">
-      <div>
-        <p class="section-intro" style="margin-bottom:28px">Ogni mese misuriamo il premio che l'arte umana comanda sull'AI-generated nei segmenti comparabili del mercato secondario. Un numero. Metodologia. Implicazioni.</p>
-        <p style="color:var(--muted);font-size:.92rem;line-height:1.85;margin-bottom:24px">L'Edizione #1 (Q1 2026) ha rilevato un premium medio del <strong style="color:#fff">+62%</strong> per opere di mid-career artists umani rispetto ai corrispettivi AI-generated di qualità simile.</p>
-        <a href="https://x.com/Bj_Beyond" target="_blank" rel="noopener noreferrer" class="btn-primary" style="display:inline-block">Leggi l'Edizione #1</a>
-      </div>
-      <div class="index-visual">
-        <div class="index-name">Human Edge Index · Ed. #1</div>
-        <div class="index-value">+62<span class="index-unit">%</span></div>
-        <div class="index-subtitle">Premium medio opere umane mid-career<br>vs AI-generated comparabili · Q1 2026</div>
-        <div class="index-bars">
-          <div class="bar-row"><span class="bar-label">Arte Umana</span><div class="bar-track"><div class="bar-fill human" data-w="85%"></div></div><span class="bar-val">85</span></div>
-          <div class="bar-row"><span class="bar-label">AI-Generated</span><div class="bar-track"><div class="bar-fill ai" data-w="52%"></div></div><span class="bar-val">52</span></div>
-          <div class="bar-row"><span class="bar-label">AI-Assisted</span><div class="bar-track"><div class="bar-fill hybrid" data-w="68%"></div></div><span class="bar-val">68</span></div>
+<body class="bg-zinc-950 text-zinc-200">
+    <!-- NAVBAR -->
+    <nav class="fixed top-0 left-0 right-0 z-50 bg-zinc-950/95 border-b border-zinc-800 backdrop-blur-lg">
+        <div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
+            <div class="flex items-center gap-x-3">
+                <div class="w-9 h-9 bg-indigo-600 rounded-2xl flex items-center justify-center">
+                    <span class="text-white font-bold text-2xl">B</span>
+                </div>
+                <span class="font-display text-2xl font-semibold tracking-tighter">BJ Beyond</span>
+            </div>
+            
+            <!-- SELETTORE LINGUA -->
+            <div class="flex items-center bg-zinc-900 rounded-3xl p-1 border border-zinc-800">
+                <button onclick="switchLang('it')" id="lang-it"
+                        class="px-4 py-1.5 text-sm font-medium rounded-3xl flex items-center gap-x-1.5 lang-active">
+                    🇮🇹 IT
+                </button>
+                <button onclick="switchLang('en')" id="lang-en"
+                        class="px-4 py-1.5 text-sm font-medium rounded-3xl flex items-center gap-x-1.5">
+                    🇬🇧 EN
+                </button>
+            </div>
+            
+            <div class="hidden md:flex items-center gap-x-8 text-sm font-medium">
+                <a href="#about" class="hover:text-indigo-400 transition" data-it="Chi sono" data-en="About">Chi sono</a>
+                <a href="#human-edge" class="hover:text-indigo-400 transition" data-it="Human Edge Index" data-en="Human Edge Index">Human Edge Index</a>
+                <a href="#projects" class="hover:text-indigo-400 transition" data-it="Progetti" data-en="Projects">Progetti</a>
+            </div>
+            
+            <div class="flex items-center gap-x-3">
+                <a href="https://x.com/Bj_Beyond" target="_blank" 
+                   class="px-5 py-2.5 text-sm font-semibold bg-white text-zinc-950 rounded-3xl hover:bg-zinc-100 transition flex items-center gap-x-2">
+                    <i class="fa-brands fa-x-twitter"></i>
+                    <span data-it="Seguimi" data-en="Follow">Seguimi</span>
+                </a>
+                <button onclick="document.getElementById('human-edge').scrollIntoView({ behavior: 'smooth' })" 
+                        class="px-5 py-2.5 text-sm font-semibold bg-indigo-600 hover:bg-indigo-700 rounded-3xl transition" 
+                        data-it="Scopri il Report" data-en="Read Report">
+                    Scopri il Report
+                </button>
+            </div>
         </div>
-      </div>
-    </div>
-  </div>
-</section>
+    </nav>
 
-<section id="social">
-  <div class="section-inner">
-    <div class="section-label">Seguici</div>
-    <h2 class="section-title">Dove trovarci</h2>
-    <div class="section-line"></div>
-    <p class="section-intro">Art market intelligence quotidiana — su ogni piattaforma, nel formato che preferisci.</p>
-    <div class="social-grid">
-      <a href="https://x.com/Bj_Beyond" target="_blank" rel="noopener noreferrer" class="social-card"><span class="social-icon">X</span><div class="social-info"><div class="social-platform">X / Twitter</div><div class="social-handle">@Bj_Beyond</div></div><span class="social-arr">→</span></a>
-      <a href="https://www.tiktok.com/@bj_beyond" target="_blank" rel="noopener noreferrer" class="social-card"><span class="social-icon">▶</span><div class="social-info"><div class="social-platform">TikTok</div><div class="social-handle">@bj_beyond</div></div><span class="social-arr">→</span></a>
-      <a href="https://www.reddit.com/user/Bj_Beyond" target="_blank" rel="noopener noreferrer" class="social-card"><span class="social-icon">R</span><div class="social-info"><div class="social-platform">Reddit</div><div class="social-handle">u/Bj_Beyond</div></div><span class="social-arr">→</span></a>
-      <a href="https://www.threads.net/@bj_beyond" target="_blank" rel="noopener noreferrer" class="social-card"><span class="social-icon">@</span><div class="social-info"><div class="social-platform">Threads</div><div class="social-handle">@bj_beyond</div></div><span class="social-arr">→</span></a>
-      <a href="https://linktr.ee/Bj_Beyond" target="_blank" rel="noopener noreferrer" class="social-card"><span class="social-icon">🌍</span><div class="social-info"><div class="social-platform">Linktree</div><div class="social-handle">Tutti i link</div></div><span class="social-arr">→</span></a>
-    </div>
-  </div>
-</section>
+    <!-- HERO -->
+    <section class="pt-20 min-h-[100dvh] flex items-center bg-zinc-950">
+        <div class="max-w-5xl mx-auto px-6 text-center">
+            <div class="inline-flex items-center gap-x-2 px-4 py-1.5 rounded-3xl bg-zinc-900 border border-zinc-800 mb-8">
+                <div class="w-2 h-2 bg-emerald-400 rounded-full animate-pulse"></div>
+                <span class="text-sm font-medium text-zinc-400">Q1 2026 • Venice Biennale Edition</span>
+            </div>
+            
+            <h1 class="font-display text-7xl md:text-8xl font-semibold tracking-tighter leading-none mb-6">
+                BJ Beyond<br>
+                <span class="bg-gradient-to-r from-indigo-400 to-violet-400 bg-clip-text text-transparent">One step beyond AI</span>
+            </h1>
+            
+            <p class="max-w-2xl mx-auto text-2xl text-zinc-400 mb-10" data-it="Intelligence è lo standard.<br>Noi andiamo oltre." data-en="Intelligence is the standard.<br>We go beyond.">
+                Intelligence è lo standard.<br>Noi andiamo oltre.
+            </p>
+            
+            <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                <button onclick="document.getElementById('human-edge').scrollIntoView({ behavior: 'smooth' })" 
+                        class="px-10 py-4 bg-white text-zinc-950 font-semibold rounded-3xl text-lg flex items-center justify-center gap-x-3 hover:bg-zinc-100 transition" 
+                        data-it="Leggi il Report Q1 2026" data-en="Read the Q1 2026 Report">
+                    Leggi il Report Q1 2026
+                </button>
+                
+                <a href="https://x.com/Bj_Beyond" target="_blank"
+                   class="px-8 py-4 border border-zinc-700 hover:bg-zinc-900 rounded-3xl text-lg font-medium flex items-center justify-center gap-x-3 transition">
+                    <i class="fa-brands fa-x-twitter text-xl"></i>
+                    <span data-it="Segui su X" data-en="Follow on X">Segui su X</span>
+                </a>
+            </div>
+        </div>
+    </section>
 
-<footer role="contentinfo">
-  <span class="footer-logo">BJ</span>
-  <div class="footer-tag">One step beyond AI.</div>
-  <div class="footer-links">
-    <a href="#about">Mission</a>
-    <a href="#projects">Progetti</a>
-    <a href="#index-feature">Human Edge Index</a>
-    <a href="https://linktr.ee/Bj_Beyond" target="_blank" rel="noopener noreferrer">Linktree</a>
-    <a href="/privacy.html">Privacy &amp; Cookie</a>
-  </div>
-  <div class="footer-copy"><span class="diamond"></span>© 2026 BJ Beyond · bjbeyond.it · Tutti i diritti riservati<span class="diamond"></span></div>
-</footer>
+    <!-- ABOUT -->
+    <section id="about" class="max-w-5xl mx-auto px-6 py-24 section">
+        <div class="grid md:grid-cols-12 gap-16 items-center">
+            <div class="md:col-span-7">
+                <div class="uppercase tracking-[3px] text-xs font-semibold text-indigo-400 mb-4" data-it="CHI SONO" data-en="ABOUT">CHI SONO</div>
+                <h2 class="font-display text-5xl font-semibold tracking-tight leading-none mb-8" data-it="All'incrocio tra<br>arte e intelligenza" data-en="At the intersection of<br>art and intelligence">
+                    All'incrocio tra<br>arte e intelligenza
+                </h2>
+                <div class="max-w-[42ch] text-lg text-zinc-400" data-it="BJ Beyond produce intelligence, dati e analisi sul mercato dell'arte contemporanea nell'era dell'AI.<br><br>Tracciamo il valore tra ciò che le macchine generano e ciò che gli umani percepiscono." data-en="BJ Beyond produces intelligence, data and analysis on the contemporary art market in the AI era.<br><br>We track the value between what machines generate and what humans perceive.">
+                    BJ Beyond produce intelligence, dati e analisi sul mercato dell'arte contemporanea nell'era dell'AI.<br><br>Tracciamo il valore tra ciò che le macchine generano e ciò che gli umani percepiscono.
+                </div>
+            </div>
+            
+            <div class="md:col-span-5">
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="metric-card bg-zinc-900 border border-zinc-800 rounded-3xl p-6">
+                        <div class="text-4xl font-semibold text-emerald-400">+62%</div>
+                        <div class="text-sm text-zinc-400 mt-2" data-it="Human Premium<br>Q1 2026" data-en="Human Premium<br>Q1 2026">Human Premium<br>Q1 2026</div>
+                    </div>
+                    <div class="metric-card bg-zinc-900 border border-zinc-800 rounded-3xl p-6">
+                        <div class="text-4xl font-semibold">89</div>
+                        <div class="text-sm text-zinc-400 mt-2" data-it="Artisti Biennale<br>analizzati" data-en="Biennale Artists<br>analyzed">Artisti Biennale<br>analizzati</div>
+                    </div>
+                    <div class="metric-card bg-zinc-900 border border-zinc-800 rounded-3xl p-6">
+                        <div class="text-4xl font-semibold">10</div>
+                        <div class="text-sm text-zinc-400 mt-2" data-it="Storie vere<br>Pillole di Arte" data-en="True Stories<br>Art Pills">Storie vere<br>Pillole di Arte</div>
+                    </div>
+                    <div class="metric-card bg-zinc-900 border border-zinc-800 rounded-3xl p-6">
+                        <div class="text-4xl font-semibold text-violet-400">∞</div>
+                        <div class="text-sm text-zinc-400 mt-2" data-it="Step beyond<br>AI" data-en="Steps beyond<br>AI">Step beyond<br>AI</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
 
-<div id="cookie-banner" role="dialog" aria-labelledby="cookie-title" aria-describedby="cookie-description">
-  <div class="cookie-text">
-    <strong id="cookie-title">Cookie e tracciamento</strong>
-    <p id="cookie-description">Utilizziamo cookie tecnici necessari al funzionamento del sito. Nessun cookie di profilazione o analytics. <a href="/privacy.html">Privacy &amp; Cookie Policy</a></p>
-  </div>
-  <div class="cookie-btns">
-    <button class="cookie-accept" onclick="cookieConsent(true)">Accetta</button>
-    <button class="cookie-decline" onclick="cookieConsent(false)">Solo necessari</button>
-  </div>
-</div>
+    <!-- HUMAN EDGE INDEX -->
+    <section id="human-edge" class="bg-zinc-900 py-24 section">
+        <div class="max-w-5xl mx-auto px-6">
+            <div class="flex flex-col md:flex-row md:items-end md:justify-between mb-12">
+                <div>
+                    <div class="uppercase tracking-[3px] text-xs font-semibold text-indigo-400 mb-3">FLAGSHIP REPORT</div>
+                    <h2 class="font-display text-5xl font-semibold tracking-tight">Human Edge Index</h2>
+                </div>
+                <a href="https://x.com/Bj_Beyond" target="_blank" class="mt-6 md:mt-0 inline-flex items-center gap-x-2 text-sm font-semibold text-indigo-400 hover:text-indigo-300">
+                    <span data-it="Leggi l'edizione #1" data-en="Read Edition #1">Leggi l'edizione #1</span>
+                </a>
+            </div>
 
-<script type="application/json" id="ld-schema">
-{
-  "@context": "https://schema.org",
-  "@type": "Organization",
-  "name": "BJ Beyond",
-  "url": "https://bjbeyond.it",
-  "description": "Art Market Intelligence. Intelligence è lo standard. Noi andiamo oltre.",
-  "image": "https://bjbeyond.it/og-image.jpg",
-  "sameAs": [
-    "https://x.com/Bj_Beyond",
-    "https://www.tiktok.com/@bj_beyond",
-    "https://www.reddit.com/user/Bj_Beyond",
-    "https://www.threads.net/@bj_beyond",
-    "https://linktr.ee/Bj_Beyond"
-  ]
-}
-</script>
+            <div class="bg-zinc-950 border border-zinc-800 rounded-3xl p-10 md:p-14">
+                <div class="grid md:grid-cols-3 gap-8">
+                    <div>
+                        <div class="text-sm text-zinc-400 mb-2" data-it="Premium medio" data-en="Average Premium">Premium medio</div>
+                        <div class="text-6xl font-semibold text-emerald-400">+62%</div>
+                        <div class="text-sm mt-1 text-zinc-500" data-it="Opere umane mid-career vs AI-generated (Q1 2026)" data-en="Human mid-career works vs AI-generated (Q1 2026)">Opere umane mid-career vs AI-generated (Q1 2026)</div>
+                    </div>
+                    
+                    <div class="md:col-span-2">
+                        <div class="grid grid-cols-3 gap-4">
+                            <div class="text-center p-5 bg-zinc-900 rounded-2xl">
+                                <div class="text-3xl font-semibold">85</div>
+                                <div class="text-xs text-emerald-400 mt-1" data-it="ARTE UMANA" data-en="HUMAN ART">ARTE UMANA</div>
+                            </div>
+                            <div class="text-center p-5 bg-zinc-900 rounded-2xl">
+                                <div class="text-3xl font-semibold">52</div>
+                                <div class="text-xs text-red-400 mt-1" data-it="AI-GENERATED" data-en="AI-GENERATED">AI-GENERATED</div>
+                            </div>
+                            <div class="text-center p-5 bg-zinc-900 rounded-2xl">
+                                <div class="text-3xl font-semibold">68</div>
+                                <div class="text-xs text-amber-400 mt-1" data-it="AI-ASSISTED" data-en="AI-ASSISTED">AI-ASSISTED</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
 
-<script>
-(function(){
-  const c=document.getElementById('sc');
-  if(!c)return;
-  const ctx=c.getContext('2d');
-  let stars=[];
-  function resize(){c.width=window.innerWidth;c.height=window.innerHeight}
-  function init(){stars=[];for(let i=0;i<280;i++){stars.push({x:Math.random()*c.width,y:Math.random()*c.height,r:Math.random()*1.3+.2,a:Math.random()*Math.PI*2,spd:Math.random()*.003+.001})}}
-  function draw(){ctx.clearRect(0,0,c.width,c.height);stars.forEach(s=>{s.a+=s.spd;const al=(Math.sin(s.a)+1)/2*.65+.1;ctx.beginPath();ctx.arc(s.x,s.y,s.r,0,Math.PI*2);ctx.fillStyle=`rgba(255,255,255,${al})`;ctx.fill()});requestAnimationFrame(draw)}
-  resize();init();draw();
-  window.addEventListener('resize',()=>{resize();init()},{ passive:true });
-})();
+    <!-- PROJECTS -->
+    <section id="projects" class="max-w-5xl mx-auto px-6 py-24 section">
+        <div class="text-center mb-16">
+            <div class="uppercase tracking-[3px] text-xs font-semibold text-indigo-400 mb-3" data-it="COSA FACCIAMO" data-en="WHAT WE DO">COSA FACCIAMO</div>
+            <h2 class="font-display text-5xl font-semibold tracking-tight" data-it="Progetti in corso" data-en="Ongoing Projects">Progetti in corso</h2>
+        </div>
 
-function cookieConsent(accepted){
-  localStorage.setItem('bj_cookie_consent',accepted?'accepted':'declined');
-  document.getElementById('cookie-banner').classList.remove('show');
-}
+        <div class="grid md:grid-cols-2 gap-6">
+            <div class="group bg-zinc-900 border border-zinc-800 hover:border-indigo-500/50 rounded-3xl p-8 transition">
+                <div class="text-4xl mb-6">📊</div>
+                <h3 class="font-semibold text-2xl mb-3">Human Edge Index</h3>
+                <p class="text-zinc-400" data-it="Report mensile sul premium dell'arte umana vs AI-generated" data-en="Monthly report on human art premium vs AI-generated">Report mensile sul premium dell'arte umana vs AI-generated</p>
+                <div class="mt-6 text-xs font-mono text-emerald-400">MENSILE • Q1 2026 LIVE</div>
+            </div>
 
-window.addEventListener('DOMContentLoaded',()=>{
-  if(!localStorage.getItem('bj_cookie_consent')){
-    setTimeout(()=>document.getElementById('cookie-banner').classList.add('show'),1200);
-  }
-});
+            <div class="group bg-zinc-900 border border-zinc-800 hover:border-indigo-500/50 rounded-3xl p-8 transition">
+                <div class="text-4xl mb-6">📖</div>
+                <h3 class="font-semibold text-2xl mb-3" data-it="Pillole di Arte" data-en="Art Pills">Pillole di Arte</h3>
+                <p class="text-zinc-400" data-it="Ebook italiano • 10 storie vere su artisti, mercato e AI" data-en="Italian ebook • 10 true stories about artists, market and AI">Ebook italiano • 10 storie vere su artisti, mercato e AI</p>
+                <div class="mt-6 text-xs font-mono text-emerald-400" data-it="DISPONIBILE SU LINKTREE" data-en="AVAILABLE ON LINKTREE">DISPONIBILE SU LINKTREE</div>
+            </div>
 
-if('IntersectionObserver' in window){
-  const obs=new IntersectionObserver(entries=>{
-    entries.forEach(e=>{
-      if(e.isIntersecting){
-        document.querySelectorAll('.bar-fill').forEach(b=>{
-          b.style.width=b.getAttribute('data-w');
-        });
-        obs.disconnect();
-      }
-    });
-  },{threshold:0.1});
-  const ix=document.getElementById('index-feature');
-  if(ix)obs.observe(ix);
-}
+            <div class="group bg-zinc-900 border border-zinc-800 hover:border-indigo-500/50 rounded-3xl p-8 transition">
+                <div class="text-4xl mb-6">📱</div>
+                <h3 class="font-semibold text-2xl mb-3" data-it="Art Intelligence Daily" data-en="Art Intelligence Daily">Art Intelligence Daily</h3>
+                <p class="text-zinc-400" data-it="Analisi quotidiane in 60 secondi su TikTok" data-en="Daily 60-second analysis on TikTok">Analisi quotidiane in 60 secondi su TikTok</p>
+                <div class="mt-6 text-xs font-mono text-emerald-400">@bj_beyond • 60s</div>
+            </div>
 
-const secs=document.querySelectorAll('section[id]');
-const navAs=document.querySelectorAll('.nav-links a');
-window.addEventListener('scroll',()=>{
-  let cur='';
-  secs.forEach(s=>{
-    if(window.scrollY>=s.offsetTop-120)cur=s.id;
-  });
-  navAs.forEach(a=>{
-    a.style.color=a.getAttribute('href')==='#'+cur?'var(--cyan)':'';
-  });
-},{passive:true});
-</script>
+            <div class="group bg-zinc-900 border border-zinc-800 hover:border-indigo-500/50 rounded-3xl p-8 transition">
+                <div class="text-4xl mb-6">🏛️</div>
+                <h3 class="font-semibold text-2xl mb-3" data-it="Venice Biennale 2026" data-en="Venice Biennale 2026">Venice Biennale 2026</h3>
+                <p class="text-zinc-400" data-it="Coverage completa di artisti emergenti e movimenti" data-en="Full coverage of emerging artists and movements">Coverage completa di artisti emergenti e movimenti</p>
+                <div class="mt-6 text-xs font-mono text-emerald-400" data-it="IN CORSO" data-en="ONGOING">IN CORSO</div>
+            </div>
+        </div>
+    </section>
 
+    <footer class="border-t border-zinc-800 py-16">
+        <div class="max-w-5xl mx-auto px-6 text-center text-sm text-zinc-500">
+            <div class="flex justify-center gap-x-8 mb-8 text-xl">
+                <a href="https://x.com/Bj_Beyond" class="hover:text-white transition"><i class="fa-brands fa-x-twitter"></i></a>
+                <a href="https://www.tiktok.com/@bj_beyond" class="hover:text-white transition"><i class="fa-brands fa-tiktok"></i></a>
+                <a href="https://linktr.ee/Bj_Beyond" class="hover:text-white transition"><i class="fa-solid fa-link"></i></a>
+            </div>
+            <p>© 2026 BJ Beyond • Sito statico su GitHub Pages</p>
+        </div>
+    </footer>
+
+    <script>
+        function switchLang(lang) {
+            document.getElementById('lang-it').classList.remove('lang-active');
+            document.getElementById('lang-en').classList.remove('lang-active');
+            
+            if (lang === 'it') {
+                document.getElementById('lang-it').classList.add('lang-active');
+            } else {
+                document.getElementById('lang-en').classList.add('lang-active');
+            }
+            
+            document.querySelectorAll('[data-it]').forEach(el => {
+                el.innerHTML = (lang === 'it') ? el.getAttribute('data-it') : el.getAttribute('data-en');
+            });
+            
+            document.documentElement.lang = lang;
+        }
+        
+        window.onload = function() {
+            document.getElementById('lang-it').classList.add('lang-active');
+        }
+    </script>
 </body>
 </html>
