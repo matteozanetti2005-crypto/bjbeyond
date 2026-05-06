@@ -243,3 +243,45 @@
     </script>
 </body>
 </html>
+    <!-- ==================== OFFICIAL SOUNDTRACK ==================== -->
+    <audio id="bj-soundtrack" loop preload="none">
+        <source src="Official Music Soundtrack.mp4" type="audio/mp4">
+        Il tuo browser non supporta l'audio.
+    </audio>
+
+    <script>
+        // Soundtrack BJ Beyond
+        const soundtrack = document.getElementById('bj-soundtrack');
+        
+        // Auto-play dopo prima interazione utente (bypass policy browser)
+        let hasInteracted = false;
+        
+        function playSoundtrack() {
+            if (hasInteracted) return;
+            hasInteracted = true;
+            
+            soundtrack.volume = 0.4; // volume medio-basso (regolabile)
+            soundtrack.play().catch(err => {
+                console.log("Auto-play bloccato dal browser:", err);
+            });
+        }
+
+        // Attiva al primo click/tocco/scroll
+        ['click', 'touchstart', 'scroll'].forEach(event => {
+            document.addEventListener(event, playSoundtrack, { once: true });
+        });
+
+        // Opzionale: bottone mute/unmute nel footer o header
+        // Puoi aggiungere questo HTML dove vuoi (es. vicino al logo):
+        /*
+        <button id="sound-toggle" class="text-zinc-400 hover:text-white transition">
+            <i class="fa-solid fa-volume-high"></i>
+        </button>
+        */
+
+        // Esempio di toggle (se vuoi aggiungere il bottone)
+        // document.getElementById('sound-toggle').addEventListener('click', () => {
+        //     if (soundtrack.paused) soundtrack.play();
+        //     else soundtrack.pause();
+        // });
+    </script>
