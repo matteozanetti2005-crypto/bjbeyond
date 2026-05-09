@@ -38,7 +38,6 @@
 </head>
 <body class="bg-zinc-950 text-zinc-200">
 
-```
 <!-- ==================== NAVBAR ==================== -->
 <nav class="fixed top-0 left-0 right-0 z-50 bg-zinc-950/95 border-b border-zinc-800 backdrop-blur-lg">
     <div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
@@ -71,34 +70,28 @@
     </div>
 </nav>
 
-<!-- ==================== HERO ==================== -->
-<section class="min-h-screen flex items-center justify-center pt-20 pb-12 relative overflow-hidden">
-    <!-- Background glow -->
-    <div class="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-indigo-900/20 rounded-full blur-3xl pointer-events-none"></div>
-
-    <div class="max-w-4xl mx-auto px-6 text-center relative z-10">
-        <!-- Badge -->
-        <div class="inline-flex items-center gap-x-2 bg-zinc-900 border border-zinc-700 rounded-full px-4 py-1.5 text-xs font-medium text-zinc-400 mb-8 fade-up">
-            <span class="glow-dot"></span>
-            <span data-it="Q1 2026 • Venice Biennale Edition" data-en="Q1 2026 • Venice Biennale Edition">Q1 2026 • Venice Biennale Edition</span>
-        </div>
-
-        <h1 class="font-display text-6xl md:text-7xl lg:text-8xl tracking-tighter leading-none mb-6 fade-up fade-up-1">
-            <span class="text-white">BJ Beyond</span><br>
-            <span class="text-indigo-400" data-it="One step beyond AI" data-en="One step beyond AI">One step beyond AI</span>
-        </h1>
-
-        <p class="text-zinc-400 text-lg md:text-xl max-w-xl mx-auto mb-10 fade-up fade-up-2" data-it="Intelligence è lo standard.&nbsp; Noi andiamo oltre." data-en="Intelligence is the standard.&nbsp; We go beyond.">
-            Intelligence è lo standard.&nbsp; Noi andiamo oltre.
-        </p>
-
-        <div class="flex flex-col sm:flex-row items-center justify-center gap-4 fade-up fade-up-3">
-            <a href="#human-edge" class="w-full sm:w-auto px-8 py-3.5 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-3xl transition text-sm" data-it="Leggi il Report Q1 2026" data-en="Read Q1 2026 Report">Leggi il Report Q1 2026</a>
-            <a href="https://x.com/Bj_Beyond" target="_blank" class="w-full sm:w-auto px-8 py-3.5 bg-zinc-800 hover:bg-zinc-700 text-zinc-200 font-semibold rounded-3xl transition text-sm flex items-center justify-center gap-x-2">
+<!-- ==================== HERO WITH YOUR NEW LOGO ==================== -->
+<section class="min-h-screen flex items-center justify-center pt-20 pb-12 relative overflow-hidden bg-black">
+    <!-- Subtle grid background -->
+    <div class="absolute inset-0 bg-[radial-gradient(#ffffff08_1px,transparent_1px)] bg-[length:3px_3px]"></div>
+    
+    <div class="max-w-6xl mx-auto px-6 text-center relative z-10">
+        <!-- YOUR LOGO - FRONT AND CENTER -->
+        <img src="logo-hero.png" 
+             alt="BJ Beyond - One step beyond AI" 
+             class="mx-auto w-full max-w-[920px] rounded-3xl shadow-[0_0_100px_-15px_rgb(129,140,248)] border border-zinc-800/60 mb-8">
+        
+        <div class="flex flex-col sm:flex-row items-center justify-center gap-4 mt-6">
+            <a href="#human-edge" class="w-full sm:w-auto px-9 py-3.5 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-3xl transition text-sm flex items-center justify-center gap-x-2" data-it="Leggi il Report Q1 2026" data-en="Read Q1 2026 Report">
+                <span>Leggi il Report Q1 2026</span>
+            </a>
+            <a href="https://x.com/Bj_Beyond" target="_blank" class="w-full sm:w-auto px-9 py-3.5 bg-zinc-800 hover:bg-zinc-700 text-zinc-200 font-semibold rounded-3xl transition text-sm flex items-center justify-center gap-x-2">
                 <i class="fa-brands fa-x-twitter"></i>
                 <span data-it="Segui su X" data-en="Follow on X">Segui su X</span>
             </a>
         </div>
+        
+        <p class="mt-8 text-xs text-zinc-500 tracking-[2px]">Q1 2026 • Venice Biennale Edition</p>
     </div>
 </section>
 
@@ -310,7 +303,6 @@
         document.getElementById('lang-it').classList.add('lang-active');
     };
 </script>
-```
 
 </body>
 </html>
