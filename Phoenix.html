@@ -6,7 +6,7 @@
 <title>Phoenix Simulator — BJ Beyond</title>
 <meta name="description" content="AI-powered simulation of X's Phoenix ranking algorithm. Based on xai-org/x-algorithm.">
 <meta property="og:title" content="Phoenix Simulator — BJ Beyond">
-<meta property="og:description" content="How would X's Phoenix algorithm rank your post? Get an AI score in seconds.">
+<meta property="og:description" content="How would X's Phoenix algorithm rank your post? Paste text or drop an X link.">
 <meta property="og:url" content="https://bjbeyond.it/Phoenix">
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
 <style>
@@ -45,7 +45,19 @@ body::before {
 @keyframes blink { 0%,100%{opacity:1;} 50%{opacity:0.3;} }
 .card { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 18px; margin-bottom: 14px; }
 .card-label { font-size: 9px; color: var(--muted); letter-spacing: 3px; margin-bottom: 12px; font-family: 'Orbitron', monospace; }
-textarea { width: 100%; min-height: 100px; background: transparent; border: none; outline: none; resize: none; color: var(--text); font-size: 14px; font-family: 'Share Tech Mono', monospace; line-height: 1.6; caret-color: var(--cyan); }
+.url-input {
+  width: 100%; background: transparent; border: none; outline: none;
+  color: var(--cyan); font-size: 13px; font-family: 'Share Tech Mono', monospace;
+  line-height: 1.6; caret-color: var(--cyan); padding: 4px 0;
+  border-bottom: 1px solid var(--border);
+}
+.url-input::placeholder { color: #2a2a3a; }
+.divider {
+  display: flex; align-items: center; gap: 12px;
+  margin: 14px 0; font-size: 9px; color: var(--muted); letter-spacing: 3px;
+}
+.divider::before, .divider::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+textarea { width: 100%; min-height: 80px; background: transparent; border: none; outline: none; resize: none; color: var(--text); font-size: 14px; font-family: 'Share Tech Mono', monospace; line-height: 1.6; caret-color: var(--cyan); }
 textarea::placeholder { color: #2a2a3a; }
 .input-footer { display: flex; justify-content: space-between; align-items: center; margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--border); }
 .char-count { font-size: 10px; color: var(--muted); }
@@ -53,6 +65,7 @@ textarea::placeholder { color: #2a2a3a; }
 .btn-run { background: transparent; border: 1px solid var(--cyan); color: var(--cyan); padding: 9px 22px; border-radius: 6px; cursor: pointer; font-size: 11px; font-family: 'Orbitron', monospace; letter-spacing: 2px; transition: all 0.2s; }
 .btn-run:hover:not(:disabled) { background: rgba(0,229,255,0.08); box-shadow: 0 0 16px rgba(0,229,255,0.2); }
 .btn-run:disabled { border-color: #333; color: #444; cursor: default; }
+.extracted-text { font-size: 11px; color: #888; line-height: 1.6; padding: 10px; background: rgba(0,229,255,0.03); border-left: 2px solid rgba(0,229,255,0.2); border-radius: 0 6px 6px 0; margin-bottom: 14px; font-style: italic; }
 .step { display: flex; align-items: center; gap: 12px; padding: 8px 0; transition: opacity 0.4s; }
 .step.inactive { opacity: 0.25; }
 .step-num { width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-family: 'Orbitron', monospace; font-size: 10px; font-weight: 700; transition: all 0.3s; }
@@ -98,11 +111,14 @@ textarea::placeholder { color: #2a2a3a; }
   </div>
 
   <div class="card">
-    <div class="card-label">ENTER YOUR POST TEXT</div>
-    <textarea id="postText" maxlength="280" placeholder="Write or paste your X post here..."></textarea>
+    <div class="card-label">PASTE X POST URL</div>
+    <input type="url" id="postUrl" class="url-input" placeholder="https://x.com/username/status/...">
+    <div class="divider">OR</div>
+    <div class="card-label">PASTE POST TEXT</div>
+    <textarea id="postText" maxlength="280" placeholder="Write or paste your X post text here..."></textarea>
     <div class="input-footer">
       <span class="char-count" id="charCount">0/280</span>
-      <button class="btn-run" id="btnRun" disabled onclick="runPipeline()">&#9654; ANALYZE WITH AI</button>
+      <button class="btn-run" id="btnRun" onclick="runPipeline()">&#9654; ANALYZE WITH AI</button>
     </div>
   </div>
 
@@ -121,7 +137,7 @@ textarea::placeholder { color: #2a2a3a; }
 <script>
 const WORKER_URL = "https://phoenix-analyzer.matteo-zanetti2005.workers.dev";
 
-const STEP_LABELS = ["Query hydration","Candidate sourcing","Grox safety check","AI analysis","Phoenix score computed"];
+const STEP_LABELS = ["Query hydration","Fetching post","Grox safety check","AI analysis","Phoenix score computed"];
 const METRICS = {
   favorite:{ label:"Like probability",     icon:"&#9825;", color:"#00e5ff" },
   reply:   { label:"Reply probability",    icon:"&#8617;", color:"#ff4d4d" },
@@ -131,6 +147,7 @@ const METRICS = {
   spam:    { label:"Spam signal",          icon:"&#9888;", color:"#ff4444" }
 };
 
+const urlInput=document.getElementById('postUrl');
 const textarea=document.getElementById('postText');
 const btnRun=document.getElementById('btnRun');
 const charCount=document.getElementById('charCount');
@@ -139,7 +156,6 @@ textarea.addEventListener('input',()=>{
   const n=textarea.value.length;
   charCount.textContent=n+'/280';
   charCount.className='char-count'+(n>250?' warn':'');
-  btnRun.disabled=textarea.value.trim().length<5;
 });
 
 function radialSVG(score){
@@ -151,8 +167,10 @@ function radialSVG(score){
 let currentResult=null;
 
 async function runPipeline(){
+  const url=urlInput.value.trim();
   const text=textarea.value.trim();
-  if(!text)return;
+  if(!url && !text){alert('Paste a URL or post text first.');return;}
+
   btnRun.disabled=true;
   btnRun.textContent='ANALYZING...';
   document.getElementById('results').classList.add('hidden');
@@ -175,27 +193,31 @@ async function runPipeline(){
     s++;
   };
 
-  for(let i=0;i<3;i++){await new Promise(r=>setTimeout(r,450));animateStep();}
+  for(let i=0;i<2;i++){await new Promise(r=>setTimeout(r,450));animateStep();}
   await new Promise(r=>setTimeout(r,450));
   animateStep();
 
   let result;
   try{
+    const body={};
+    if(url) body.postUrl=url;
+    if(text) body.postText=text;
+
     const res=await fetch(WORKER_URL,{
       method:'POST',
       headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({postText:text})
+      body:JSON.stringify(body)
     });
-    if(!res.ok)throw new Error('Worker error: '+res.status);
+    if(!res.ok) throw new Error('Worker error: '+res.status);
     result=await res.json();
-    if(result.error)throw new Error(result.error);
+    if(result.error) throw new Error(result.error);
   }catch(err){
     document.getElementById('stepnum'+(s-1)).className='step-num active';
     document.getElementById('stepnum'+(s-1)).textContent='\u2717';
     document.getElementById('stepnum'+(s-1)).style.borderColor='#ff4d4d';
     document.getElementById('stepnum'+(s-1)).style.color='#ff4d4d';
     const el=document.getElementById('results');
-    el.innerHTML='<div class="error-box fade-in">&#9888; Error: '+err.message+'<br><br>Check Worker configuration.</div>';
+    el.innerHTML='<div class="error-box fade-in">&#9888; '+err.message+'</div>';
     el.classList.remove('hidden');
     btnRun.disabled=false;
     btnRun.textContent='&#9654; ANALYZE WITH AI';
@@ -225,14 +247,16 @@ function showResults(r){
     return'<div class="bar-row"><div class="bar-meta"><span class="bar-label">'+m.icon+' '+m.label+'</span><span class="bar-val" style="color:'+m.color+'">'+val+'%</span></div><div class="bar-track"><div class="bar-fill" id="bar_'+k+'" style="width:0%;background:'+m.color+';box-shadow:0 0 8px '+m.color+'55"></div></div></div>';
   }).join('');
   const sigHTML=(r.signals||[]).map(s=>'<div class="signal"><span style="color:'+(s.positive?'#39ff14':'#ff4d4d')+';font-size:13px">'+(s.positive?'+':'\u2212')+'</span><span style="color:'+(s.positive?'#aaa':'#ff7070')+'">'+s.text+'</span></div>').join('')||'<div style="font-size:11px;color:#555">No signals detected.</div>';
+  const extractedHTML=r.extractedText?'<div class="extracted-text fade-in">&#8220;'+r.extractedText+'&#8221;</div>':'';
   const el=document.getElementById('results');
   el.innerHTML=
+    extractedHTML+
     '<div class="card fade-in"><div class="card-label">FOR YOU RANKING SIGNAL</div><div class="score-row"><div id="radialContainer">'+radialSVG(0)+'</div><div class="score-info"><div class="score-verdict" style="color:'+verdictColor+'">'+verdict+'</div><div class="score-stats">'+(r.wordCount||'--')+' words &middot; '+(r.charCount||'--')+' chars<br>Hook strength: '+(r.hookScore||'--')+'/5</div></div></div></div>'+
     '<div class="card fade-in" style="animation-delay:0.1s"><div class="card-label">PREDICTED ENGAGEMENT</div>'+barsHTML+'</div>'+
     (r.insight?'<div class="card fade-in" style="animation-delay:0.15s"><div class="card-label">AI INSIGHT</div><div class="insight-text">'+r.insight+'</div></div>':'')+
     '<div class="card fade-in" style="animation-delay:0.2s"><div class="card-label">SIGNAL ANALYSIS</div>'+sigHTML+'</div>'+
     '<button class="btn-share fade-in" style="animation-delay:0.3s" onclick="shareOnX()">\u2197 SHARE YOUR RESULT ON X</button>'+
-    '<div class="disclaimer fade-in" style="animation-delay:0.35s">\u26A0 AI SIMULATION &mdash; Based on xai-org/x-algorithm (May 15 2026). Not affiliated with X Corp. Educational approximation only.</div>';
+    '<div class="disclaimer fade-in" style="animation-delay:0.35s">\u26A0 AI SIMULATION \u2014 Based on xai-org/x-algorithm (May 15 2026). Not affiliated with X Corp. Educational approximation only.</div>';
   el.classList.remove('hidden');
   setTimeout(()=>{
     document.getElementById('radialContainer').innerHTML=radialSVG(r.finalScore||50);
