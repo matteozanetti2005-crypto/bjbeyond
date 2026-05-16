@@ -37,32 +37,27 @@
                 <span class="text-xs font-medium text-cyan-400">BASED ON xAI OPEN-SOURCE RELEASE • MAY 15 2026</span>
             </div>
             <h1 class="font-display text-6xl md:text-7xl font-semibold tracking-tighter mb-3">PHOENIX SIMULATOR</h1>
-            <p class="text-xl text-slate-400">Real-time simulation of X's For You algorithm</p>
+            <p class="text-xl text-slate-400">Paste post URL or text • Automatic fetch supported</p>
         </div>
 
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
             <!-- INPUT -->
             <div class="lg:col-span-5">
                 <div class="glass border border-slate-700 rounded-3xl p-6">
-                    <div class="font-semibold text-lg mb-4">INPUT POST</div>
-                    <textarea id="postInput" rows="5" class="w-full bg-slate-900 border border-slate-700 rounded-2xl p-4 text-sm" placeholder="Paste your X post here..."></textarea>
+                    <div class="font-semibold text-lg mb-4">POST URL OR TEXT</div>
                     
-                    <div class="my-4">
-                        <div class="text-xs text-slate-400 mb-2">USER PERSONA</div>
-                        <div class="grid grid-cols-3 gap-2">
-                            <div onclick="selectPersona(this, 'bi')" class="persona-btn active p-3 rounded-2xl border border-cyan-500 bg-cyan-950/50 cursor-pointer text-center">
-                                <i class="fa-solid fa-chart-line text-cyan-400"></i><div class="text-xs mt-1">BI Analyst</div>
-                            </div>
-                            <div onclick="selectPersona(this, 'finance')" class="persona-btn p-3 rounded-2xl border border-slate-700 hover:border-slate-600 cursor-pointer text-center">
-                                <i class="fa-solid fa-building text-violet-400"></i><div class="text-xs mt-1">Finance Pro</div>
-                            </div>
-                            <div onclick="selectPersona(this, 'creator')" class="persona-btn p-3 rounded-2xl border border-slate-700 hover:border-slate-600 cursor-pointer text-center">
-                                <i class="fa-solid fa-rocket text-fuchsia-400"></i><div class="text-xs mt-1">X Creator</div>
-                            </div>
-                        </div>
+                    <div class="mb-3">
+                        <input type="text" id="postUrl" class="w-full bg-slate-900 border border-slate-700 rounded-2xl p-4 text-sm" placeholder="https://x.com/username/status/123456789">
                     </div>
-
-                    <button onclick="runPhoenixSimulation()" class="w-full py-4 bg-gradient-to-r from-cyan-400 to-violet-500 text-slate-950 font-semibold rounded-2xl">RUN PHOENIX SIMULATION</button>
+                    
+                    <div class="text-center text-xs text-slate-500 mb-3">— or —</div>
+                    
+                    <textarea id="postInput" rows="4" class="w-full bg-slate-900 border border-slate-700 rounded-2xl p-4 text-sm mb-4" placeholder="Or paste post text here..."></textarea>
+                    
+                    <div class="flex gap-2">
+                        <button onclick="fetchAndAnalyze()" class="flex-1 py-4 bg-gradient-to-r from-cyan-400 to-violet-500 text-slate-950 font-semibold rounded-2xl">FETCH & ANALYZE</button>
+                        <button onclick="analyzeTextOnly()" class="px-6 py-4 bg-slate-700 hover:bg-slate-600 rounded-2xl">ANALYZE TEXT</button>
+                    </div>
                 </div>
             </div>
 
@@ -151,22 +146,73 @@
             if (el) el.classList.toggle('active', active);
         }
 
-        async function runPhoenixSimulation() {
-            const input = document.getElementById('postInput').value.trim();
-            if (!input) return alert("Paste a post first!");
+        async function fetchAndAnalyze() {
+            const url = document.getElementById('postUrl').value.trim();
+            if (!url) return alert("Please enter a post URL");
 
             document.getElementById('resultsPanel').style.display = 'none';
             document.querySelectorAll('.pipeline-step').forEach(el => el.classList.remove('active'));
 
-            const steps = ['hydration','sourcing','prefilter','transformer','scoring','ranking'];
-            for (let i=0; i<steps.length; i++) {
-                await new Promise(r => setTimeout(r, 260));
-                highlightStep(steps[i], true);
+            try {
+                // Use free CORS proxy
+                const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`;
+                const response = await fetch(proxyUrl);
+                const html = await response.text();
+
+                // Extract text from X post (simple method)
+                let postText = '';
+                
+                // Try to find the post text in the HTML
+                const textMatch = html.match(/<meta property="og:description" content="([^"]+)"/);
+                if (textMatch && textMatch[1]) {
+                    postText = textMatch[1];
+                } else {
+                    // Fallback: extract from title or other meta
+                    const titleMatch = html.match(/<title>([^<]+)<\/title>/);
+                    if (titleMatch) postText = titleMatch[1].replace(' | X', '');
+                }
+
+                if (!postText || postText.length < 10) {
+                    alert("Could not extract post text. Please paste the text manually instead.");
+                    return;
+                }
+
+                // Run simulation
+                const results = generatePhoenixResults(postText, currentPersona);
+                lastResults = results;
+                updateResultsUI(results);
+
+                // Show pipeline animation
+                const steps = ['hydration','sourcing','prefilter','transformer','scoring','ranking'];
+                for (let i=0; i<steps.length; i++) {
+                    await new Promise(r => setTimeout(r, 200));
+                    highlightStep(steps[i], true);
+                }
+
+                document.getElementById('resultsPanel').style.display = 'block';
+
+            } catch (error) {
+                alert("Error fetching post. Please paste the text manually.");
+                console.error(error);
             }
+        }
+
+        async function analyzeTextOnly() {
+            const input = document.getElementById('postInput').value.trim();
+            if (!input) return alert("Please paste post text");
+
+            document.getElementById('resultsPanel').style.display = 'none';
+            document.querySelectorAll('.pipeline-step').forEach(el => el.classList.remove('active'));
 
             const results = generatePhoenixResults(input, currentPersona);
             lastResults = results;
             updateResultsUI(results);
+
+            const steps = ['hydration','sourcing','prefilter','transformer','scoring','ranking'];
+            for (let i=0; i<steps.length; i++) {
+                await new Promise(r => setTimeout(r, 200));
+                highlightStep(steps[i], true);
+            }
 
             document.getElementById('resultsPanel').style.display = 'block';
         }
@@ -257,7 +303,6 @@
         function init() {
             initPipeline();
             setTimeout(() => document.querySelector('.persona-btn')?.click(), 200);
-            document.getElementById('postInput').value = "Just launched my new Power BI dashboard that predicts X algorithm scores using the official Phoenix model. What do you think?";
         }
         window.onload = init;
     </script>
