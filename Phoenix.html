@@ -1,331 +1,385 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PHOENIX • X Algorithm Simulator</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <style>
-        body { font-family: 'Inter', system_ui, sans-serif; }
-        .font-display { font-family: 'Space Grotesk', 'Inter', sans-serif; font-weight: 600; }
-        .glass { background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(16px); }
-        .pipeline-step { transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1); }
-        .pipeline-step.active { background: rgba(0, 243, 255, 0.15); border-color: #00f3ff; box-shadow: 0 0 0 3px rgba(0, 243, 255, 0.2); }
-        .metric-bar { transition: width 1s cubic-bezier(0.23, 1, 0.32, 1); }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Phoenix Simulator — BJ Beyond</title>
+<meta name="description" content="AI-powered simulation of X's Phoenix ranking algorithm. Powered by Claude. Based on xai-org/x-algorithm.">
+<meta property="og:title" content="Phoenix Simulator — BJ Beyond">
+<meta property="og:description" content="How would X's Phoenix algorithm rank your post? Get an AI-powered score in seconds.">
+<meta property="og:url" content="https://bjbeyond.it/phoenix">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --cyan: #00e5ff; --red: #ff4d4d; --green: #39ff14;
+    --amber: #ffaa00; --purple: #bf80ff;
+    --bg: #0a0a14; --card: #0d0d1f; --border: #1e1e3a;
+    --text: #e0e0e0; --muted: #555;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--text); font-family: 'Share Tech Mono', monospace; min-height: 100vh; }
+  body::before {
+    content: ''; position: fixed; inset: 0;
+    background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,229,255,0.012) 2px, rgba(0,229,255,0.012) 4px);
+    pointer-events: none; z-index: 1000;
+  }
+  .container { max-width: 540px; margin: 0 auto; padding: 28px 16px 48px; }
+
+  /* Header */
+  .header { text-align: center; margin-bottom: 32px; }
+  .header-eyebrow { font-family: 'Orbitron', monospace; font-size: 9px; letter-spacing: 5px; color: var(--cyan); margin-bottom: 10px; opacity: 0.7; }
+  .header-title {
+    font-family: 'Orbitron', monospace; font-size: clamp(22px,6vw,32px); font-weight: 900;
+    background: linear-gradient(90deg, var(--cyan), var(--red));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    letter-spacing: 3px; line-height: 1.1; margin-bottom: 10px;
+  }
+  .header-sub { font-size: 10px; color: var(--muted); line-height: 1.6; }
+  .header-sub a { color: rgba(0,229,255,0.5); text-decoration: none; }
+
+  /* AI badge */
+  .ai-badge {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: rgba(0,229,255,0.06); border: 1px solid rgba(0,229,255,0.2);
+    border-radius: 20px; padding: 4px 12px; margin-top: 10px;
+    font-size: 9px; color: rgba(0,229,255,0.7); letter-spacing: 2px;
+    font-family: 'Orbitron', monospace;
+  }
+  .ai-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--cyan); animation: blink 2s infinite; }
+  @keyframes blink { 0%,100%{opacity:1;} 50%{opacity:0.3;} }
+
+  /* Card */
+  .card { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 18px; margin-bottom: 14px; }
+  .card-label { font-size: 9px; color: var(--muted); letter-spacing: 3px; margin-bottom: 12px; font-family: 'Orbitron', monospace; }
+
+  /* Textarea */
+  textarea { width: 100%; min-height: 100px; background: transparent; border: none; outline: none; resize: none; color: var(--text); font-size: 14px; font-family: 'Share Tech Mono', monospace; line-height: 1.6; caret-color: var(--cyan); }
+  textarea::placeholder { color: #2a2a3a; }
+  .input-footer { display: flex; justify-content: space-between; align-items: center; margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--border); }
+  .char-count { font-size: 10px; color: var(--muted); }
+  .char-count.warn { color: var(--red); }
+
+  /* Button */
+  .btn-run { background: transparent; border: 1px solid var(--cyan); color: var(--cyan); padding: 9px 22px; border-radius: 6px; cursor: pointer; font-size: 11px; font-family: 'Orbitron', monospace; letter-spacing: 2px; transition: all 0.2s; }
+  .btn-run:hover:not(:disabled) { background: rgba(0,229,255,0.08); box-shadow: 0 0 16px rgba(0,229,255,0.2); }
+  .btn-run:disabled { border-color: #333; color: #444; cursor: default; }
+
+  /* Pipeline */
+  .step { display: flex; align-items: center; gap: 12px; padding: 8px 0; transition: opacity 0.4s; }
+  .step.inactive { opacity: 0.25; }
+  .step-num { width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-family: 'Orbitron', monospace; font-size: 10px; font-weight: 700; transition: all 0.3s; }
+  .step-num.done { background: rgba(0,229,255,0.1); border: 1px solid var(--cyan); color: var(--cyan); }
+  .step-num.active { background: rgba(255,77,77,0.1); border: 1px solid var(--red); color: var(--red); animation: pulse 0.8s infinite; }
+  .step-num.idle { background: #111; border: 1px solid #2a2a3a; color: #444; }
+  @keyframes pulse { 0%,100%{box-shadow:0 0 0 0 rgba(255,77,77,0.3);} 50%{box-shadow:0 0 0 5px rgba(255,77,77,0);} }
+  .step-text { font-size: 12px; }
+  .step-text.done{color:#aaa;} .step-text.active{color:#fff;} .step-text.idle{color:#444;}
+
+  /* Score */
+  .score-row { display: flex; align-items: center; gap: 20px; }
+  .score-info { flex: 1; }
+  .score-verdict { font-family: 'Orbitron', monospace; font-size: 13px; font-weight: 700; margin-bottom: 8px; letter-spacing: 1px; }
+  .score-stats { font-size: 10px; color: #555; line-height: 1.8; }
+
+  /* Bars */
+  .bar-row { margin-bottom: 11px; }
+  .bar-meta { display: flex; justify-content: space-between; margin-bottom: 5px; }
+  .bar-label { font-size: 11px; color: #888; }
+  .bar-val { font-size: 11px; font-family: 'Orbitron', monospace; font-weight: 700; }
+  .bar-track { height: 5px; background: #111; border-radius: 3px; overflow: hidden; }
+  .bar-fill { height: 100%; border-radius: 3px; transition: width 1s cubic-bezier(.4,0,.2,1); }
+
+  /* Insight */
+  .insight-text { font-size: 12px; color: #aaa; line-height: 1.7; padding: 12px; background: rgba(0,229,255,0.03); border-left: 2px solid rgba(0,229,255,0.3); border-radius: 0 6px 6px 0; }
+
+  /* Signals */
+  .signal { display: flex; align-items: center; gap: 10px; padding: 6px 0; border-bottom: 1px solid #0f0f1e; font-size: 11px; }
+  .signal:last-child { border-bottom: none; }
+
+  /* Error */
+  .error-box { background: rgba(255,77,77,0.05); border: 1px solid rgba(255,77,77,0.3); border-radius: 8px; padding: 14px; font-size: 11px; color: #ff7070; line-height: 1.6; }
+
+  /* Share */
+  .btn-share { width: 100%; padding: 12px; background: rgba(0,229,255,0.06); border: 1px solid rgba(0,229,255,0.3); border-radius: 8px; color: var(--cyan); font-family: 'Orbitron', monospace; font-size: 11px; letter-spacing: 2px; cursor: pointer; transition: all 0.2s; margin-bottom: 14px; }
+  .btn-share:hover { background: rgba(0,229,255,0.12); box-shadow: 0 0 20px rgba(0,229,255,0.15); }
+
+  /* Disclaimer */
+  .disclaimer { font-size: 9px; color: #383848; line-height: 1.7; padding: 10px 14px; background: #07070f; border: 1px solid var(--border); border-radius: 8px; }
+
+  /* Footer */
+  .footer { text-align: center; margin-top: 28px; font-size: 10px; color: #333; }
+  .footer a { color: rgba(0,229,255,0.4); text-decoration: none; }
+
+  .fade-in { animation: fadeIn 0.5s ease forwards; }
+  @keyframes fadeIn { from{opacity:0;transform:translateY(8px);} to{opacity:1;transform:none;} }
+  .hidden { display: none; }
+</style>
 </head>
-<body class="bg-slate-950 text-slate-200">
-    <div class="border-b border-slate-800 bg-slate-950/80 backdrop-blur-xl sticky top-0 z-50">
-        <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
-            <div class="flex items-center gap-x-3">
-                <div class="w-11 h-11 rounded-2xl bg-gradient-to-br from-cyan-400 via-violet-500 to-fuchsia-500 flex items-center justify-center">
-                    <i class="fa-solid fa-infinity text-white text-3xl"></i>
-                </div>
-                <div>
-                    <div class="font-display text-3xl font-semibold tracking-tighter">PHOENIX</div>
-                    <div class="text-[10px] text-slate-500 -mt-1 tracking-[3px]">X ALGORITHM SIMULATOR</div>
-                </div>
-            </div>
-            <a href="https://github.com/xai-org/x-algorithm" target="_blank" class="px-4 py-2 text-sm rounded-2xl border border-slate-700 hover:bg-slate-900">Official Repo</a>
-        </div>
+<body>
+<div class="container">
+
+  <div class="header">
+    <div class="header-eyebrow">BJ BEYOND × X ALGORITHM</div>
+    <div class="header-title">PHOENIX<br>SIMULATOR</div>
+    <div class="header-sub">
+      Based on <a href="https://github.com/xai-org/x-algorithm" target="_blank">xai-org/x-algorithm</a> · May 15 2026 · <a href="https://bjbeyond.it">bjbeyond.it</a>
     </div>
-
-    <div class="max-w-7xl mx-auto px-6 py-8">
-        <div class="text-center mb-10">
-            <div class="inline-flex items-center gap-x-2 px-4 py-1 rounded-full bg-slate-900 border border-slate-700 mb-4">
-                <span class="text-xs font-medium text-cyan-400">BASED ON xAI OPEN-SOURCE RELEASE • MAY 15 2026</span>
-            </div>
-            <h1 class="font-display text-6xl md:text-7xl font-semibold tracking-tighter mb-3">PHOENIX SIMULATOR</h1>
-            <p class="text-xl text-slate-400">Paste post URL or text • Automatic fetch supported</p>
-        </div>
-
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
-            <!-- INPUT -->
-            <div class="lg:col-span-5">
-                <div class="glass border border-slate-700 rounded-3xl p-6">
-                    <div class="font-semibold text-lg mb-4">POST URL OR TEXT</div>
-                    
-                    <div class="mb-3">
-                        <input type="text" id="postUrl" class="w-full bg-slate-900 border border-slate-700 rounded-2xl p-4 text-sm" placeholder="https://x.com/username/status/123456789">
-                    </div>
-                    
-                    <div class="text-center text-xs text-slate-500 mb-3">— or —</div>
-                    
-                    <textarea id="postInput" rows="4" class="w-full bg-slate-900 border border-slate-700 rounded-2xl p-4 text-sm mb-4" placeholder="Or paste post text here..."></textarea>
-                    
-                    <div class="flex gap-2">
-                        <button onclick="fetchAndAnalyze()" class="flex-1 py-4 bg-gradient-to-r from-cyan-400 to-violet-500 text-slate-950 font-semibold rounded-2xl">FETCH & ANALYZE</button>
-                        <button onclick="analyzeTextOnly()" class="px-6 py-4 bg-slate-700 hover:bg-slate-600 rounded-2xl">ANALYZE TEXT</button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- PIPELINE -->
-            <div class="lg:col-span-7">
-                <div class="glass border border-slate-700 rounded-3xl p-6">
-                    <div class="font-semibold text-lg mb-4">OFFICIAL PHOENIX PIPELINE</div>
-                    <div id="pipelineSteps" class="space-y-2"></div>
-                </div>
-            </div>
-
-            <!-- RESULTS -->
-            <div class="lg:col-span-12" id="resultsPanel" style="display:none">
-                <div class="glass border border-slate-700 rounded-3xl p-7">
-                    <div class="font-semibold text-2xl mb-6">SIMULATION RESULTS</div>
-                    
-                    <div class="grid grid-cols-1 md:grid-cols-12 gap-6">
-                        <div class="md:col-span-4 text-center bg-slate-900/70 border border-slate-700 rounded-3xl p-6">
-                            <div class="relative w-40 h-40 mx-auto mb-4">
-                                <svg class="w-40 h-40 -rotate-90" viewBox="0 0 120 120">
-                                    <circle cx="60" cy="60" r="52" fill="none" stroke="#1e2937" stroke-width="10"/>
-                                    <circle id="scoreCircle" cx="60" cy="60" r="52" fill="none" stroke="#00f3ff" stroke-width="10" stroke-linecap="round"/>
-                                </svg>
-                                <div class="absolute inset-0 flex items-center justify-center">
-                                    <div>
-                                        <div id="overallScore" class="font-display text-6xl font-semibold">87</div>
-                                        <div class="text-xs text-slate-400">OVERALL</div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div id="scoreLabel" class="font-semibold text-cyan-400">STRONG</div>
-                        </div>
-
-                        <div class="md:col-span-5 bg-slate-900/70 border border-slate-700 rounded-3xl p-6">
-                            <div class="text-xs text-slate-400 mb-4">PHOENIX PREDICTIONS</div>
-                            <div id="probabilities" class="space-y-4 text-sm"></div>
-                        </div>
-
-                        <div class="md:col-span-3 bg-slate-900/70 border border-slate-700 rounded-3xl p-6">
-                            <div class="text-xs text-slate-400 mb-3">WEIGHTED SCORER</div>
-                            <div id="weightedBreakdown" class="text-[10px] font-mono text-slate-300"></div>
-                            <div class="mt-3 pt-3 border-t border-slate-700 text-[10px]">
-                                <div class="flex justify-between text-emerald-400"><span>Diversity Penalty</span><span id="diversityDisplay"></span></div>
-                                <div class="flex justify-between text-cyan-400"><span>OON Adjustment</span><span id="oonDisplay"></span></div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+    <div class="ai-badge">
+      <div class="ai-dot"></div>
+      POWERED BY CLAUDE AI
     </div>
+  </div>
 
-    <script>
-        let currentPersona = 'bi';
-        let lastResults = null;
+  <div class="card">
+    <div class="card-label">ENTER YOUR POST TEXT</div>
+    <textarea id="postText" maxlength="280" placeholder="Write or paste your X post here..."></textarea>
+    <div class="input-footer">
+      <span class="char-count" id="charCount">0/280</span>
+      <button class="btn-run" id="btnRun" disabled onclick="runPipeline()">▶ ANALYZE WITH AI</button>
+    </div>
+  </div>
 
-        function selectPersona(el, persona) {
-            document.querySelectorAll('.persona-btn').forEach(e => e.classList.remove('active', 'border-cyan-500', 'bg-cyan-950/50'));
-            el.classList.add('active', 'border-cyan-500', 'bg-cyan-950/50');
-            currentPersona = persona;
-        }
+  <div class="card hidden" id="pipelineCard">
+    <div class="card-label">PIPELINE</div>
+    <div id="steps"></div>
+  </div>
 
-        const pipelineData = [
-            {id:'hydration', label:'Query Hydration'},
-            {id:'sourcing', label:'Candidate Sourcing'},
-            {id:'prefilter', label:'Pre-Filters'},
-            {id:'transformer', label:'Phoenix Transformer'},
-            {id:'scoring', label:'Weighted + Diversity'},
-            {id:'ranking', label:'Final Ranking'}
-        ];
+  <div id="results" class="hidden"></div>
 
-        function initPipeline() {
-            const c = document.getElementById('pipelineSteps');
-            c.innerHTML = '';
-            pipelineData.forEach((s,i) => {
-                const d = document.createElement('div');
-                d.id = `step-${s.id}`;
-                d.className = `pipeline-step flex items-center gap-x-4 p-4 rounded-2xl border border-slate-700 bg-slate-900/60`;
-                d.innerHTML = `<div class="flex-1"><div class="font-medium text-sm">${s.label}</div></div><div class="text-xs font-mono text-slate-500">${i+1}</div>`;
-                c.appendChild(d);
-            });
-        }
+  <div class="footer">
+    <a href="https://bjbeyond.it">bjbeyond.it</a> · <a href="https://x.com/bj_beyond">@bj_beyond</a>
+  </div>
 
-        function highlightStep(id, active=true) {
-            const el = document.getElementById(`step-${id}`);
-            if (el) el.classList.toggle('active', active);
-        }
+</div>
+<script>
+  // ⚙️ CONFIGURA: incolla qui l'URL del tuo Cloudflare Worker dopo il deploy
+  const WORKER_URL = "https://phoenix-analyzer.TUOUSERNAME.workers.dev";
 
-        async function fetchAndAnalyze() {
-            const url = document.getElementById('postUrl').value.trim();
-            if (!url) return alert("Please enter a post URL");
+  const STEP_LABELS = [
+    "Query hydration",
+    "Candidate sourcing",
+    "Grox safety check",
+    "Claude AI analysis",
+    "Phoenix score computed"
+  ];
 
-            document.getElementById('resultsPanel').style.display = 'none';
-            document.querySelectorAll('.pipeline-step').forEach(el => el.classList.remove('active'));
+  const METRICS = {
+    favorite:{ label:"Like probability",     icon:"♥", color:"#00e5ff" },
+    reply:   { label:"Reply probability",    icon:"↩", color:"#ff4d4d" },
+    repost:  { label:"Repost probability",   icon:"⟳", color:"#39ff14" },
+    dwell:   { label:"Dwell time score",     icon:"⏱", color:"#ffaa00" },
+    oon:     { label:"Out-of-network reach", icon:"📡", color:"#bf80ff" },
+    spam:    { label:"Spam signal",          icon:"⚠", color:"#ff4444" }
+  };
 
-            try {
-                const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`;
-                const response = await fetch(proxyUrl);
-                const html = await response.text();
+  const textarea   = document.getElementById('postText');
+  const btnRun     = document.getElementById('btnRun');
+  const charCount  = document.getElementById('charCount');
 
-                let postText = '';
+  textarea.addEventListener('input', () => {
+    const n = textarea.value.length;
+    charCount.textContent = n + '/280';
+    charCount.className = 'char-count' + (n > 250 ? ' warn' : '');
+    btnRun.disabled = textarea.value.trim().length < 5;
+  });
 
-                // TENTATIVO 1: Meta og:description
-                let match = html.match(/<meta property="og:description" content="([^"]+)"/);
-                if (match && match[1] && match[1].length > 10) postText = match[1];
+  function radialSVG(score) {
+    const r = 44, circ = 2 * Math.PI * r, dash = (score / 100) * circ;
+    const color = score >= 70 ? '#00e5ff' : score >= 45 ? '#ffaa00' : '#ff4d4d';
+    return `<svg width="110" height="110" viewBox="0 0 100 100">
+      <circle cx="50" cy="50" r="${r}" fill="none" stroke="#1a1a2e" stroke-width="8"/>
+      <circle cx="50" cy="50" r="${r}" fill="none" stroke="${color}" stroke-width="8"
+        stroke-dasharray="${dash} ${circ}" stroke-linecap="round"
+        transform="rotate(-90 50 50)"
+        style="transition:stroke-dasharray 1.2s cubic-bezier(.4,0,.2,1)"/>
+      <text x="50" y="46" text-anchor="middle" fill="${color}"
+        style="font-size:20px;font-family:'Orbitron',monospace;font-weight:700">${score}</text>
+      <text x="50" y="60" text-anchor="middle" fill="#888"
+        style="font-size:9px;font-family:monospace">/100</text>
+    </svg>`;
+  }
 
-                // TENTATIVO 2: Title tag
-                if (!postText || postText.length < 15) {
-                    match = html.match(/<title>([^<]+)<\/title>/);
-                    if (match && match[1]) postText = match[1].replace(' | X', '').replace(' on X', '');
-                }
+  let currentResult = null;
 
-                // TENTATIVO 3: Pattern "text"
-                if (!postText || postText.length < 15) {
-                    match = html.match(/"text":"([^"]{15,})"/);
-                    if (match && match[1]) postText = match[1];
-                }
+  async function runPipeline() {
+    const text = textarea.value.trim();
+    if (!text) return;
 
-                // TENTATIVO 4: data-testid="tweetText"
-                if (!postText || postText.length < 15) {
-                    match = html.match(/data-testid="tweetText"[^>]*>([^<]{15,})/);
-                    if (match && match[1]) postText = match[1];
-                }
+    btnRun.disabled = true;
+    btnRun.textContent = 'ANALYZING...';
+    document.getElementById('results').classList.add('hidden');
+    document.getElementById('results').innerHTML = '';
 
-                // TENTATIVO 5: span con tanto testo
-                if (!postText || postText.length < 15) {
-                    const spans = html.match(/<span[^>]*>([^<]{20,})<\/span>/g);
-                    if (spans) {
-                        for (let span of spans) {
-                            const text = span.replace(/<[^>]+>/g, '');
-                            if (text.length > 20 && text.length < 500) {
-                                postText = text;
-                                break;
-                            }
-                        }
-                    }
-                }
+    const pc = document.getElementById('pipelineCard');
+    pc.classList.remove('hidden');
+    const stepsEl = document.getElementById('steps');
+    stepsEl.innerHTML = STEP_LABELS.map((s, i) =>
+      `<div class="step inactive" id="step${i}">
+        <div class="step-num idle" id="stepnum${i}">${i + 1}</div>
+        <div class="step-text idle" id="steptext${i}">${s}</div>
+      </div>`
+    ).join('');
 
-                postText = postText.replace(/\\u002F/g, '/').replace(/\\"/g, '"').replace(/&amp;/g, '&').trim();
+    // Animate first 3 steps (local), step 4 = real API call
+    let s = 0;
+    const animateStep = () => {
+      if (s > 0) {
+        document.getElementById(`stepnum${s-1}`).className = 'step-num done';
+        document.getElementById(`stepnum${s-1}`).textContent = '✓';
+        document.getElementById(`steptext${s-1}`).className = 'step-text done';
+      }
+      document.getElementById(`step${s}`).className = 'step';
+      document.getElementById(`stepnum${s}`).className = 'step-num active';
+      document.getElementById(`steptext${s}`).className = 'step-text active';
+      s++;
+    };
 
-                if (!postText || postText.length < 10) {
-                    alert("Non sono riuscito a estrarre il testo. Incolla manualmente.");
-                    return;
-                }
+    // Steps 1-3: visual animation
+    for (let i = 0; i < 3; i++) {
+      await new Promise(r => setTimeout(r, 450));
+      animateStep();
+    }
 
-                const results = generatePhoenixResults(postText, currentPersona);
-                lastResults = results;
-                updateResultsUI(results);
+    // Step 4: Claude AI (real API call)
+    await new Promise(r => setTimeout(r, 450));
+    animateStep(); // "Claude AI analysis" active
 
-                const steps = ['hydration','sourcing','prefilter','transformer','scoring','ranking'];
-                for (let i = 0; i < steps.length; i++) {
-                    await new Promise(r => setTimeout(r, 180));
-                    highlightStep(steps[i], true);
-                }
+    let result;
+    try {
+      const res = await fetch(WORKER_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ postText: text })
+      });
 
-                document.getElementById('resultsPanel').style.display = 'block';
+      if (!res.ok) throw new Error(`Worker error: ${res.status}`);
+      result = await res.json();
+      if (result.error) throw new Error(result.error);
 
-            } catch (error) {
-                alert("Errore durante il recupero. Incolla il testo manualmente.");
-            }
-        }
+    } catch (err) {
+      // Mark step 4 as failed, show error
+      document.getElementById(`stepnum${s-1}`).className = 'step-num active';
+      document.getElementById(`stepnum${s-1}`).textContent = '✗';
+      document.getElementById(`stepnum${s-1}`).style.borderColor = '#ff4d4d';
+      document.getElementById(`stepnum${s-1}`).style.color = '#ff4d4d';
 
-        async function analyzeTextOnly() {
-            const input = document.getElementById('postInput').value.trim();
-            if (!input) return alert("Please paste post text");
+      const el = document.getElementById('results');
+      el.innerHTML = `<div class="error-box fade-in">
+        ⚠ Worker not configured yet.<br><br>
+        Set <code>WORKER_URL</code> in phoenix.html to your Cloudflare Worker URL.<br>
+        See setup instructions at <a href="https://bjbeyond.it" style="color:#00e5ff">bjbeyond.it</a>
+      </div>`;
+      el.classList.remove('hidden');
+      btnRun.disabled = false;
+      btnRun.textContent = '▶ ANALYZE WITH AI';
+      return;
+    }
 
-            document.getElementById('resultsPanel').style.display = 'none';
-            document.querySelectorAll('.pipeline-step').forEach(el => el.classList.remove('active'));
+    // Step 5: complete
+    await new Promise(r => setTimeout(r, 300));
+    animateStep(); // "Phoenix score computed" active
+    await new Promise(r => setTimeout(r, 400));
 
-            const results = generatePhoenixResults(input, currentPersona);
-            lastResults = results;
-            updateResultsUI(results);
+    // Mark all done
+    for (let i = 0; i < STEP_LABELS.length; i++) {
+      document.getElementById(`stepnum${i}`).className = 'step-num done';
+      document.getElementById(`stepnum${i}`).textContent = '✓';
+      document.getElementById(`steptext${i}`).className = 'step-text done';
+    }
 
-            const steps = ['hydration','sourcing','prefilter','transformer','scoring','ranking'];
-            for (let i = 0; i < steps.length; i++) {
-                await new Promise(r => setTimeout(r, 200));
-                highlightStep(steps[i], true);
-            }
+    currentResult = result;
+    showResults(result);
+    btnRun.disabled = false;
+    btnRun.textContent = '▶ ANALYZE WITH AI';
+  }
 
-            document.getElementById('resultsPanel').style.display = 'block';
-        }
+  function showResults(r) {
+    const verdictColor = r.verdictColor || '#ffaa00';
+    const verdict = r.verdict || 'MODERATE SIGNAL';
 
-        function generatePhoenixResults(text, persona) {
-            const t = text.toLowerCase();
-            const len = text.length;
-            const wc = text.split(/\s+/).length;
-            
-            const hasQ = t.includes('?');
-            const hasLink = /https?:|t\.co\//.test(t);
-            const hasMedia = /image|video|dashboard|chart|gif/.test(t);
-            const hasNumbers = /\d/.test(text);
-            const hasHashtag = /#\w+/.test(text);
-            const hasCTA = /try|check|link|dm|comment|reply|tag|click|see|watch/.test(t);
-            const isLong = len > 200;
-            const isShort = len < 50;
+    const barsHTML = Object.entries(r.scores || {}).map(([k, val]) => {
+      const m = METRICS[k];
+      if (!m) return '';
+      return `<div class="bar-row">
+        <div class="bar-meta">
+          <span class="bar-label">${m.icon} ${m.label}</span>
+          <span class="bar-val" style="color:${m.color}">${val}%</span>
+        </div>
+        <div class="bar-track">
+          <div class="bar-fill" id="bar_${k}" style="width:0%;background:${m.color};box-shadow:0 0 8px ${m.color}55"></div>
+        </div>
+      </div>`;
+    }).join('');
 
-            let score = 25;
-            if (hasQ) score += 38;
-            if (hasLink) score += 32;
-            if (hasMedia) score += 30;
-            if (isLong) score += 35;
-            if (hasNumbers) score += 24;
-            if (hasHashtag) score += 20;
-            if (hasCTA) score += 28;
-            if (wc > 25 && wc < 100) score += 22;
-            if (isShort) score -= 32;
-            if (len < 35) score -= 28;
-            if (!hasQ && !hasLink && !hasMedia && !hasCTA) score -= 30;
+    const signalsHTML = (r.signals || []).map(s =>
+      `<div class="signal">
+        <span style="color:${s.positive ? '#39ff14' : '#ff4d4d'};font-size:13px">${s.positive ? '+' : '−'}</span>
+        <span style="color:${s.positive ? '#aaa' : '#ff7070'}">${s.text}</span>
+      </div>`
+    ).join('') || '<div style="font-size:11px;color:#555">No signals detected.</div>';
 
-            if (persona === 'bi' && /power bi|dashboard|data|kpi|dax/.test(t)) score += 42;
-            if (persona === 'finance' && /finance|excel|kpi|roi|budget/.test(t)) score += 40;
-            if (persona === 'creator' && /growth|algorithm|post|reach|engagement/.test(t)) score += 41;
+    const el = document.getElementById('results');
+    el.innerHTML = `
+      <div class="card fade-in">
+        <div class="card-label">FOR YOU RANKING SIGNAL</div>
+        <div class="score-row">
+          <div id="radialContainer">${radialSVG(0)}</div>
+          <div class="score-info">
+            <div class="score-verdict" style="color:${verdictColor}">${verdict}</div>
+            <div class="score-stats">
+              ${r.wordCount || '—'} words · ${r.charCount || '—'} chars<br>
+              Hook strength: ${r.hookScore || '—'}/5
+            </div>
+          </div>
+        </div>
+      </div>
 
-            score = Math.max(15, Math.min(96, score));
+      <div class="card fade-in" style="animation-delay:0.1s">
+        <div class="card-label">PREDICTED ENGAGEMENT</div>
+        ${barsHTML}
+      </div>
 
-            const pLike = Math.round(Math.max(8, Math.min(97, score * 0.92 + (hasQ ? 6 : 0))));
-            const pReply = Math.round(Math.max(4, Math.min(93, (hasQ ? 88 : 15) + (hasCTA ? 20 : 0))));
-            const pRepost = Math.round(Math.max(3, Math.min(90, score * 0.87 + (hasMedia ? 18 : 0))));
-            const pDwell = Math.round(Math.max(12, Math.min(98, score * 0.94 + (isLong ? 10 : 0))));
-            const pClick = Math.round(Math.max(6, Math.min(88, score * 0.80 + (hasLink ? 24 : 0))));
+      ${r.insight ? `
+      <div class="card fade-in" style="animation-delay:0.15s">
+        <div class="card-label">AI INSIGHT</div>
+        <div class="insight-text">${r.insight}</div>
+      </div>` : ''}
 
-            const w = { like: 0.29, reply: 0.16, repost: 0.15, dwell: 0.25, click: 0.11 };
+      <div class="card fade-in" style="animation-delay:0.2s">
+        <div class="card-label">SIGNAL ANALYSIS</div>
+        ${signalsHTML}
+      </div>
 
-            return {
-                overall: Math.round(score),
-                pLike, pReply, pRepost, pDwell, pClick,
-                hook: Math.round(score * 0.94),
-                quality: Math.round(score * 0.90),
-                relevance: Math.round(score * 0.87),
-                virality: Math.round(score * 0.82),
-                divPen: -0.5,
-                oon: hasLink ? 2.8 : 0.8,
-                niche: (persona === 'bi' && /power bi|dashboard/.test(t)) ? 30 : 0,
-                _weights: w
-            };
-        }
+      <button class="btn-share fade-in" style="animation-delay:0.3s" onclick="shareOnX()">
+        ↗ SHARE YOUR RESULT ON X
+      </button>
 
-        function updateResultsUI(r) {
-            document.getElementById('overallScore').textContent = r.overall;
-            const circ = document.getElementById('scoreCircle');
-            circ.style.strokeDashoffset = 326.7256 * (1 - r.overall/100);
+      <div class="disclaimer fade-in" style="animation-delay:0.35s">
+        ⚠ AI SIMULATION — Analysis powered by Claude, based on xai-org/x-algorithm architecture (May 15 2026).
+        Not affiliated with X Corp. Scores are educational approximations, not output from X's production system.
+      </div>
+    `;
 
-            const label = document.getElementById('scoreLabel');
-            if (r.overall >= 85) { circ.setAttribute('stroke','#10b981'); label.innerHTML = 'EXCELLENT'; label.className = 'font-semibold text-emerald-400'; }
-            else if (r.overall >= 72) { circ.setAttribute('stroke','#00f3ff'); label.innerHTML = 'STRONG'; label.className = 'font-semibold text-cyan-400'; }
-            else { circ.setAttribute('stroke','#f59e0b'); label.innerHTML = 'MODERATE'; label.className = 'font-semibold text-amber-400'; }
+    el.classList.remove('hidden');
 
-            document.getElementById('probabilities').innerHTML = `
-                <div class="flex justify-between"><span>P(like)</span><span class="font-mono text-red-400">${r.pLike}</span></div>
-                <div class="flex justify-between"><span>P(reply)</span><span class="font-mono text-sky-400">${r.pReply}</span></div>
-                <div class="flex justify-between"><span>P(repost)</span><span class="font-mono text-emerald-400">${r.pRepost}</span></div>
-                <div class="flex justify-between"><span>P(dwell)</span><span class="font-mono text-violet-400">${r.pDwell}</span></div>
-            `;
+    setTimeout(() => {
+      document.getElementById('radialContainer').innerHTML = radialSVG(r.finalScore || 50);
+      Object.keys(r.scores || {}).forEach(k => {
+        const b = document.getElementById('bar_' + k);
+        if (b) setTimeout(() => b.style.width = (r.scores[k] || 0) + '%', 50);
+      });
+    }, 80);
+  }
 
-            const w = r._weights;
-            document.getElementById('weightedBreakdown').innerHTML = `
-                <div class="text-emerald-400">Final = Σ(wᵢ × Pᵢ)</div>
-                <div class="text-[9px] mt-1">like ${r.pLike}×${w.like} | reply ${r.pReply}×${w.reply} | repost ${r.pRepost}×${w.repost} | dwell ${r.pDwell}×${w.dwell}</div>
-            `;
-            document.getElementById('diversityDisplay').textContent = r.divPen.toFixed(2);
-            document.getElementById('oonDisplay').textContent = r.oon > 1 ? '+2.8' : '+0.8';
-        }
-
-        function init() {
-            initPipeline();
-            setTimeout(() => document.querySelector('.persona-btn')?.click(), 200);
-        }
-        window.onload = init;
-    </script>
+  function shareOnX() {
+    if (!currentResult) return;
+    const score = currentResult.finalScore || 50;
+    const v = score >= 75 ? 'HIGH RANKING POTENTIAL 🔥' : score >= 50 ? 'MODERATE SIGNAL ⚡' : 'LOW REACH PREDICTED';
+    window.open('https://x.com/intent/tweet?text=' + encodeURIComponent(
+      `I just ran my post through the Phoenix algorithm AI simulator.\n\nScore: ${score}/100 — ${v}\n\nTest yours 👇\nbjbeyond.it/phoenix\n\n@bj_beyond #XAlgorithm #Phoenix`
+    ), '_blank');
+  }
+</script>
 </body>
 </html>
