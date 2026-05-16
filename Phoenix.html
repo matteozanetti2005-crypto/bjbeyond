@@ -4,58 +4,25 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Phoenix Simulator — BJ Beyond</title>
-<meta name="description" content="AI-powered simulation of X's Phoenix ranking algorithm. Based on xai-org/x-algorithm.">
-<meta property="og:title" content="Phoenix Simulator — BJ Beyond">
-<meta property="og:description" content="How would X's Phoenix algorithm rank your post? Paste text or drop an X link.">
-<meta property="og:url" content="https://bjbeyond.it/Phoenix">
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
 <style>
-:root {
-  --cyan: #00e5ff; --red: #ff4d4d; --green: #39ff14;
-  --amber: #ffaa00; --purple: #bf80ff;
-  --bg: #0a0a14; --card: #0d0d1f; --border: #1e1e3a;
-  --text: #e0e0e0; --muted: #555;
-}
+:root { --cyan: #00e5ff; --red: #ff4d4d; --green: #39ff14; --amber: #ffaa00; --purple: #bf80ff; --bg: #0a0a14; --card: #0d0d1f; --border: #1e1e3a; --text: #e0e0e0; --muted: #555; }
 * { box-sizing: border-box; margin: 0; padding: 0; }
 body { background: var(--bg); color: var(--text); font-family: 'Share Tech Mono', monospace; min-height: 100vh; }
-body::before {
-  content: ''; position: fixed; inset: 0;
-  background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,229,255,0.012) 2px, rgba(0,229,255,0.012) 4px);
-  pointer-events: none; z-index: 1000;
-}
 .container { max-width: 540px; margin: 0 auto; padding: 28px 16px 48px; }
 .header { text-align: center; margin-bottom: 32px; }
 .header-eyebrow { font-family: 'Orbitron', monospace; font-size: 9px; letter-spacing: 5px; color: var(--cyan); margin-bottom: 10px; opacity: 0.7; }
-.header-title {
-  font-family: 'Orbitron', monospace; font-size: clamp(22px,6vw,32px); font-weight: 900;
-  background: linear-gradient(90deg, var(--cyan), var(--red));
-  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-  letter-spacing: 3px; line-height: 1.1; margin-bottom: 10px;
-}
+.header-title { font-family: 'Orbitron', monospace; font-size: clamp(22px,6vw,32px); font-weight: 900; background: linear-gradient(90deg, var(--cyan), var(--red)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; letter-spacing: 3px; line-height: 1.1; margin-bottom: 10px; }
 .header-sub { font-size: 10px; color: var(--muted); line-height: 1.6; }
 .header-sub a { color: rgba(0,229,255,0.5); text-decoration: none; }
-.badge {
-  display: inline-flex; align-items: center; gap: 6px;
-  background: rgba(0,229,255,0.06); border: 1px solid rgba(0,229,255,0.2);
-  border-radius: 20px; padding: 4px 12px; margin-top: 10px;
-  font-size: 9px; color: rgba(0,229,255,0.7); letter-spacing: 2px;
-  font-family: 'Orbitron', monospace;
-}
+.badge { display: inline-flex; align-items: center; gap: 6px; background: rgba(0,229,255,0.06); border: 1px solid rgba(0,229,255,0.2); border-radius: 20px; padding: 4px 12px; margin-top: 10px; font-size: 9px; color: rgba(0,229,255,0.7); letter-spacing: 2px; font-family: 'Orbitron', monospace; }
 .badge-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--cyan); animation: blink 2s infinite; }
 @keyframes blink { 0%,100%{opacity:1;} 50%{opacity:0.3;} }
 .card { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 18px; margin-bottom: 14px; }
 .card-label { font-size: 9px; color: var(--muted); letter-spacing: 3px; margin-bottom: 12px; font-family: 'Orbitron', monospace; }
-.url-input {
-  width: 100%; background: transparent; border: none; outline: none;
-  color: var(--cyan); font-size: 13px; font-family: 'Share Tech Mono', monospace;
-  line-height: 1.6; caret-color: var(--cyan); padding: 4px 0;
-  border-bottom: 1px solid var(--border);
-}
+.url-input { width: 100%; background: transparent; border: none; outline: none; color: var(--cyan); font-size: 13px; font-family: 'Share Tech Mono', monospace; line-height: 1.6; caret-color: var(--cyan); padding: 4px 0; border-bottom: 1px solid var(--border); }
 .url-input::placeholder { color: #2a2a3a; }
-.divider {
-  display: flex; align-items: center; gap: 12px;
-  margin: 14px 0; font-size: 9px; color: var(--muted); letter-spacing: 3px;
-}
+.divider { display: flex; align-items: center; gap: 12px; margin: 14px 0; font-size: 9px; color: var(--muted); letter-spacing: 3px; }
 .divider::before, .divider::after { content: ''; flex: 1; height: 1px; background: var(--border); }
 textarea { width: 100%; min-height: 80px; background: transparent; border: none; outline: none; resize: none; color: var(--text); font-size: 14px; font-family: 'Share Tech Mono', monospace; line-height: 1.6; caret-color: var(--cyan); }
 textarea::placeholder { color: #2a2a3a; }
@@ -85,7 +52,6 @@ textarea::placeholder { color: #2a2a3a; }
 .bar-val { font-size: 11px; font-family: 'Orbitron', monospace; font-weight: 700; }
 .bar-track { height: 5px; background: #111; border-radius: 3px; overflow: hidden; }
 .bar-fill { height: 100%; border-radius: 3px; transition: width 1s cubic-bezier(.4,0,.2,1); }
-.insight-text { font-size: 12px; color: #aaa; line-height: 1.7; padding: 12px; background: rgba(0,229,255,0.03); border-left: 2px solid rgba(0,229,255,0.3); border-radius: 0 6px 6px 0; }
 .signal { display: flex; align-items: center; gap: 10px; padding: 6px 0; border-bottom: 1px solid #0f0f1e; font-size: 11px; }
 .signal:last-child { border-bottom: none; }
 .error-box { background: rgba(255,77,77,0.05); border: 1px solid rgba(255,77,77,0.3); border-radius: 8px; padding: 14px; font-size: 11px; color: #ff7070; line-height: 1.6; }
@@ -137,7 +103,6 @@ textarea::placeholder { color: #2a2a3a; }
 <script>
 const WORKER_URL = "https://phoenix-analyzer.matteo-zanetti2005.workers.dev";
 
-// ====================== FETCH DA URL ======================
 async function fetchPostText(url) {
   try {
     const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`;
@@ -145,13 +110,12 @@ async function fetchPostText(url) {
     const html = await response.text();
 
     let postText = '';
-
-    let match = html.match(/<meta property="og:description" content="([^"]+)"/);
-    if (match && match[1] && match[1].length > 10) postText = match[1];
+    let match = html.match(/<meta property="og:description" content="([^"]+)"/i);
+    if (match && match[1]) postText = match[1];
 
     if (!postText || postText.length < 15) {
-      match = html.match(/<title>([^<]+)<\/title>/);
-      if (match && match[1]) postText = match[1].replace(' | X', '').replace(' on X', '');
+      match = html.match(/<title>([^<]+)<\/title>/i);
+      if (match && match[1]) postText = match[1].replace(/ \| X| on X/gi, '');
     }
 
     if (!postText || postText.length < 15) {
@@ -160,61 +124,33 @@ async function fetchPostText(url) {
     }
 
     if (!postText || postText.length < 15) {
-      match = html.match(/data-testid="tweetText"[^>]*>([^<]{15,})/);
+      match = html.match(/data-testid="tweetText"[^>]*>([^<]{15,})/i);
       if (match && match[1]) postText = match[1];
-    }
-
-    if (!postText || postText.length < 15) {
-      const spans = html.match(/<span[^>]*>([^<]{20,})<\/span>/g);
-      if (spans) {
-        for (let span of spans) {
-          const text = span.replace(/<[^>]+>/g, '');
-          if (text.length > 20 && text.length < 500) {
-            postText = text;
-            break;
-          }
-        }
-      }
     }
 
     postText = postText.replace(/\\u002F/g, '/').replace(/\\"/g, '"').replace(/&amp;/g, '&').trim();
 
-    if (!postText || postText.length < 10) {
-      throw new Error("Could not extract post text from URL");
-    }
-
+    if (postText.length < 10) throw new Error("Could not extract text");
     return postText;
-
-  } catch (error) {
-    throw new Error("Failed to fetch post: " + error.message);
+  } catch (e) {
+    throw new Error("Failed to fetch post. Paste text manually.");
   }
 }
 
-// ====================== ANALISI CON WORKER ======================
 async function analyzeWithWorker(postText) {
   const res = await fetch(WORKER_URL, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ postText: postText })
+    body: JSON.stringify({ postText })
   });
 
-  if (!res.ok) throw new Error('Worker error: ' + res.status);
+  if (!res.ok) throw new Error('AI service error');
   const result = await res.json();
   if (result.error) throw new Error(result.error);
   return result;
 }
 
-// ====================== COSTANTI E VARIABILI ======================
 const STEP_LABELS = ["Query hydration","Fetching post","Grox safety check","AI analysis","Phoenix score computed"];
-
-const METRICS = {
-  favorite: { label: "Like probability",     icon: "&#9825;", color: "#00e5ff" },
-  reply:    { label: "Reply probability",    icon: "&#8617;", color: "#ff4d4d" },
-  repost:   { label: "Repost probability",   icon: "&#8635;", color: "#39ff14" },
-  dwell:    { label: "Dwell time score",     icon: "&#9201;", color: "#ffaa00" },
-  oon:      { label: "Out-of-network reach", icon: "&#128225;", color: "#bf80ff" },
-  spam:     { label: "Spam signal",          icon: "&#9888;", color: "#ff4444" }
-};
 
 const urlInput = document.getElementById('postUrl');
 const textarea = document.getElementById('postText');
@@ -229,7 +165,6 @@ textarea.addEventListener('input', () => {
 
 let currentResult = null;
 
-// ====================== PIPELINE ======================
 async function runPipeline() {
   const url = urlInput.value.trim();
   let text = textarea.value.trim();
@@ -263,37 +198,23 @@ async function runPipeline() {
   };
 
   try {
-    for (let i = 0; i < 2; i++) {
-      await new Promise(r => setTimeout(r, 450));
-      animateStep();
-    }
+    for (let i = 0; i < 2; i++) { await new Promise(r => setTimeout(r, 450)); animateStep(); }
 
     if (url) {
-      await new Promise(r => setTimeout(r, 450));
-      animateStep();
-      
-      const extractedText = await fetchPostText(url);
-      textarea.value = extractedText;
-      charCount.textContent = extractedText.length + '/280';
-      
-      const extractedDiv = document.createElement('div');
-      extractedDiv.className = 'extracted-text fade-in';
-      extractedDiv.innerHTML = `&#8220;${extractedText.substring(0, 120)}${extractedText.length > 120 ? '...' : ''}&#8221;`;
-      document.getElementById('results').appendChild(extractedDiv);
-      
-      text = extractedText;
+      await new Promise(r => setTimeout(r, 450)); animateStep();
+      const extracted = await fetchPostText(url);
+      textarea.value = extracted;
+      charCount.textContent = extracted.length + '/280';
+      text = extracted;
     } else {
-      await new Promise(r => setTimeout(r, 450));
-      animateStep();
+      await new Promise(r => setTimeout(r, 450)); animateStep();
     }
 
-    await new Promise(r => setTimeout(r, 450));
-    animateStep();
+    await new Promise(r => setTimeout(r, 450)); animateStep();
 
     const result = await analyzeWithWorker(text);
 
-    await new Promise(r => setTimeout(r, 400));
-    animateStep();
+    await new Promise(r => setTimeout(r, 400)); animateStep();
 
     for (let i = 0; i < STEP_LABELS.length; i++) {
       document.getElementById('stepnum' + i).className = 'step-num done';
@@ -319,54 +240,36 @@ async function runPipeline() {
   btnRun.textContent = '&#9654; ANALYZE WITH AI';
 }
 
-// ====================== MOSTRA RISULTATI ======================
 function showResults(r) {
-  const verdictColor = r.verdictColor || '#ffaa00';
-  const verdict = r.verdict || 'MODERATE SIGNAL';
-  
-  const barsHTML = Object.entries(r.scores || {}).map(([k, val]) => {
-    const m = METRICS[k];
-    if (!m) return '';
-    return `<div class="bar-row"><div class="bar-meta"><span class="bar-label">${m.icon} ${m.label}</span><span class="bar-val" style="color:${m.color}">${val}%</span></div><div class="bar-track"><div class="bar-fill" id="bar_${k}" style="width:0%;background:${m.color};box-shadow:0 0 8px ${m.color}55"></div></div></div>`;
-  }).join('');
-
-  const sigHTML = (r.signals || []).map(s => 
-    `<div class="signal"><span style="color:${s.positive ? '#39ff14' : '#ff4d4d'};font-size:13px">${s.positive ? '+' : '−'}</span><span style="color:${s.positive ? '#aaa' : '#ff7070'}">${s.text}</span></div>`
-  ).join('') || '<div style="font-size:11px;color:#555">No signals detected.</div>';
-
-  const extractedHTML = r.extractedText ? `<div class="extracted-text fade-in">&#8220;${r.extractedText}&#8221;</div>` : '';
-  
   const el = document.getElementById('results');
-  el.innerHTML = extractedHTML +
-    `<div class="card fade-in"><div class="card-label">FOR YOU RANKING SIGNAL</div><div class="score-row"><div id="radialContainer">${radialSVG(0)}</div><div class="score-info"><div class="score-verdict" style="color:${verdictColor}">${verdict}</div><div class="score-stats">${(r.wordCount || '--')} words &middot; ${(r.charCount || '--')} chars<br>Hook strength: ${(r.hookScore || '--')}/5</div></div></div></div>` +
-    `<div class="card fade-in" style="animation-delay:0.1s"><div class="card-label">PREDICTED ENGAGEMENT</div>${barsHTML}</div>` +
-    (r.insight ? `<div class="card fade-in" style="animation-delay:0.15s"><div class="card-label">AI INSIGHT</div><div class="insight-text">${r.insight}</div></div>` : '') +
-    `<div class="card fade-in" style="animation-delay:0.2s"><div class="card-label">SIGNAL ANALYSIS</div>${sigHTML}</div>` +
-    `<button class="btn-share fade-in" style="animation-delay:0.3s" onclick="shareOnX()">&#2197; SHARE YOUR RESULT ON X</button>` +
-    `<div class="disclaimer fade-in" style="animation-delay:0.35s">&#26A0; AI SIMULATION — Based on xai-org/x-algorithm (May 15 2026). Educational approximation only.</div>`;
-  
+  el.innerHTML = `
+    <div class="card fade-in">
+      <div class="card-label">FOR YOU RANKING SIGNAL</div>
+      <div class="score-row">
+        <div id="radialContainer">${radialSVG(r.finalScore || 50)}</div>
+        <div class="score-info">
+          <div class="score-verdict" style="color:${r.verdictColor || '#ffaa00'}">${r.verdict || 'MODERATE SIGNAL'}</div>
+          <div class="score-stats">${r.insight || ''}</div>
+        </div>
+      </div>
+    </div>
+    <button class="btn-share fade-in" onclick="shareOnX()">↗ SHARE YOUR RESULT ON X</button>
+    <div class="disclaimer fade-in">⚠ AI SIMULATION — Powered by Groq + Llama 3.1 70B</div>
+  `;
   el.classList.remove('hidden');
-
-  setTimeout(() => {
-    document.getElementById('radialContainer').innerHTML = radialSVG(r.finalScore || 50);
-    Object.keys(r.scores || {}).forEach(k => {
-      const b = document.getElementById('bar_' + k);
-      if (b) setTimeout(() => b.style.width = (r.scores[k] || 0) + '%', 50);
-    });
-  }, 80);
 }
 
 function radialSVG(score) {
   const r = 44, circ = 2 * Math.PI * r, dash = (score / 100) * circ;
   const color = score >= 70 ? '#00e5ff' : score >= 45 ? '#ffaa00' : '#ff4d4d';
-  return `<svg width="110" height="110" viewBox="0 0 100 100"><circle cx="50" cy="50" r="${r}" fill="none" stroke="#1a1a2e" stroke-width="8"/><circle cx="50" cy="50" r="${r}" fill="none" stroke="${color}" stroke-width="8" stroke-dasharray="${dash} ${circ}" stroke-linecap="round" transform="rotate(-90 50 50)" style="transition:stroke-dasharray 1.2s cubic-bezier(.4,0,.2,1)"/><text x="50" y="46" text-anchor="middle" fill="${color}" style="font-size:20px;font-family:Orbitron,monospace;font-weight:700">${score}</text><text x="50" y="60" text-anchor="middle" fill="#888" style="font-size:9px;font-family:monospace">/100</text></svg>`;
+  return `<svg width="110" height="110" viewBox="0 0 100 100"><circle cx="50" cy="50" r="${r}" fill="none" stroke="#1a1a2e" stroke-width="8"/><circle cx="50" cy="50" r="${r}" fill="none" stroke="${color}" stroke-width="8" stroke-dasharray="${dash} ${circ}" stroke-linecap="round" transform="rotate(-90 50 50)"/><text x="50" y="46" text-anchor="middle" fill="${color}" style="font-size:20px;font-family:Orbitron,monospace;font-weight:700">${score}</text><text x="50" y="60" text-anchor="middle" fill="#888" style="font-size:9px;font-family:monospace">/100</text></svg>`;
 }
 
 function shareOnX() {
   if (!currentResult) return;
   const score = currentResult.finalScore || 50;
   const v = score >= 75 ? 'HIGH RANKING POTENTIAL 🔥' : score >= 50 ? 'MODERATE SIGNAL ⚡' : 'LOW REACH PREDICTED';
-  window.open('https://x.com/intent/tweet?text=' + encodeURIComponent('I just ran my post through the Phoenix algorithm AI simulator.\n\nScore: ' + score + '/100 — ' + v + '\n\nTest yours 👇\nbjbeyond.it/Phoenix\n\n@bj_beyond #XAlgorithm #Phoenix'), '_blank');
+  window.open('https://x.com/intent/tweet?text=' + encodeURIComponent('I just ran my post through the Phoenix AI simulator.\n\nScore: ' + score + '/100 — ' + v + '\n\nTest yours 👇\nbjbeyond.it/Phoenix\n\n@bj_beyond #XAlgorithm #Phoenix'), '_blank');
 }
 </script>
 </body>
