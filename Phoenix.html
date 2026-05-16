@@ -154,46 +154,55 @@
             document.querySelectorAll('.pipeline-step').forEach(el => el.classList.remove('active'));
 
             try {
-                // Use free CORS proxy
                 const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`;
                 const response = await fetch(proxyUrl);
                 const html = await response.text();
 
-                // Extract text from X post (simple method)
                 let postText = '';
-                
-                // Try to find the post text in the HTML
-                const textMatch = html.match(/<meta property="og:description" content="([^"]+)"/);
-                if (textMatch && textMatch[1]) {
-                    postText = textMatch[1];
-                } else {
-                    // Fallback: extract from title or other meta
-                    const titleMatch = html.match(/<title>([^<]+)<\/title>/);
-                    if (titleMatch) postText = titleMatch[1].replace(' | X', '');
+
+                // METODO 1: Meta description
+                let match = html.match(/<meta property="og:description" content="([^"]+)"/);
+                if (match && match[1]) postText = match[1];
+
+                // METODO 2: Title
+                if (!postText || postText.length < 15) {
+                    match = html.match(/<title>([^<]+)<\/title>/);
+                    if (match && match[1]) postText = match[1].replace(' | X', '').replace(' on X', '');
                 }
 
+                // METODO 3: Pattern aggressivi
+                if (!postText || postText.length < 15) {
+                    const patterns = [/"text":"([^"]{20,})"/, /<span[^>]*>([^<]{30,})<\/span>/];
+                    for (let pattern of patterns) {
+                        match = html.match(pattern);
+                        if (match && match[1] && match[1].length > 15) {
+                            postText = match[1];
+                            break;
+                        }
+                    }
+                }
+
+                postText = postText.replace(/\\u002F/g, '/').replace(/\\"/g, '"').replace(/&amp;/g, '&').trim();
+
                 if (!postText || postText.length < 10) {
-                    alert("Could not extract post text. Please paste the text manually instead.");
+                    alert("Non sono riuscito a estrarre il testo automaticamente. Incolla manualmente.");
                     return;
                 }
 
-                // Run simulation
                 const results = generatePhoenixResults(postText, currentPersona);
                 lastResults = results;
                 updateResultsUI(results);
 
-                // Show pipeline animation
                 const steps = ['hydration','sourcing','prefilter','transformer','scoring','ranking'];
-                for (let i=0; i<steps.length; i++) {
-                    await new Promise(r => setTimeout(r, 200));
+                for (let i = 0; i < steps.length; i++) {
+                    await new Promise(r => setTimeout(r, 180));
                     highlightStep(steps[i], true);
                 }
 
                 document.getElementById('resultsPanel').style.display = 'block';
 
             } catch (error) {
-                alert("Error fetching post. Please paste the text manually.");
-                console.error(error);
+                alert("Errore durante il recupero. Incolla il testo manualmente.");
             }
         }
 
@@ -209,7 +218,7 @@
             updateResultsUI(results);
 
             const steps = ['hydration','sourcing','prefilter','transformer','scoring','ranking'];
-            for (let i=0; i<steps.length; i++) {
+            for (let i = 0; i < steps.length; i++) {
                 await new Promise(r => setTimeout(r, 200));
                 highlightStep(steps[i], true);
             }
@@ -232,7 +241,6 @@
             const isShort = len < 50;
 
             let score = 28;
-
             if (hasQ) score += 35;
             if (hasLink) score += 30;
             if (hasMedia) score += 28;
@@ -241,7 +249,6 @@
             if (hasHashtag) score += 18;
             if (hasCTA) score += 26;
             if (wc > 25 && wc < 100) score += 20;
-
             if (isShort) score -= 30;
             if (len < 35) score -= 25;
             if (!hasQ && !hasLink && !hasMedia && !hasCTA) score -= 28;
