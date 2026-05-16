@@ -172,62 +172,61 @@
         }
 
         function generatePhoenixResults(text, persona) {
-            const t = text.toLowerCase();
-            const len = text.length;
-            const wc = text.split(/\s+/).length;
-            
-            const hasQ = t.includes('?');
-            const hasLink = /https?:|t\.co\//.test(t);
-            const hasMedia = /image|video|dashboard|chart|gif/.test(t);
-            const hasNumbers = /\d/.test(text);
-            const hasHashtag = /#\w+/.test(text);
-            const hasCTA = /try|check|link|dm|comment|reply|tag|click|see|watch/.test(t);
-            const isLong = len > 200;
-            const isShort = len < 50;
+    const t = text.toLowerCase();
+    const len = text.length;
+    const wc = text.split(/\s+/).length;
+    
+    const hasQ = t.includes('?');
+    const hasLink = /https?:|t\.co\//.test(t);
+    const hasMedia = /image|video|dashboard|chart|gif/.test(t);
+    const hasNumbers = /\d/.test(text);
+    const hasHashtag = /#\w+/.test(text);
+    const hasCTA = /try|check|link|dm|comment|reply|tag|click|see|watch/.test(t);
+    const isLong = len > 200;
+    const isShort = len < 50;
 
-            // === SCORING AGGRESSIVO ===
-            let score = 35;
+    let score = 28;
 
-            if (hasQ) score += 30;
-            if (hasLink) score += 25;
-            if (hasMedia) score += 24;
-            if (isLong) score += 26;
-            if (hasNumbers) score += 18;
-            if (hasHashtag) score += 14;
-            if (hasCTA) score += 20;
-            if (wc > 25 && wc < 90) score += 16;
+    if (hasQ) score += 35;
+    if (hasLink) score += 30;
+    if (hasMedia) score += 28;
+    if (isLong) score += 32;
+    if (hasNumbers) score += 22;
+    if (hasHashtag) score += 18;
+    if (hasCTA) score += 26;
+    if (wc > 25 && wc < 100) score += 20;
 
-            if (isShort) score -= 22;
-            if (len < 30) score -= 15;
-            if (!hasQ && !hasLink && !hasMedia) score -= 18;
+    if (isShort) score -= 30;
+    if (len < 35) score -= 25;
+    if (!hasQ && !hasLink && !hasMedia && !hasCTA) score -= 28;
 
-            if (persona === 'bi' && /power bi|dashboard|data|kpi|dax/.test(t)) score += 32;
-            if (persona === 'finance' && /finance|excel|kpi|roi|budget/.test(t)) score += 30;
-            if (persona === 'creator' && /growth|algorithm|post|reach|engagement/.test(t)) score += 31;
+    if (persona === 'bi' && /power bi|dashboard|data|kpi|dax/.test(t)) score += 40;
+    if (persona === 'finance' && /finance|excel|kpi|roi|budget/.test(t)) score += 38;
+    if (persona === 'creator' && /growth|algorithm|post|reach|engagement/.test(t)) score += 39;
 
-            score = Math.max(22, Math.min(96, score));
+    score = Math.max(18, Math.min(96, score));
 
-            const pLike = Math.round(Math.max(15, Math.min(96, score * 0.85 + (hasQ ? 12 : 0))));
-            const pReply = Math.round(Math.max(8, Math.min(92, (hasQ ? 75 : 25) + (hasCTA ? 15 : 0))));
-            const pRepost = Math.round(Math.max(6, Math.min(89, score * 0.78 + (hasMedia ? 14 : 0))));
-            const pDwell = Math.round(Math.max(20, Math.min(97, score * 0.88 + (isLong ? 10 : 0))));
-            const pClick = Math.round(Math.max(12, Math.min(86, score * 0.72 + (hasLink ? 18 : 0))));
+    const pLike = Math.round(Math.max(10, Math.min(97, score * 0.90 + (hasQ ? 8 : 0))));
+    const pReply = Math.round(Math.max(5, Math.min(93, (hasQ ? 85 : 18) + (hasCTA ? 18 : 0))));
+    const pRepost = Math.round(Math.max(4, Math.min(90, score * 0.85 + (hasMedia ? 16 : 0))));
+    const pDwell = Math.round(Math.max(15, Math.min(98, score * 0.92 + (isLong ? 12 : 0))));
+    const pClick = Math.round(Math.max(8, Math.min(88, score * 0.78 + (hasLink ? 22 : 0))));
 
-            const w = { like: 0.29, reply: 0.16, repost: 0.15, dwell: 0.25, click: 0.11 };
+    const w = { like: 0.29, reply: 0.16, repost: 0.15, dwell: 0.25, click: 0.11 };
 
-            return {
-                overall: Math.round(score),
-                pLike, pReply, pRepost, pDwell, pClick,
-                hook: Math.round(score * 0.9),
-                quality: Math.round(score * 0.85),
-                relevance: Math.round(score * 0.82),
-                virality: Math.round(score * 0.78),
-                divPen: -0.5,
-                oon: hasLink ? 2.2 : 0.7,
-                niche: (persona === 'bi' && /power bi|dashboard/.test(t)) ? 25 : 0,
-                _weights: w
-            };
-        }
+    return {
+        overall: Math.round(score),
+        pLike, pReply, pRepost, pDwell, pClick,
+        hook: Math.round(score * 0.93),
+        quality: Math.round(score * 0.88),
+        relevance: Math.round(score * 0.85),
+        virality: Math.round(score * 0.80),
+        divPen: -0.5,
+        oon: hasLink ? 2.6 : 0.8,
+        niche: (persona === 'bi' && /power bi|dashboard/.test(t)) ? 28 : 0,
+        _weights: w
+    };
+}
 
         function updateResultsUI(r) {
             document.getElementById('overallScore').textContent = r.overall;
