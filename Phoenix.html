@@ -1,305 +1,80 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PHOENIX • X Algorithm Simulator</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <style>
-        body { font-family: 'Inter', system_ui, sans-serif; }
-        .font-display { font-family: 'Space Grotesk', 'Inter', sans-serif; font-weight: 600; }
-        .glass { background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(16px); }
-        .pipeline-step { transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1); }
-        .pipeline-step.active { background: rgba(0, 243, 255, 0.15); border-color: #00f3ff; box-shadow: 0 0 0 3px rgba(0, 243, 255, 0.2); }
-        .metric-bar { transition: width 1s cubic-bezier(0.23, 1, 0.32, 1); }
-    </style>
-</head>
-<body class="bg-slate-950 text-slate-200">
-    <div class="border-b border-slate-800 bg-slate-950/80 backdrop-blur-xl sticky top-0 z-50">
-        <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
-            <div class="flex items-center gap-x-3">
-                <div class="w-11 h-11 rounded-2xl bg-gradient-to-br from-cyan-400 via-violet-500 to-fuchsia-500 flex items-center justify-center">
-                    <i class="fa-solid fa-infinity text-white text-3xl"></i>
-                </div>
-                <div>
-                    <div class="font-display text-3xl font-semibold tracking-tighter">PHOENIX</div>
-                    <div class="text-[10px] text-slate-500 -mt-1 tracking-[3px]">X ALGORITHM SIMULATOR</div>
-                </div>
-            </div>
-            <a href="https://github.com/xai-org/x-algorithm" target="_blank" class="px-4 py-2 text-sm rounded-2xl border border-slate-700 hover:bg-slate-900">Official Repo</a>
-        </div>
-    </div>
+async function fetchAndAnalyze() {
+    const url = document.getElementById('postUrl').value.trim();
+    if (!url) return alert("Please enter a post URL");
 
-    <div class="max-w-7xl mx-auto px-6 py-8">
-        <div class="text-center mb-10">
-            <div class="inline-flex items-center gap-x-2 px-4 py-1 rounded-full bg-slate-900 border border-slate-700 mb-4">
-                <span class="text-xs font-medium text-cyan-400">BASED ON xAI OPEN-SOURCE RELEASE • MAY 15 2026</span>
-            </div>
-            <h1 class="font-display text-6xl md:text-7xl font-semibold tracking-tighter mb-3">PHOENIX SIMULATOR</h1>
-            <p class="text-xl text-slate-400">Real-time simulation of X's For You algorithm</p>
-        </div>
+    document.getElementById('resultsPanel').style.display = 'none';
+    document.querySelectorAll('.pipeline-step').forEach(el => el.classList.remove('active'));
 
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
-            <!-- INPUT -->
-            <div class="lg:col-span-5">
-                <div class="glass border border-slate-700 rounded-3xl p-6">
-                    <div class="font-semibold text-lg mb-4">POST URL OR TEXT</div>
-                    
-                    <div class="mb-3">
-                        <input type="text" id="postUrl" class="w-full bg-slate-900 border border-slate-700 rounded-2xl p-4 text-sm" placeholder="https://x.com/username/status/123456789">
-                    </div>
-                    
-                    <div class="text-center text-xs text-slate-500 mb-3">— or —</div>
-                    
-                    <textarea id="postInput" rows="4" class="w-full bg-slate-900 border border-slate-700 rounded-2xl p-4 text-sm mb-4" placeholder="Or paste post text here..."></textarea>
-                    
-                    <div class="flex gap-2">
-                        <button onclick="fetchAndAnalyze()" class="flex-1 py-4 bg-gradient-to-r from-cyan-400 to-violet-500 text-slate-950 font-semibold rounded-2xl">FETCH & ANALYZE</button>
-                        <button onclick="analyzeTextOnly()" class="px-6 py-4 bg-slate-700 hover:bg-slate-600 rounded-2xl">ANALYZE TEXT</button>
-                    </div>
-                </div>
-            </div>
+    try {
+        const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`;
+        const response = await fetch(proxyUrl);
+        const html = await response.text();
 
-            <!-- PIPELINE -->
-            <div class="lg:col-span-7">
-                <div class="glass border border-slate-700 rounded-3xl p-6">
-                    <div class="font-semibold text-lg mb-4">OFFICIAL PHOENIX PIPELINE</div>
-                    <div id="pipelineSteps" class="space-y-2"></div>
-                </div>
-            </div>
+        let postText = '';
 
-            <!-- RESULTS -->
-            <div class="lg:col-span-12" id="resultsPanel" style="display:none">
-                <div class="glass border border-slate-700 rounded-3xl p-7">
-                    <div class="font-semibold text-2xl mb-6">SIMULATION RESULTS</div>
-                    
-                    <div class="grid grid-cols-1 md:grid-cols-12 gap-6">
-                        <div class="md:col-span-4 text-center bg-slate-900/70 border border-slate-700 rounded-3xl p-6">
-                            <div class="relative w-40 h-40 mx-auto mb-4">
-                                <svg class="w-40 h-40 -rotate-90" viewBox="0 0 120 120">
-                                    <circle cx="60" cy="60" r="52" fill="none" stroke="#1e2937" stroke-width="10"/>
-                                    <circle id="scoreCircle" cx="60" cy="60" r="52" fill="none" stroke="#00f3ff" stroke-width="10" stroke-linecap="round"/>
-                                </svg>
-                                <div class="absolute inset-0 flex items-center justify-center">
-                                    <div>
-                                        <div id="overallScore" class="font-display text-6xl font-semibold">87</div>
-                                        <div class="text-xs text-slate-400">OVERALL</div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div id="scoreLabel" class="font-semibold text-cyan-400">STRONG</div>
-                        </div>
+        // === TENTATIVO 1: Meta og:description ===
+        let match = html.match(/<meta property="og:description" content="([^"]+)"/);
+        if (match && match[1] && match[1].length > 10) postText = match[1];
 
-                        <div class="md:col-span-5 bg-slate-900/70 border border-slate-700 rounded-3xl p-6">
-                            <div class="text-xs text-slate-400 mb-4">PHOENIX PREDICTIONS</div>
-                            <div id="probabilities" class="space-y-4 text-sm"></div>
-                        </div>
-
-                        <div class="md:col-span-3 bg-slate-900/70 border border-slate-700 rounded-3xl p-6">
-                            <div class="text-xs text-slate-400 mb-3">WEIGHTED SCORER</div>
-                            <div id="weightedBreakdown" class="text-[10px] font-mono text-slate-300"></div>
-                            <div class="mt-3 pt-3 border-t border-slate-700 text-[10px]">
-                                <div class="flex justify-between text-emerald-400"><span>Diversity Penalty</span><span id="diversityDisplay"></span></div>
-                                <div class="flex justify-between text-cyan-400"><span>OON Adjustment</span><span id="oonDisplay"></span></div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <script>
-        let currentPersona = 'bi';
-        let lastResults = null;
-
-        function selectPersona(el, persona) {
-            document.querySelectorAll('.persona-btn').forEach(e => e.classList.remove('active', 'border-cyan-500', 'bg-cyan-950/50'));
-            el.classList.add('active', 'border-cyan-500', 'bg-cyan-950/50');
-            currentPersona = persona;
+        // === TENTATIVO 2: Title tag ===
+        if (!postText || postText.length < 15) {
+            match = html.match(/<title>([^<]+)<\/title>/);
+            if (match && match[1]) postText = match[1].replace(' | X', '').replace(' on X', '');
         }
 
-        const pipelineData = [
-            {id:'hydration', label:'Query Hydration'},
-            {id:'sourcing', label:'Candidate Sourcing'},
-            {id:'prefilter', label:'Pre-Filters'},
-            {id:'transformer', label:'Phoenix Transformer'},
-            {id:'scoring', label:'Weighted + Diversity'},
-            {id:'ranking', label:'Final Ranking'}
-        ];
-
-        function initPipeline() {
-            const c = document.getElementById('pipelineSteps');
-            c.innerHTML = '';
-            pipelineData.forEach((s,i) => {
-                const d = document.createElement('div');
-                d.id = `step-${s.id}`;
-                d.className = `pipeline-step flex items-center gap-x-4 p-4 rounded-2xl border border-slate-700 bg-slate-900/60`;
-                d.innerHTML = `<div class="flex-1"><div class="font-medium text-sm">${s.label}</div></div><div class="text-xs font-mono text-slate-500">${i+1}</div>`;
-                c.appendChild(d);
-            });
+        // === TENTATIVO 3: Pattern "text" (molto comune su X) ===
+        if (!postText || postText.length < 15) {
+            match = html.match(/"text":"([^"]{15,})"/);
+            if (match && match[1]) postText = match[1];
         }
 
-        function highlightStep(id, active=true) {
-            const el = document.getElementById(`step-${id}`);
-            if (el) el.classList.toggle('active', active);
+        // === TENTATIVO 4: data-testid="tweetText" ===
+        if (!postText || postText.length < 15) {
+            match = html.match(/data-testid="tweetText"[^>]*>([^<]{15,})/);
+            if (match && match[1]) postText = match[1];
         }
 
-        async function fetchAndAnalyze() {
-            const url = document.getElementById('postUrl').value.trim();
-            if (!url) return alert("Please enter a post URL");
-
-            document.getElementById('resultsPanel').style.display = 'none';
-            document.querySelectorAll('.pipeline-step').forEach(el => el.classList.remove('active'));
-
-            try {
-                const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`;
-                const response = await fetch(proxyUrl);
-                const html = await response.text();
-
-                let postText = '';
-                let match = html.match(/<meta property="og:description" content="([^"]+)"/);
-                if (match && match[1]) postText = match[1];
-
-                if (!postText || postText.length < 15) {
-                    match = html.match(/<title>([^<]+)<\/title>/);
-                    if (match && match[1]) postText = match[1].replace(' | X', '').replace(' on X', '');
+        // === TENTATIVO 5: Qualsiasi span con tanto testo ===
+        if (!postText || postText.length < 15) {
+            const spans = html.match(/<span[^>]*>([^<]{20,})<\/span>/g);
+            if (spans) {
+                for (let span of spans) {
+                    const text = span.replace(/<[^>]+>/g, '');
+                    if (text.length > 20 && text.length < 500) {
+                        postText = text;
+                        break;
+                    }
                 }
-
-                postText = postText.replace(/\\u002F/g, '/').replace(/\\"/g, '"').replace(/&amp;/g, '&').trim();
-
-                if (!postText || postText.length < 10) {
-                    alert("Could not extract text. Please paste manually.");
-                    return;
-                }
-
-                const results = generatePhoenixResults(postText, currentPersona);
-                lastResults = results;
-                updateResultsUI(results);
-
-                const steps = ['hydration','sourcing','prefilter','transformer','scoring','ranking'];
-                for (let i = 0; i < steps.length; i++) {
-                    await new Promise(r => setTimeout(r, 180));
-                    highlightStep(steps[i], true);
-                }
-
-                document.getElementById('resultsPanel').style.display = 'block';
-
-            } catch (error) {
-                alert("Error fetching post. Paste text manually.");
             }
         }
 
-        async function analyzeTextOnly() {
-            const input = document.getElementById('postInput').value.trim();
-            if (!input) return alert("Please paste post text");
+        // Pulisci il testo
+        postText = postText
+            .replace(/\\u002F/g, '/')
+            .replace(/\\"/g, '"')
+            .replace(/&amp;/g, '&')
+            .replace(/\\n/g, ' ')
+            .trim();
 
-            document.getElementById('resultsPanel').style.display = 'none';
-            document.querySelectorAll('.pipeline-step').forEach(el => el.classList.remove('active'));
-
-            const results = generatePhoenixResults(input, currentPersona);
-            lastResults = results;
-            updateResultsUI(results);
-
-            const steps = ['hydration','sourcing','prefilter','transformer','scoring','ranking'];
-            for (let i = 0; i < steps.length; i++) {
-                await new Promise(r => setTimeout(r, 200));
-                highlightStep(steps[i], true);
-            }
-
-            document.getElementById('resultsPanel').style.display = 'block';
+        if (!postText || postText.length < 10) {
+            alert("Non sono riuscito a estrarre il testo. Incolla manualmente.");
+            return;
         }
 
-        function generatePhoenixResults(text, persona) {
-            const t = text.toLowerCase();
-            const len = text.length;
-            const wc = text.split(/\s+/).length;
-            
-            const hasQ = t.includes('?');
-            const hasLink = /https?:|t\.co\//.test(t);
-            const hasMedia = /image|video|dashboard|chart|gif/.test(t);
-            const hasNumbers = /\d/.test(text);
-            const hasHashtag = /#\w+/.test(text);
-            const hasCTA = /try|check|link|dm|comment|reply|tag|click|see|watch/.test(t);
-            const isLong = len > 200;
-            const isShort = len < 50;
+        // Esegui simulazione
+        const results = generatePhoenixResults(postText, currentPersona);
+        lastResults = results;
+        updateResultsUI(results);
 
-            // === SCORING MOLTO AGGRESSIVO ===
-            let score = 25;
-
-            if (hasQ) score += 38;
-            if (hasLink) score += 32;
-            if (hasMedia) score += 30;
-            if (isLong) score += 35;
-            if (hasNumbers) score += 24;
-            if (hasHashtag) score += 20;
-            if (hasCTA) score += 28;
-            if (wc > 25 && wc < 100) score += 22;
-
-            if (isShort) score -= 32;
-            if (len < 35) score -= 28;
-            if (!hasQ && !hasLink && !hasMedia && !hasCTA) score -= 30;
-
-            if (persona === 'bi' && /power bi|dashboard|data|kpi|dax/.test(t)) score += 42;
-            if (persona === 'finance' && /finance|excel|kpi|roi|budget/.test(t)) score += 40;
-            if (persona === 'creator' && /growth|algorithm|post|reach|engagement/.test(t)) score += 41;
-
-            score = Math.max(15, Math.min(96, score));
-
-            const pLike = Math.round(Math.max(8, Math.min(97, score * 0.92 + (hasQ ? 6 : 0))));
-            const pReply = Math.round(Math.max(4, Math.min(93, (hasQ ? 88 : 15) + (hasCTA ? 20 : 0))));
-            const pRepost = Math.round(Math.max(3, Math.min(90, score * 0.87 + (hasMedia ? 18 : 0))));
-            const pDwell = Math.round(Math.max(12, Math.min(98, score * 0.94 + (isLong ? 10 : 0))));
-            const pClick = Math.round(Math.max(6, Math.min(88, score * 0.80 + (hasLink ? 24 : 0))));
-
-            const w = { like: 0.29, reply: 0.16, repost: 0.15, dwell: 0.25, click: 0.11 };
-
-            return {
-                overall: Math.round(score),
-                pLike, pReply, pRepost, pDwell, pClick,
-                hook: Math.round(score * 0.94),
-                quality: Math.round(score * 0.90),
-                relevance: Math.round(score * 0.87),
-                virality: Math.round(score * 0.82),
-                divPen: -0.5,
-                oon: hasLink ? 2.8 : 0.8,
-                niche: (persona === 'bi' && /power bi|dashboard/.test(t)) ? 30 : 0,
-                _weights: w
-            };
+        const steps = ['hydration','sourcing','prefilter','transformer','scoring','ranking'];
+        for (let i = 0; i < steps.length; i++) {
+            await new Promise(r => setTimeout(r, 180));
+            highlightStep(steps[i], true);
         }
 
-        function updateResultsUI(r) {
-            document.getElementById('overallScore').textContent = r.overall;
-            const circ = document.getElementById('scoreCircle');
-            circ.style.strokeDashoffset = 326.7256 * (1 - r.overall/100);
+        document.getElementById('resultsPanel').style.display = 'block';
 
-            const label = document.getElementById('scoreLabel');
-            if (r.overall >= 85) { circ.setAttribute('stroke','#10b981'); label.innerHTML = 'EXCELLENT'; label.className = 'font-semibold text-emerald-400'; }
-            else if (r.overall >= 72) { circ.setAttribute('stroke','#00f3ff'); label.innerHTML = 'STRONG'; label.className = 'font-semibold text-cyan-400'; }
-            else { circ.setAttribute('stroke','#f59e0b'); label.innerHTML = 'MODERATE'; label.className = 'font-semibold text-amber-400'; }
-
-            document.getElementById('probabilities').innerHTML = `
-                <div class="flex justify-between"><span>P(like)</span><span class="font-mono text-red-400">${r.pLike}</span></div>
-                <div class="flex justify-between"><span>P(reply)</span><span class="font-mono text-sky-400">${r.pReply}</span></div>
-                <div class="flex justify-between"><span>P(repost)</span><span class="font-mono text-emerald-400">${r.pRepost}</span></div>
-                <div class="flex justify-between"><span>P(dwell)</span><span class="font-mono text-violet-400">${r.pDwell}</span></div>
-            `;
-
-            const w = r._weights;
-            document.getElementById('weightedBreakdown').innerHTML = `
-                <div class="text-emerald-400">Final = Σ(wᵢ × Pᵢ)</div>
-                <div class="text-[9px] mt-1">like ${r.pLike}×${w.like} | reply ${r.pReply}×${w.reply} | repost ${r.pRepost}×${w.repost} | dwell ${r.pDwell}×${w.dwell}</div>
-            `;
-            document.getElementById('diversityDisplay').textContent = r.divPen.toFixed(2);
-            document.getElementById('oonDisplay').textContent = r.oon > 1 ? '+2.8' : '+0.8';
-        }
-
-        function init() {
-            initPipeline();
-            setTimeout(() => document.querySelector('.persona-btn')?.click(), 200);
-        }
-        window.onload = init;
-    </script>
-</body>
-</html>
+    } catch (error) {
+        alert("Errore durante il recupero. Incolla il testo manualmente.");
+    }
+}
