@@ -37,16 +37,14 @@
                 <span class="text-xs font-medium text-cyan-400">BASED ON xAI OPEN-SOURCE RELEASE • MAY 15 2026</span>
             </div>
             <h1 class="font-display text-6xl md:text-7xl font-semibold tracking-tighter mb-3">PHOENIX SIMULATOR</h1>
-            <p class="text-xl text-slate-400">Real-time simulation of X's For You algorithm • Paste any post</p>
+            <p class="text-xl text-slate-400">Real-time simulation of X's For You algorithm</p>
         </div>
 
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
             <!-- INPUT -->
             <div class="lg:col-span-5">
                 <div class="glass border border-slate-700 rounded-3xl p-6">
-                    <div class="font-semibold text-lg mb-4 flex items-center gap-x-2">
-                        <i class="fa-solid fa-keyboard text-cyan-400"></i> INPUT POST
-                    </div>
+                    <div class="font-semibold text-lg mb-4">INPUT POST</div>
                     <textarea id="postInput" rows="5" class="w-full bg-slate-900 border border-slate-700 rounded-2xl p-4 text-sm" placeholder="Paste your X post here..."></textarea>
                     
                     <div class="my-4">
@@ -63,11 +61,6 @@
                             </div>
                         </div>
                     </div>
-
-                    <label class="flex items-center gap-x-2 text-xs mb-4">
-                        <input type="checkbox" id="explorationNoise" class="accent-cyan-400">
-                        <span class="text-slate-400">Add exploration noise (demo only)</span>
-                    </label>
 
                     <button onclick="runPhoenixSimulation()" class="w-full py-4 bg-gradient-to-r from-cyan-400 to-violet-500 text-slate-950 font-semibold rounded-2xl">RUN PHOENIX SIMULATION</button>
                 </div>
@@ -87,7 +80,6 @@
                     <div class="font-semibold text-2xl mb-6">SIMULATION RESULTS</div>
                     
                     <div class="grid grid-cols-1 md:grid-cols-12 gap-6">
-                        <!-- Score -->
                         <div class="md:col-span-4 text-center bg-slate-900/70 border border-slate-700 rounded-3xl p-6">
                             <div class="relative w-40 h-40 mx-auto mb-4">
                                 <svg class="w-40 h-40 -rotate-90" viewBox="0 0 120 120">
@@ -104,15 +96,13 @@
                             <div id="scoreLabel" class="font-semibold text-cyan-400">STRONG</div>
                         </div>
 
-                        <!-- Probabilities -->
                         <div class="md:col-span-5 bg-slate-900/70 border border-slate-700 rounded-3xl p-6">
-                            <div class="text-xs text-slate-400 mb-4">PHOENIX TRANSFORMER PREDICTIONS</div>
+                            <div class="text-xs text-slate-400 mb-4">PHOENIX PREDICTIONS</div>
                             <div id="probabilities" class="space-y-4 text-sm"></div>
                         </div>
 
-                        <!-- Weighted Scorer -->
                         <div class="md:col-span-3 bg-slate-900/70 border border-slate-700 rounded-3xl p-6">
-                            <div class="text-xs text-slate-400 mb-3">OFFICIAL WEIGHTED SCORER</div>
+                            <div class="text-xs text-slate-400 mb-3">WEIGHTED SCORER</div>
                             <div id="weightedBreakdown" class="text-[10px] font-mono text-slate-300"></div>
                             <div class="mt-3 pt-3 border-t border-slate-700 text-[10px]">
                                 <div class="flex justify-between text-emerald-400"><span>Diversity Penalty</span><span id="diversityDisplay"></span></div>
@@ -136,12 +126,12 @@
         }
 
         const pipelineData = [
-            {id:'hydration', label:'Query Hydration', icon:'fa-database'},
-            {id:'sourcing', label:'Candidate Sourcing', icon:'fa-search'},
-            {id:'prefilter', label:'Pre-Filters', icon:'fa-filter'},
-            {id:'transformer', label:'Phoenix Transformer', icon:'fa-brain'},
-            {id:'scoring', label:'Weighted + Diversity', icon:'fa-balance-scale'},
-            {id:'ranking', label:'Final Ranking', icon:'fa-tachometer-alt'}
+            {id:'hydration', label:'Query Hydration'},
+            {id:'sourcing', label:'Candidate Sourcing'},
+            {id:'prefilter', label:'Pre-Filters'},
+            {id:'transformer', label:'Phoenix Transformer'},
+            {id:'scoring', label:'Weighted + Diversity'},
+            {id:'ranking', label:'Final Ranking'}
         ];
 
         function initPipeline() {
@@ -151,7 +141,7 @@
                 const d = document.createElement('div');
                 d.id = `step-${s.id}`;
                 d.className = `pipeline-step flex items-center gap-x-4 p-4 rounded-2xl border border-slate-700 bg-slate-900/60`;
-                d.innerHTML = `<div class="w-9 h-9 rounded-xl bg-slate-800 flex items-center justify-center"><i class="fa-solid ${s.icon} text-cyan-400"></i></div><div class="flex-1"><div class="font-medium text-sm">${s.label}</div></div><div class="text-xs font-mono text-slate-500">${String(i+1).padStart(2,'0')}</div>`;
+                d.innerHTML = `<div class="flex-1"><div class="font-medium text-sm">${s.label}</div></div><div class="text-xs font-mono text-slate-500">${i+1}</div>`;
                 c.appendChild(d);
             });
         }
@@ -166,22 +156,19 @@
             if (!input) return alert("Paste a post first!");
 
             document.getElementById('resultsPanel').style.display = 'none';
-            document.getElementById('pipelineStatus').textContent = 'RUNNING';
 
             document.querySelectorAll('.pipeline-step').forEach(el => el.classList.remove('active'));
 
             const steps = ['hydration','sourcing','prefilter','transformer','scoring','ranking'];
             for (let i=0; i<steps.length; i++) {
-                await new Promise(r => setTimeout(r, 320));
+                await new Promise(r => setTimeout(r, 300));
                 highlightStep(steps[i], true);
-                if (i===3) await new Promise(r => setTimeout(r, 550));
             }
 
             const results = generatePhoenixResults(input, currentPersona);
             lastResults = results;
             updateResultsUI(results);
 
-            document.getElementById('pipelineStatus').textContent = 'COMPLETE';
             document.getElementById('resultsPanel').style.display = 'block';
         }
 
@@ -192,14 +179,13 @@
             const hasQ = t.includes('?');
             const hasLink = /https?:|t\.co\//.test(t);
             const hasMedia = /image|video|dashboard/.test(t);
-            const hasCTA = /try|check|dm|comment/.test(t);
 
             let hist = 0.5;
-            if (persona==='bi' && /power bi|dashboard|data|kpi/.test(t)) hist=0.92;
-            if (persona==='finance' && /finance|excel|kpi/.test(t)) hist=0.89;
-            if (persona==='creator' && /growth|algorithm|post/.test(t)) hist=0.91;
+            if (persona==='bi' && /power bi|dashboard|data/.test(t)) hist = 0.92;
+            if (persona==='finance' && /finance|excel/.test(t)) hist = 0.89;
+            if (persona==='creator' && /growth|algorithm/.test(t)) hist = 0.91;
 
-            const hook = Math.min(98, 62 + (hasQ?14:0) + (wc>22?11:0) + (hasCTA?8:0));
+            const hook = Math.min(98, 62 + (hasQ?14:0) + (wc>22?11:0));
             const qual = Math.min(96, 68 + (len>120?13:0) + (hasMedia?10:0));
             const rel = Math.round(64 + hist*32);
             const vir = Math.min(91, 55 + (hasLink?10:0) + (hasQ?9:0));
@@ -215,37 +201,17 @@
             let pDwell = Math.round(Math.min(98, qual*0.79 + (len>160?11:0)));
             let pClick = Math.round(Math.min(81, rel*0.61 + (hasLink?15:0)));
 
-            // OFFICIAL WEIGHTS (from xAI Phoenix release)
-            const w = { like: 0.28, reply: 0.17, repost: 0.16, dwell: 0.24, click: 0.12, 
-                       not_interested: -0.08, block: -0.12, mute: -0.07, report: -0.15 };
-
-            let score = (pLike * w.like) + (pReply * w.reply) + (pRepost * w.repost) + 
-                       (pDwell * w.dwell) + (pClick * w.click) +
-                       (niche * 0.55);
-
-            // Negative actions (official)
-            const neg = (hasQ ? 0 : -1.2) + (len < 60 ? -2 : 0);
-            score += neg;
+            const w = { like: 0.28, reply: 0.17, repost: 0.16, dwell: 0.24, click: 0.12 };
+            let score = (pLike * w.like) + (pReply * w.reply) + (pRepost * w.repost) + (pDwell * w.dwell) + (pClick * w.click) + (niche * 0.55);
 
             const divPen = (persona==='creator' || niche > 12) ? -0.65 : -0.28;
             const oon = (vir > 75) ? 1.8 : 0.4;
 
             const final = Math.round(Math.max(42, Math.min(97, score + oon + divPen)));
 
-            const noise = document.getElementById('explorationNoise').checked;
-            if (noise) {
-                const n = () => Math.round((Math.random()-0.5)*6);
-                pLike = Math.max(35, Math.min(97, pLike + n()));
-                pReply = Math.max(19, Math.min(92, pReply + n()));
-                pRepost = Math.max(16, Math.min(88, pRepost + n()));
-                pDwell = Math.max(41, Math.min(98, pDwell + n()));
-                pClick = Math.max(27, Math.min(84, pClick + n()));
-            }
-
             return {
                 overall: final, pLike, pReply, pRepost, pDwell, pClick,
-                hook, qual, rel, vir, divPen, oon, niche,
-                _weights: w
+                hook, qual, rel, vir, divPen, oon, niche, _weights: w
             };
         }
 
@@ -255,9 +221,9 @@
             circ.style.strokeDashoffset = 326.7256 * (1 - r.overall/100);
 
             const label = document.getElementById('scoreLabel');
-            if (r.overall >= 85) { circ.setAttribute('stroke','#10b981'); label.innerHTML = 'EXCELLENT'; label.className='font-semibold text-emerald-400'; }
-            else if (r.overall >= 72) { circ.setAttribute('stroke','#00f3ff'); label.innerHTML = 'STRONG'; label.className='font-semibold text-cyan-400'; }
-            else { circ.setAttribute('stroke','#f59e0b'); label.innerHTML = 'MODERATE'; label.className='font-semibold text-amber-400'; }
+            if (r.overall >= 85) { circ.setAttribute('stroke','#10b981'); label.innerHTML = 'EXCELLENT'; label.className = 'font-semibold text-emerald-400'; }
+            else if (r.overall >= 72) { circ.setAttribute('stroke','#00f3ff'); label.innerHTML = 'STRONG'; label.className = 'font-semibold text-cyan-400'; }
+            else { circ.setAttribute('stroke','#f59e0b'); label.innerHTML = 'MODERATE'; label.className = 'font-semibold text-amber-400'; }
 
             document.getElementById('probabilities').innerHTML = `
                 <div class="flex justify-between"><span>P(like)</span><span class="font-mono text-red-400">${r.pLike}</span></div>
@@ -268,7 +234,7 @@
 
             const w = r._weights;
             document.getElementById('weightedBreakdown').innerHTML = `
-                <div class="text-emerald-400">Final = Σ(wᵢ × Pᵢ) + OON + Niche - Diversity</div>
+                <div class="text-emerald-400">Final = Σ(wᵢ × Pᵢ)</div>
                 <div class="text-[9px] mt-1">like ${r.pLike}×${w.like} | reply ${r.pReply}×${w.reply} | repost ${r.pRepost}×${w.repost} | dwell ${r.pDwell}×${w.dwell}</div>
             `;
             document.getElementById('diversityDisplay').textContent = r.divPen.toFixed(2);
