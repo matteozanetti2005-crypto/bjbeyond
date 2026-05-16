@@ -1,0 +1,6 @@
+{
+  "rewrites": [
+    { "source": "/Phoenix", "destination": "/Phoenix/Phoenix.html" },
+    { "source": "/phoenix", "destination": "/Phoenix/Phoenix.html" }
+  ]
+}
