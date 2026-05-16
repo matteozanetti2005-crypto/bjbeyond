@@ -137,7 +137,7 @@ textarea::placeholder { color: #2a2a3a; }
 <script>
 const WORKER_URL = "https://phoenix-analyzer.matteo-zanetti2005.workers.dev";
 
-// ====================== FETCH DA URL (AllOrigins + 5 tentativi) ======================
+// ====================== FETCH DA URL ======================
 async function fetchPostText(url) {
   try {
     const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`;
@@ -146,29 +146,24 @@ async function fetchPostText(url) {
 
     let postText = '';
 
-    // Tentativo 1: og:description
     let match = html.match(/<meta property="og:description" content="([^"]+)"/);
     if (match && match[1] && match[1].length > 10) postText = match[1];
 
-    // Tentativo 2: title
     if (!postText || postText.length < 15) {
       match = html.match(/<title>([^<]+)<\/title>/);
       if (match && match[1]) postText = match[1].replace(' | X', '').replace(' on X', '');
     }
 
-    // Tentativo 3: JSON text
     if (!postText || postText.length < 15) {
       match = html.match(/"text":"([^"]{15,})"/);
       if (match && match[1]) postText = match[1];
     }
 
-    // Tentativo 4: data-testid
     if (!postText || postText.length < 15) {
       match = html.match(/data-testid="tweetText"[^>]*>([^<]{15,})/);
       if (match && match[1]) postText = match[1];
     }
 
-    // Tentativo 5: span lunghi
     if (!postText || postText.length < 15) {
       const spans = html.match(/<span[^>]*>([^<]{20,})<\/span>/g);
       if (spans) {
@@ -209,8 +204,17 @@ async function analyzeWithWorker(postText) {
   return result;
 }
 
-// ====================== PIPELINE ======================
+// ====================== COSTANTI E VARIABILI ======================
 const STEP_LABELS = ["Query hydration","Fetching post","Grox safety check","AI analysis","Phoenix score computed"];
+
+const METRICS = {
+  favorite: { label: "Like probability",     icon: "&#9825;", color: "#00e5ff" },
+  reply:    { label: "Reply probability",    icon: "&#8617;", color: "#ff4d4d" },
+  repost:   { label: "Repost probability",   icon: "&#8635;", color: "#39ff14" },
+  dwell:    { label: "Dwell time score",     icon: "&#9201;", color: "#ffaa00" },
+  oon:      { label: "Out-of-network reach", icon: "&#128225;", color: "#bf80ff" },
+  spam:     { label: "Spam signal",          icon: "&#9888;", color: "#ff4444" }
+};
 
 const urlInput = document.getElementById('postUrl');
 const textarea = document.getElementById('postText');
@@ -225,6 +229,7 @@ textarea.addEventListener('input', () => {
 
 let currentResult = null;
 
+// ====================== PIPELINE ======================
 async function runPipeline() {
   const url = urlInput.value.trim();
   let text = textarea.value.trim();
@@ -258,13 +263,11 @@ async function runPipeline() {
   };
 
   try {
-    // Step 1-2: Hydration + Fetch
     for (let i = 0; i < 2; i++) {
       await new Promise(r => setTimeout(r, 450));
       animateStep();
     }
 
-    // Se c'è un URL, estrai il testo
     if (url) {
       await new Promise(r => setTimeout(r, 450));
       animateStep();
@@ -273,7 +276,6 @@ async function runPipeline() {
       textarea.value = extractedText;
       charCount.textContent = extractedText.length + '/280';
       
-      // Mostra il testo estratto
       const extractedDiv = document.createElement('div');
       extractedDiv.className = 'extracted-text fade-in';
       extractedDiv.innerHTML = `&#8220;${extractedText.substring(0, 120)}${extractedText.length > 120 ? '...' : ''}&#8221;`;
@@ -285,17 +287,14 @@ async function runPipeline() {
       animateStep();
     }
 
-    // Step 3-4: Groq + AI
     await new Promise(r => setTimeout(r, 450));
     animateStep();
 
     const result = await analyzeWithWorker(text);
 
-    // Step 5: Final
     await new Promise(r => setTimeout(r, 400));
     animateStep();
 
-    // Completa tutti gli step
     for (let i = 0; i < STEP_LABELS.length; i++) {
       document.getElementById('stepnum' + i).className = 'step-num done';
       document.getElementById('stepnum' + i).textContent = '✓';
@@ -320,15 +319,23 @@ async function runPipeline() {
   btnRun.textContent = '&#9654; ANALYZE WITH AI';
 }
 
+// ====================== MOSTRA RISULTATI ======================
 function showResults(r) {
   const verdictColor = r.verdictColor || '#ffaa00';
   const verdict = r.verdict || 'MODERATE SIGNAL';
+  
   const barsHTML = Object.entries(r.scores || {}).map(([k, val]) => {
-    const m = METRICS[k]; if (!m) return '';
+    const m = METRICS[k];
+    if (!m) return '';
     return `<div class="bar-row"><div class="bar-meta"><span class="bar-label">${m.icon} ${m.label}</span><span class="bar-val" style="color:${m.color}">${val}%</span></div><div class="bar-track"><div class="bar-fill" id="bar_${k}" style="width:0%;background:${m.color};box-shadow:0 0 8px ${m.color}55"></div></div></div>`;
   }).join('');
-  const sigHTML = (r.signals || []).map(s => `<div class="signal"><span style="color:${s.positive ? '#39ff14' : '#ff4d4d'};font-size:13px">${s.positive ? '+' : '−'}</span><span style="color:${s.positive ? '#aaa' : '#ff7070'}">${s.text}</span></div>`).join('') || '<div style="font-size:11px;color:#555">No signals detected.</div>';
+
+  const sigHTML = (r.signals || []).map(s => 
+    `<div class="signal"><span style="color:${s.positive ? '#39ff14' : '#ff4d4d'};font-size:13px">${s.positive ? '+' : '−'}</span><span style="color:${s.positive ? '#aaa' : '#ff7070'}">${s.text}</span></div>`
+  ).join('') || '<div style="font-size:11px;color:#555">No signals detected.</div>';
+
   const extractedHTML = r.extractedText ? `<div class="extracted-text fade-in">&#8220;${r.extractedText}&#8221;</div>` : '';
+  
   const el = document.getElementById('results');
   el.innerHTML = extractedHTML +
     `<div class="card fade-in"><div class="card-label">FOR YOU RANKING SIGNAL</div><div class="score-row"><div id="radialContainer">${radialSVG(0)}</div><div class="score-info"><div class="score-verdict" style="color:${verdictColor}">${verdict}</div><div class="score-stats">${(r.wordCount || '--')} words &middot; ${(r.charCount || '--')} chars<br>Hook strength: ${(r.hookScore || '--')}/5</div></div></div></div>` +
@@ -336,11 +343,16 @@ function showResults(r) {
     (r.insight ? `<div class="card fade-in" style="animation-delay:0.15s"><div class="card-label">AI INSIGHT</div><div class="insight-text">${r.insight}</div></div>` : '') +
     `<div class="card fade-in" style="animation-delay:0.2s"><div class="card-label">SIGNAL ANALYSIS</div>${sigHTML}</div>` +
     `<button class="btn-share fade-in" style="animation-delay:0.3s" onclick="shareOnX()">&#2197; SHARE YOUR RESULT ON X</button>` +
-    `<div class="disclaimer fade-in" style="animation-delay:0.35s">&#26A0; AI SIMULATION — Based on xai-org/x-algorithm (May 15 2026). Not affiliated with X Corp. Educational approximation only.</div>`;
+    `<div class="disclaimer fade-in" style="animation-delay:0.35s">&#26A0; AI SIMULATION — Based on xai-org/x-algorithm (May 15 2026). Educational approximation only.</div>`;
+  
   el.classList.remove('hidden');
+
   setTimeout(() => {
     document.getElementById('radialContainer').innerHTML = radialSVG(r.finalScore || 50);
-    Object.keys(r.scores || {}).forEach(k => { const b = document.getElementById('bar_' + k); if (b) setTimeout(() => b.style.width = (r.scores[k] || 0) + '%', 50); });
+    Object.keys(r.scores || {}).forEach(k => {
+      const b = document.getElementById('bar_' + k);
+      if (b) setTimeout(() => b.style.width = (r.scores[k] || 0) + '%', 50);
+    });
   }, 80);
 }
 
