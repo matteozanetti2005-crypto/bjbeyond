@@ -73,7 +73,7 @@ textarea::placeholder { color: #2a2a3a; }
     <div class="header-sub">
       Based on <a href="https://github.com/xai-org/x-algorithm" target="_blank">xai-org/x-algorithm</a> · May 15 2026 · <a href="https://bjbeyond.it">bjbeyond.it</a>
     </div>
-    <div class="badge"><div class="badge-dot"></div>POWERED BY GROQ</div>
+    <div class="badge"><div class="badge-dot"></div>HEURISTIC MODE</div>
   </div>
 
   <div class="card">
@@ -84,7 +84,7 @@ textarea::placeholder { color: #2a2a3a; }
     <textarea id="postText" maxlength="280" placeholder="Write or paste your X post text here..."></textarea>
     <div class="input-footer">
       <span class="char-count" id="charCount">0/280</span>
-      <button class="btn-run" id="btnRun" onclick="runPipeline()">&#9654; ANALYZE WITH AI</button>
+      <button class="btn-run" id="btnRun" onclick="runPipeline()">&#9654; ANALYZE</button>
     </div>
   </div>
 
@@ -101,40 +101,109 @@ textarea::placeholder { color: #2a2a3a; }
 </div>
 
 <script>
-const GROQ_KEY = "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";
+// ====================== FETCH DA URL ======================
+async function fetchPostText(url) {
+  try {
+    const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`;
+    const response = await fetch(proxyUrl);
+    const html = await response.text();
 
-async function analyzeWithGroq(postText) {
-  const res = await fetch("https://api.groq.com/openai/v1/chat/completions", {
-    method: "POST",
-    headers: {
-      "Authorization": `Bearer ${GROQ_KEY}`,
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify({
-      model: "llama-3.1-70b-versatile",
-      messages: [
-        {
-          role: "system",
-          content: "Return ONLY valid JSON: {\"finalScore\": number (15-96), \"verdict\": \"HIGH RANKING POTENTIAL\" or \"MODERATE SIGNAL\" or \"LOW REACH PREDICTED\", \"verdictColor\": \"#00e5ff\" or \"#ffaa00\" or \"#ff4d4d\", \"insight\": \"short explanation\", \"p_like\": number, \"p_reply\": number, \"p_repost\": number, \"p_dwell\": number}"
-        },
-        {
-          role: "user",
-          content: postText
-        }
-      ],
-      temperature: 0.3,
-      max_tokens: 300
-    })
-  });
+    let postText = '';
+    let match = html.match(/<meta property="og:description" content="([^"]+)"/i);
+    if (match && match[1]) postText = match[1];
 
-  if (!res.ok) throw new Error("Groq API error");
-  const data = await res.json();
-  let resultText = data.choices[0].message.content;
-  resultText = resultText.replace(/```json/g, "").replace(/```/g, "").trim();
-  return JSON.parse(resultText);
+    if (!postText || postText.length < 15) {
+      match = html.match(/<title>([^<]+)<\/title>/i);
+      if (match && match[1]) postText = match[1].replace(/ \| X| on X/gi, '');
+    }
+
+    if (!postText || postText.length < 15) {
+      match = html.match(/"text":"([^"]{15,})"/);
+      if (match && match[1]) postText = match[1];
+    }
+
+    if (!postText || postText.length < 15) {
+      match = html.match(/data-testid="tweetText"[^>]*>([^<]{15,})/i);
+      if (match && match[1]) postText = match[1];
+    }
+
+    postText = postText.replace(/\\u002F/g, '/').replace(/\\"/g, '"').replace(/&amp;/g, '&').trim();
+
+    if (postText.length < 10) throw new Error("Could not extract text");
+    return postText;
+  } catch (e) {
+    throw new Error("Failed to fetch post. Paste text manually.");
+  }
 }
 
-const STEP_LABELS = ["Query hydration","Fetching post","Grox safety check","AI analysis","Phoenix score computed"];
+// ====================== ANALISI EURISTICA ======================
+function analyzePost(text) {
+  const words = text.trim().split(/\s+/);
+  const chars = text.length;
+  const sentences = text.split(/[.!?]+/).filter(Boolean).length;
+  const hook = words.slice(0, 8).join(' ');
+
+  const hasQ = /\?/.test(text);
+  const hasN = /\d+/.test(text);
+  const hasHash = /#\w+/.test(text);
+  const hasEmoji = /\p{Emoji}/u.test(text);
+  const hasThread = /\uD83E\uDDF5|thread|1\//i.test(text);
+  const hasUrg = /breaking|just|now|today/i.test(text);
+  const hasList = /\u2192|\u2022|\d\.|step/i.test(text);
+  const hasContra = /wrong|nobody|everyone|actually|myth/i.test(text);
+  const hasProof = /million|billion|study|research|data|report/i.test(text);
+  const caps = (text.match(/[A-Z]/g) || []).length / Math.max(chars, 1);
+  const spam = /buy now|click here|follow back|dm me|free money/i.test(text);
+
+  const hookStr = [hasQ, hasN, hasUrg, /^(if|why|how|what|here|nobody|most)/i.test(hook), hasEmoji].filter(Boolean).length;
+
+  const pFav = Math.min(0.95, 0.05 + hookStr * 0.07 + (hasN ? 0.06 : 0) + (hasProof ? 0.05 : 0) + (chars > 100 ? 0.04 : 0));
+  const pRep = Math.min(0.93, 0.02 + (hasQ ? 0.09 : 0) + (hasContra ? 0.06 : 0) + (hasThread ? 0.04 : 0));
+  const pRet = Math.min(0.90, 0.02 + (hasProof ? 0.07 : 0) + (hasList ? 0.05 : 0) + (hasN ? 0.04 : 0));
+  const pDwl = Math.min(0.98, 0.30 + (Math.min(chars, 280) / 280) * 0.35 + (hasList ? 0.12 : 0) + (sentences > 2 ? 0.06 : 0));
+  const pShr = Math.min(0.88, 0.01 + (hasProof ? 0.05 : 0) + (hasContra ? 0.04 : 0));
+  const pOon = Math.min(0.85, (hasHash ? 0.06 : 0) + (hasProof ? 0.05 : 0) + (hasN ? 0.04 : 0) + hookStr * 0.03);
+
+  const spamS = spam ? 0.75 : caps > 0.35 ? 0.35 : 0.02;
+  const blockP = spam ? 0.55 : caps > 0.45 ? 0.30 : 0.03;
+
+  const raw = pFav * 0.5 + pRep * 1.0 + pRet * 0.4 + pDwl * 0.8 + pShr * 0.6 + pOon * 0.15 + spamS * (-3.0) + blockP * (-2.5);
+  const finalScore = Math.max(12, Math.min(96, Math.round((raw + 1) / 1.8 * 100)));
+
+  const signals = [];
+  if (hasUrg) signals.push({ t: "Urgency signal detected", pos: true });
+  if (hookStr >= 3) signals.push({ t: "Strong hook (first 8 words)", pos: true });
+  if (hasQ) signals.push({ t: "Question → reply trigger", pos: true });
+  if (hasN) signals.push({ t: "Numbers → credibility boost", pos: true });
+  if (hasProof) signals.push({ t: "Social proof / data detected", pos: true });
+  if (hasList) signals.push({ t: "List/steps → dwell time ↑", pos: true });
+  if (hasThread) signals.push({ t: "Thread format detected", pos: true });
+  if (hasHash) signals.push({ t: "Hashtags → OON discovery", pos: true });
+  if (spam) signals.push({ t: "Spam language detected", pos: false });
+  if (caps > 0.35) signals.push({ t: "Excessive CAPS → spam signal", pos: false });
+  if (blockP > 0.20) signals.push({ t: "Block prediction elevated", pos: false });
+  if (chars < 50) signals.push({ t: "Too short → low dwell time", pos: false });
+  if (!hasEmoji && !hasN && !hasQ) signals.push({ t: "No hook triggers detected", pos: false });
+
+  return {
+    finalScore,
+    scores: {
+      favorite: Math.round(pFav * 100),
+      reply: Math.round(pRep * 100),
+      repost: Math.round(pRet * 100),
+      dwell: Math.round(pDwl * 100),
+      oon: Math.round(pOon * 100),
+      spam: Math.round(spamS * 100)
+    },
+    signals,
+    stats: { words: words.length, chars, hookStr },
+    verdict: finalScore >= 75 ? "HIGH RANKING POTENTIAL" : finalScore >= 50 ? "MODERATE SIGNAL" : "LOW REACH PREDICTED",
+    verdictColor: finalScore >= 75 ? "#00e5ff" : finalScore >= 50 ? "#ffaa00" : "#ff4d4d"
+  };
+}
+
+// ====================== PIPELINE ======================
+const STEP_LABELS = ["Query hydration","Fetching post","Analysis","Score computed"];
 
 const urlInput = document.getElementById('postUrl');
 const textarea = document.getElementById('postText');
@@ -144,128 +213,4 @@ const charCount = document.getElementById('charCount');
 textarea.addEventListener('input', () => {
   const n = textarea.value.length;
   charCount.textContent = n + '/280';
-  charCount.className = 'char-count' + (n > 250 ? ' warn' : '');
-});
-
-let currentResult = null;
-
-async function runPipeline() {
-  const url = urlInput.value.trim();
-  let text = textarea.value.trim();
-
-  if (!url && !text) {
-    alert('Paste a URL or post text first.');
-    return;
-  }
-
-  btnRun.disabled = true;
-  btnRun.textContent = 'ANALYZING...';
-  document.getElementById('results').classList.add('hidden');
-  document.getElementById('results').innerHTML = '';
-
-  const pc = document.getElementById('pipelineCard');
-  pc.classList.remove('hidden');
-  const stepsEl = document.getElementById('steps');
-  stepsEl.innerHTML = STEP_LABELS.map((s, i) => `<div class="step inactive" id="step${i}"><div class="step-num idle" id="stepnum${i}">${i + 1}</div><div class="step-text idle" id="steptext${i}">${s}</div></div>`).join('');
-
-  let s = 0;
-  const animateStep = () => {
-    if (s > 0) {
-      document.getElementById('stepnum' + (s - 1)).className = 'step-num done';
-      document.getElementById('stepnum' + (s - 1)).textContent = '✓';
-      document.getElementById('steptext' + (s - 1)).className = 'step-text done';
-    }
-    document.getElementById('step' + s).className = 'step';
-    document.getElementById('stepnum' + s).className = 'step-num active';
-    document.getElementById('steptext' + s).className = 'step-text active';
-    s++;
-  };
-
-  try {
-    for (let i = 0; i < 2; i++) { await new Promise(r => setTimeout(r, 450)); animateStep(); }
-
-    if (url) {
-      await new Promise(r => setTimeout(r, 450)); animateStep();
-      const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`;
-      const response = await fetch(proxyUrl);
-      const html = await response.text();
-      let extracted = '';
-      let match = html.match(/<meta property="og:description" content="([^"]+)"/i);
-      if (match && match[1]) extracted = match[1];
-      if (!extracted || extracted.length < 15) {
-        match = html.match(/<title>([^<]+)<\/title>/i);
-        if (match && match[1]) extracted = match[1].replace(/ \| X| on X/gi, '');
-      }
-      if (extracted.length > 15) {
-        textarea.value = extracted;
-        charCount.textContent = extracted.length + '/280';
-        text = extracted;
-      }
-    } else {
-      await new Promise(r => setTimeout(r, 450)); animateStep();
-    }
-
-    await new Promise(r => setTimeout(r, 450)); animateStep();
-
-    const result = await analyzeWithGroq(text);
-
-    await new Promise(r => setTimeout(r, 400)); animateStep();
-
-    for (let i = 0; i < STEP_LABELS.length; i++) {
-      document.getElementById('stepnum' + i).className = 'step-num done';
-      document.getElementById('stepnum' + i).textContent = '✓';
-      document.getElementById('steptext' + i).className = 'step-text done';
-    }
-
-    currentResult = result;
-    showResults(result);
-
-  } catch (err) {
-    document.getElementById('stepnum' + (s - 1)).className = 'step-num active';
-    document.getElementById('stepnum' + (s - 1)).textContent = '✗';
-    document.getElementById('stepnum' + (s - 1)).style.borderColor = '#ff4d4d';
-    document.getElementById('stepnum' + (s - 1)).style.color = '#ff4d4d';
-
-    const el = document.getElementById('results');
-    el.innerHTML = `<div class="error-box fade-in">&#9888; ${err.message}</div>`;
-    el.classList.remove('hidden');
-  }
-
-  btnRun.disabled = false;
-  btnRun.textContent = '&#9654; ANALYZE WITH AI';
-}
-
-function showResults(r) {
-  const el = document.getElementById('results');
-  el.innerHTML = `
-    <div class="card fade-in">
-      <div class="card-label">FOR YOU RANKING SIGNAL</div>
-      <div class="score-row">
-        <div id="radialContainer">${radialSVG(r.finalScore || 50)}</div>
-        <div class="score-info">
-          <div class="score-verdict" style="color:${r.verdictColor || '#ffaa00'}">${r.verdict || 'MODERATE SIGNAL'}</div>
-          <div class="score-stats">${r.insight || ''}</div>
-        </div>
-      </div>
-    </div>
-    <button class="btn-share fade-in" onclick="shareOnX()">↗ SHARE YOUR RESULT ON X</button>
-    <div class="disclaimer fade-in">⚠ Powered by Groq (Llama 3.1 70B)</div>
-  `;
-  el.classList.remove('hidden');
-}
-
-function radialSVG(score) {
-  const r = 44, circ = 2 * Math.PI * r, dash = (score / 100) * circ;
-  const color = score >= 70 ? '#00e5ff' : score >= 45 ? '#ffaa00' : '#ff4d4d';
-  return `<svg width="110" height="110" viewBox="0 0 100 100"><circle cx="50" cy="50" r="${r}" fill="none" stroke="#1a1a2e" stroke-width="8"/><circle cx="50" cy="50" r="${r}" fill="none" stroke="${color}" stroke-width="8" stroke-dasharray="${dash} ${circ}" stroke-linecap="round" transform="rotate(-90 50 50)"/><text x="50" y="46" text-anchor="middle" fill="${color}" style="font-size:20px;font-family:Orbitron,monospace;font-weight:700">${score}</text><text x="50" y="60" text-anchor="middle" fill="#888" style="font-size:9px;font-family:monospace">/100</text></svg>`;
-}
-
-function shareOnX() {
-  if (!currentResult) return;
-  const score = currentResult.finalScore || 50;
-  const v = score >= 75 ? 'HIGH RANKING POTENTIAL 🔥' : score >= 50 ? 'MODERATE SIGNAL ⚡' : 'LOW REACH PREDICTED';
-  window.open('https://x.com/intent/tweet?text=' + encodeURIComponent('I just ran my post through the Phoenix AI simulator.\n\nScore: ' + score + '/100 — ' + v + '\n\nTest yours 👇\nbjbeyond.it/Phoenix\n\n@bj_beyond #XAlgorithm #Phoenix'), '_blank');
-}
-</script>
-</body>
-</html>
+  charCount.className
