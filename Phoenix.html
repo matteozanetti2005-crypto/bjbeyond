@@ -103,48 +103,40 @@ textarea::placeholder { color: #2a2a3a; }
 <script>
 const WORKER_URL = "https://phoenix-analyzer.matteo-zanetti2005.workers.dev";
 
-// ====================== FETCH MIGLIORATO ======================
 async function fetchPostText(url) {
-  const proxies = [
-    `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`,
-    `https://corsproxy.io/?${encodeURIComponent(url)}`,
-    `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(url)}`
-  ];
+  try {
+    const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`;
+    const response = await fetch(proxyUrl);
+    const html = await response.text();
 
-  for (let proxy of proxies) {
-    try {
-      const response = await fetch(proxy, { signal: AbortSignal.timeout(8000) });
-      if (!response.ok) continue;
-      const html = await response.text();
+    let postText = '';
+    let match = html.match(/<meta property="og:description" content="([^"]+)"/i);
+    if (match && match[1]) postText = match[1];
 
-      let postText = '';
-      let match = html.match(/<meta property="og:description" content="([^"]+)"/i);
+    if (!postText || postText.length < 15) {
+      match = html.match(/<title>([^<]+)<\/title>/i);
+      if (match && match[1]) postText = match[1].replace(/ \| X| on X/gi, '');
+    }
+
+    if (!postText || postText.length < 15) {
+      match = html.match(/"text":"([^"]{15,})"/);
       if (match && match[1]) postText = match[1];
+    }
 
-      if (!postText || postText.length < 15) {
-        match = html.match(/<title>([^<]+)<\/title>/i);
-        if (match && match[1]) postText = match[1].replace(/ \| X| on X/gi, '');
-      }
+    if (!postText || postText.length < 15) {
+      match = html.match(/data-testid="tweetText"[^>]*>([^<]{15,})/i);
+      if (match && match[1]) postText = match[1];
+    }
 
-      if (!postText || postText.length < 15) {
-        match = html.match(/"text":"([^"]{15,})"/);
-        if (match && match[1]) postText = match[1];
-      }
+    postText = postText.replace(/\\u002F/g, '/').replace(/\\"/g, '"').replace(/&amp;/g, '&').trim();
 
-      if (!postText || postText.length < 15) {
-        match = html.match(/data-testid="tweetText"[^>]*>([^<]{15,})/i);
-        if (match && match[1]) postText = match[1];
-      }
-
-      postText = postText.replace(/\\u002F/g, '/').replace(/\\"/g, '"').replace(/&amp;/g, '&').trim();
-
-      if (postText.length > 15) return postText;
-    } catch (e) {}
+    if (postText.length < 10) throw new Error("Could not extract text");
+    return postText;
+  } catch (e) {
+    throw new Error("Failed to fetch post. Paste text manually.");
   }
-  throw new Error("Failed to fetch post. Please paste the text manually.");
 }
 
-// ====================== ANALISI CON WORKER ======================
 async function analyzeWithWorker(postText) {
   const res = await fetch(WORKER_URL, {
     method: 'POST',
@@ -152,13 +144,12 @@ async function analyzeWithWorker(postText) {
     body: JSON.stringify({ postText })
   });
 
-  if (!res.ok) throw new Error('AI service error');
+  if (!res.ok) throw new Error('Worker error: ' + res.status);
   const result = await res.json();
   if (result.error) throw new Error(result.error);
   return result;
 }
 
-// ====================== PIPELINE ======================
 const STEP_LABELS = ["Query hydration","Fetching post","Grox safety check","AI analysis","Phoenix score computed"];
 
 const urlInput = document.getElementById('postUrl');
