@@ -160,7 +160,7 @@
 
             const steps = ['hydration','sourcing','prefilter','transformer','scoring','ranking'];
             for (let i=0; i<steps.length; i++) {
-                await new Promise(r => setTimeout(r, 280));
+                await new Promise(r => setTimeout(r, 260));
                 highlightStep(steps[i], true);
             }
 
@@ -176,66 +176,70 @@
             const len = text.length;
             const wc = text.split(/\s+/).length;
             
-            // === FEATURE DETECTION ===
-            const hasQuestion = t.includes('?') || t.includes('what') || t.includes('how') || t.includes('why');
+            const hasQ = t.includes('?') || t.includes('what') || t.includes('how') || t.includes('why');
             const hasLink = /https?:|t\.co\//.test(t);
             const hasMedia = /image|video|dashboard|chart|gif/.test(t);
             const hasNumbers = /\d/.test(text);
             const hasHashtag = /#\w+/.test(text);
             const hasCTA = /try|check|link|dm|comment|reply|tag|click|see|watch/.test(t);
-            const isLong = len > 200;
-            const isShort = len < 50;
+            const isLong = len > 220;
+            const isShort = len < 45;
             const hasManyEmojis = (text.match(/[\u{1F600}-\u{1F64F}]/gu) || []).length > 2;
 
-            // === AGGRESSIVE SCORING ===
-            let hook = 48;
-            if (hasQuestion) hook += 22;
-            if (hasNumbers) hook += 12;
-            if (hasCTA) hook += 14;
-            if (wc > 20 && wc < 70) hook += 10;
-            if (hasManyEmojis) hook -= 8;
-            hook = Math.max(35, Math.min(98, hook));
+            // === AGGRESSIVE SCORING (molto sensibile) ===
+            let base = 42;
+            
+            // Hook (molto importante)
+            let hook = base + (hasQ ? 24 : 0) + (hasNumbers ? 14 : 0) + (hasCTA ? 16 : 0) + (wc > 18 && wc < 75 ? 12 : 0);
+            if (hasManyEmojis) hook -= 10;
+            hook = Math.max(32, Math.min(98, hook));
 
-            let quality = 52;
-            if (isLong) quality += 18;
-            if (hasMedia) quality += 16;
-            if (hasHashtag) quality += 9;
-            if (isShort) quality -= 12;
-            quality = Math.max(38, Math.min(96, quality));
+            // Quality
+            let quality = base + (isLong ? 20 : 0) + (hasMedia ? 18 : 0) + (hasHashtag ? 10 : 0);
+            if (isShort) quality -= 14;
+            quality = Math.max(30, Math.min(96, quality));
 
-            let relevance = 48;
-            if (persona === 'bi' && /power bi|dashboard|data|kpi|dax/.test(t)) relevance += 28;
-            if (persona === 'finance' && /finance|excel|kpi|roi|budget/.test(t)) relevance += 26;
-            if (persona === 'creator' && /growth|algorithm|post|reach|engagement/.test(t)) relevance += 27;
-            relevance = Math.max(35, Math.min(95, relevance));
+            // Relevance (molto forte per nicchia)
+            let relevance = base + 8;
+            if (persona === 'bi' && /power bi|dashboard|data|kpi|dax/.test(t)) relevance += 32;
+            if (persona === 'finance' && /finance|excel|kpi|roi|budget/.test(t)) relevance += 30;
+            if (persona === 'creator' && /growth|algorithm|post|reach|engagement/.test(t)) relevance += 31;
+            relevance = Math.max(28, Math.min(95, relevance));
 
-            let virality = 42;
-            if (hasLink) virality += 18;
-            if (hasQuestion) virality += 13;
-            if (hasMedia) virality += 12;
-            if (isShort) virality += 10;
-            if (hasHashtag) virality += 8;
-            virality = Math.max(30, Math.min(92, virality));
+            // Virality
+            let virality = base - 4;
+            if (hasLink) virality += 20;
+            if (hasQ) virality += 14;
+            if (hasMedia) virality += 13;
+            if (isShort) virality += 12;
+            if (hasHashtag) virality += 9;
+            virality = Math.max(25, Math.min(92, virality));
 
-            // === PROBABILITIES (molto più variabili) ===
-            let pLike = Math.round(Math.max(28, Math.min(97, hook * 0.42 + quality * 0.35 + relevance * 0.28 - 12)));
-            let pReply = Math.round(Math.max(18, Math.min(92, (hasQuestion ? 72 : 32) + virality * 0.25 + (hasCTA ? 12 : 0))));
-            let pRepost = Math.round(Math.max(15, Math.min(89, virality * 0.52 + (hasMedia ? 11 : 0) + (hasHashtag ? 9 : 0))));
-            let pDwell = Math.round(Math.max(35, Math.min(98, quality * 0.82 + (isLong ? 14 : 0) + (hasNumbers ? 8 : 0))));
-            let pClick = Math.round(Math.max(22, Math.min(85, relevance * 0.62 + (hasLink ? 18 : 0) + (hasCTA ? 10 : 0))));
+            // === PROBABILITIES MOLTO VARIABILI ===
+            let pLike = Math.round(Math.max(22, Math.min(97, hook * 0.45 + quality * 0.38 + relevance * 0.32 - 18)));
+            let pReply = Math.round(Math.max(12, Math.min(93, (hasQ ? 78 : 28) + virality * 0.28 + (hasCTA ? 14 : 0))));
+            let pRepost = Math.round(Math.max(10, Math.min(90, virality * 0.55 + (hasMedia ? 13 : 0) + (hasHashtag ? 10 : 0))));
+            let pDwell = Math.round(Math.max(28, Math.min(98, quality * 0.85 + (isLong ? 16 : 0) + (hasNumbers ? 9 : 0))));
+            let pClick = Math.round(Math.max(18, Math.min(87, relevance * 0.65 + (hasLink ? 20 : 0) + (hasCTA ? 11 : 0))));
 
             // === OFFICIAL WEIGHTED SCORER ===
-            const w = { like: 0.28, reply: 0.17, repost: 0.16, dwell: 0.24, click: 0.12 };
+            const w = { like: 0.29, reply: 0.16, repost: 0.15, dwell: 0.25, click: 0.11 };
             let score = (pLike * w.like) + (pReply * w.reply) + (pRepost * w.repost) + (pDwell * w.dwell) + (pClick * w.click);
 
-            const niche = (persona === 'bi' && /power bi|dashboard/.test(t)) ? 18 : 
-                          (persona === 'finance' && /finance|excel/.test(t)) ? 16 : 
-                          (persona === 'creator' && /growth|algorithm/.test(t)) ? 17 : 0;
+            const niche = (persona === 'bi' && /power bi|dashboard/.test(t)) ? 22 : 
+                          (persona === 'finance' && /finance|excel/.test(t)) ? 20 : 
+                          (persona === 'creator' && /growth|algorithm/.test(t)) ? 21 : 0;
 
-            const divPen = (niche > 12) ? -0.75 : -0.32;
-            const oon = (virality > 78) ? 2.1 : 0.6;
+            const divPen = (niche > 15) ? -0.85 : -0.38;
+            const oon = (virality > 80) ? 2.4 : 0.7;
 
-            const final = Math.round(Math.max(32, Math.min(97, score + niche * 0.62 + oon + divPen)));
+            // === FINAL SCORE MOLTO SENSIBILE ===
+            let final = Math.round(Math.max(28, Math.min(97, score + niche * 0.68 + oon + divPen)));
+
+            // Piccola variazione per evitare risultati identici
+            if (hasQ && hasLink) final += 3;
+            if (isShort && !hasQ) final -= 4;
+            if (hasMedia && hasHashtag) final += 2;
 
             return {
                 overall: final, pLike, pReply, pRepost, pDwell, pClick,
@@ -266,7 +270,7 @@
                 <div class="text-[9px] mt-1">like ${r.pLike}×${w.like} | reply ${r.pReply}×${w.reply} | repost ${r.pRepost}×${w.repost} | dwell ${r.pDwell}×${w.dwell}</div>
             `;
             document.getElementById('diversityDisplay').textContent = r.divPen.toFixed(2);
-            document.getElementById('oonDisplay').textContent = r.oon > 1 ? '+2.1' : '+0.6';
+            document.getElementById('oonDisplay').textContent = r.oon > 1 ? '+2.4' : '+0.7';
         }
 
         function init() {
