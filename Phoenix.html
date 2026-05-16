@@ -73,7 +73,7 @@ textarea::placeholder { color: #2a2a3a; }
     <div class="header-sub">
       Based on <a href="https://github.com/xai-org/x-algorithm" target="_blank">xai-org/x-algorithm</a> · May 15 2026 · <a href="https://bjbeyond.it">bjbeyond.it</a>
     </div>
-    <div class="badge"><div class="badge-dot"></div>POWERED BY AI</div>
+    <div class="badge"><div class="badge-dot"></div>POWERED BY GROQ</div>
   </div>
 
   <div class="card">
@@ -101,53 +101,37 @@ textarea::placeholder { color: #2a2a3a; }
 </div>
 
 <script>
-const WORKER_URL = "https://phoenix-analyzer.matteo-zanetti2005.workers.dev";
+const GROQ_KEY = "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";
 
-async function fetchPostText(url) {
-  try {
-    const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`;
-    const response = await fetch(proxyUrl);
-    const html = await response.text();
-
-    let postText = '';
-    let match = html.match(/<meta property="og:description" content="([^"]+)"/i);
-    if (match && match[1]) postText = match[1];
-
-    if (!postText || postText.length < 15) {
-      match = html.match(/<title>([^<]+)<\/title>/i);
-      if (match && match[1]) postText = match[1].replace(/ \| X| on X/gi, '');
-    }
-
-    if (!postText || postText.length < 15) {
-      match = html.match(/"text":"([^"]{15,})"/);
-      if (match && match[1]) postText = match[1];
-    }
-
-    if (!postText || postText.length < 15) {
-      match = html.match(/data-testid="tweetText"[^>]*>([^<]{15,})/i);
-      if (match && match[1]) postText = match[1];
-    }
-
-    postText = postText.replace(/\\u002F/g, '/').replace(/\\"/g, '"').replace(/&amp;/g, '&').trim();
-
-    if (postText.length < 10) throw new Error("Could not extract text");
-    return postText;
-  } catch (e) {
-    throw new Error("Failed to fetch post. Paste text manually.");
-  }
-}
-
-async function analyzeWithWorker(postText) {
-  const res = await fetch(WORKER_URL, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ postText })
+async function analyzeWithGroq(postText) {
+  const res = await fetch("https://api.groq.com/openai/v1/chat/completions", {
+    method: "POST",
+    headers: {
+      "Authorization": `Bearer ${GROQ_KEY}`,
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      model: "llama-3.1-70b-versatile",
+      messages: [
+        {
+          role: "system",
+          content: "Return ONLY valid JSON: {\"finalScore\": number (15-96), \"verdict\": \"HIGH RANKING POTENTIAL\" or \"MODERATE SIGNAL\" or \"LOW REACH PREDICTED\", \"verdictColor\": \"#00e5ff\" or \"#ffaa00\" or \"#ff4d4d\", \"insight\": \"short explanation\", \"p_like\": number, \"p_reply\": number, \"p_repost\": number, \"p_dwell\": number}"
+        },
+        {
+          role: "user",
+          content: postText
+        }
+      ],
+      temperature: 0.3,
+      max_tokens: 300
+    })
   });
 
-  if (!res.ok) throw new Error('Worker error: ' + res.status);
-  const result = await res.json();
-  if (result.error) throw new Error(result.error);
-  return result;
+  if (!res.ok) throw new Error("Groq API error");
+  const data = await res.json();
+  let resultText = data.choices[0].message.content;
+  resultText = resultText.replace(/```json/g, "").replace(/```/g, "").trim();
+  return JSON.parse(resultText);
 }
 
 const STEP_LABELS = ["Query hydration","Fetching post","Grox safety check","AI analysis","Phoenix score computed"];
@@ -202,17 +186,28 @@ async function runPipeline() {
 
     if (url) {
       await new Promise(r => setTimeout(r, 450)); animateStep();
-      const extracted = await fetchPostText(url);
-      textarea.value = extracted;
-      charCount.textContent = extracted.length + '/280';
-      text = extracted;
+      const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`;
+      const response = await fetch(proxyUrl);
+      const html = await response.text();
+      let extracted = '';
+      let match = html.match(/<meta property="og:description" content="([^"]+)"/i);
+      if (match && match[1]) extracted = match[1];
+      if (!extracted || extracted.length < 15) {
+        match = html.match(/<title>([^<]+)<\/title>/i);
+        if (match && match[1]) extracted = match[1].replace(/ \| X| on X/gi, '');
+      }
+      if (extracted.length > 15) {
+        textarea.value = extracted;
+        charCount.textContent = extracted.length + '/280';
+        text = extracted;
+      }
     } else {
       await new Promise(r => setTimeout(r, 450)); animateStep();
     }
 
     await new Promise(r => setTimeout(r, 450)); animateStep();
 
-    const result = await analyzeWithWorker(text);
+    const result = await analyzeWithGroq(text);
 
     await new Promise(r => setTimeout(r, 400)); animateStep();
 
@@ -254,7 +249,7 @@ function showResults(r) {
       </div>
     </div>
     <button class="btn-share fade-in" onclick="shareOnX()">↗ SHARE YOUR RESULT ON X</button>
-    <div class="disclaimer fade-in">⚠ AI SIMULATION — Powered by Groq (Llama 3.1 70B)</div>
+    <div class="disclaimer fade-in">⚠ Powered by Groq (Llama 3.1 70B)</div>
   `;
   el.classList.remove('hidden');
 }
