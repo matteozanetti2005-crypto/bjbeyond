@@ -137,138 +137,224 @@ textarea::placeholder { color: #2a2a3a; }
 <script>
 const WORKER_URL = "https://phoenix-analyzer.matteo-zanetti2005.workers.dev";
 
-const STEP_LABELS = ["Query hydration","Fetching post","Grox safety check","AI analysis","Phoenix score computed"];
-const METRICS = {
-  favorite:{ label:"Like probability",     icon:"&#9825;", color:"#00e5ff" },
-  reply:   { label:"Reply probability",    icon:"&#8617;", color:"#ff4d4d" },
-  repost:  { label:"Repost probability",   icon:"&#8635;", color:"#39ff14" },
-  dwell:   { label:"Dwell time score",     icon:"&#9201;", color:"#ffaa00" },
-  oon:     { label:"Out-of-network reach", icon:"&#128225;", color:"#bf80ff" },
-  spam:    { label:"Spam signal",          icon:"&#9888;", color:"#ff4444" }
-};
+// ====================== FETCH DA URL (AllOrigins + 5 tentativi) ======================
+async function fetchPostText(url) {
+  try {
+    const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`;
+    const response = await fetch(proxyUrl);
+    const html = await response.text();
 
-const urlInput=document.getElementById('postUrl');
-const textarea=document.getElementById('postText');
-const btnRun=document.getElementById('btnRun');
-const charCount=document.getElementById('charCount');
+    let postText = '';
 
-textarea.addEventListener('input',()=>{
-  const n=textarea.value.length;
-  charCount.textContent=n+'/280';
-  charCount.className='char-count'+(n>250?' warn':'');
-});
+    // Tentativo 1: og:description
+    let match = html.match(/<meta property="og:description" content="([^"]+)"/);
+    if (match && match[1] && match[1].length > 10) postText = match[1];
 
-function radialSVG(score){
-  const r=44,circ=2*Math.PI*r,dash=(score/100)*circ;
-  const color=score>=70?'#00e5ff':score>=45?'#ffaa00':'#ff4d4d';
-  return'<svg width="110" height="110" viewBox="0 0 100 100"><circle cx="50" cy="50" r="'+r+'" fill="none" stroke="#1a1a2e" stroke-width="8"/><circle cx="50" cy="50" r="'+r+'" fill="none" stroke="'+color+'" stroke-width="8" stroke-dasharray="'+dash+' '+circ+'" stroke-linecap="round" transform="rotate(-90 50 50)" style="transition:stroke-dasharray 1.2s cubic-bezier(.4,0,.2,1)"/><text x="50" y="46" text-anchor="middle" fill="'+color+'" style="font-size:20px;font-family:Orbitron,monospace;font-weight:700">'+score+'</text><text x="50" y="60" text-anchor="middle" fill="#888" style="font-size:9px;font-family:monospace">/100</text></svg>';
+    // Tentativo 2: title
+    if (!postText || postText.length < 15) {
+      match = html.match(/<title>([^<]+)<\/title>/);
+      if (match && match[1]) postText = match[1].replace(' | X', '').replace(' on X', '');
+    }
+
+    // Tentativo 3: JSON text
+    if (!postText || postText.length < 15) {
+      match = html.match(/"text":"([^"]{15,})"/);
+      if (match && match[1]) postText = match[1];
+    }
+
+    // Tentativo 4: data-testid
+    if (!postText || postText.length < 15) {
+      match = html.match(/data-testid="tweetText"[^>]*>([^<]{15,})/);
+      if (match && match[1]) postText = match[1];
+    }
+
+    // Tentativo 5: span lunghi
+    if (!postText || postText.length < 15) {
+      const spans = html.match(/<span[^>]*>([^<]{20,})<\/span>/g);
+      if (spans) {
+        for (let span of spans) {
+          const text = span.replace(/<[^>]+>/g, '');
+          if (text.length > 20 && text.length < 500) {
+            postText = text;
+            break;
+          }
+        }
+      }
+    }
+
+    postText = postText.replace(/\\u002F/g, '/').replace(/\\"/g, '"').replace(/&amp;/g, '&').trim();
+
+    if (!postText || postText.length < 10) {
+      throw new Error("Could not extract post text from URL");
+    }
+
+    return postText;
+
+  } catch (error) {
+    throw new Error("Failed to fetch post: " + error.message);
+  }
 }
 
-let currentResult=null;
+// ====================== ANALISI CON WORKER ======================
+async function analyzeWithWorker(postText) {
+  const res = await fetch(WORKER_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ postText: postText })
+  });
 
-async function runPipeline(){
-  const url=urlInput.value.trim();
-  const text=textarea.value.trim();
-  if(!url && !text){alert('Paste a URL or post text first.');return;}
+  if (!res.ok) throw new Error('Worker error: ' + res.status);
+  const result = await res.json();
+  if (result.error) throw new Error(result.error);
+  return result;
+}
 
-  btnRun.disabled=true;
-  btnRun.textContent='ANALYZING...';
-  document.getElementById('results').classList.add('hidden');
-  document.getElementById('results').innerHTML='';
-  const pc=document.getElementById('pipelineCard');
-  pc.classList.remove('hidden');
-  const stepsEl=document.getElementById('steps');
-  stepsEl.innerHTML=STEP_LABELS.map((s,i)=>'<div class="step inactive" id="step'+i+'"><div class="step-num idle" id="stepnum'+i+'">'+(i+1)+'</div><div class="step-text idle" id="steptext'+i+'">'+s+'</div></div>').join('');
+// ====================== PIPELINE ======================
+const STEP_LABELS = ["Query hydration","Fetching post","Grox safety check","AI analysis","Phoenix score computed"];
 
-  let s=0;
-  const animateStep=()=>{
-    if(s>0){
-      document.getElementById('stepnum'+(s-1)).className='step-num done';
-      document.getElementById('stepnum'+(s-1)).textContent='\u2713';
-      document.getElementById('steptext'+(s-1)).className='step-text done';
-    }
-    document.getElementById('step'+s).className='step';
-    document.getElementById('stepnum'+s).className='step-num active';
-    document.getElementById('steptext'+s).className='step-text active';
-    s++;
-  };
+const urlInput = document.getElementById('postUrl');
+const textarea = document.getElementById('postText');
+const btnRun = document.getElementById('btnRun');
+const charCount = document.getElementById('charCount');
 
-  for(let i=0;i<2;i++){await new Promise(r=>setTimeout(r,450));animateStep();}
-  await new Promise(r=>setTimeout(r,450));
-  animateStep();
+textarea.addEventListener('input', () => {
+  const n = textarea.value.length;
+  charCount.textContent = n + '/280';
+  charCount.className = 'char-count' + (n > 250 ? ' warn' : '');
+});
 
-  let result;
-  try{
-    const body={};
-    if(url) body.postUrl=url;
-    if(text) body.postText=text;
+let currentResult = null;
 
-    const res=await fetch(WORKER_URL,{
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body:JSON.stringify(body)
-    });
-    if(!res.ok) throw new Error('Worker error: '+res.status);
-    result=await res.json();
-    if(result.error) throw new Error(result.error);
-  }catch(err){
-    document.getElementById('stepnum'+(s-1)).className='step-num active';
-    document.getElementById('stepnum'+(s-1)).textContent='\u2717';
-    document.getElementById('stepnum'+(s-1)).style.borderColor='#ff4d4d';
-    document.getElementById('stepnum'+(s-1)).style.color='#ff4d4d';
-    const el=document.getElementById('results');
-    el.innerHTML='<div class="error-box fade-in">&#9888; '+err.message+'</div>';
-    el.classList.remove('hidden');
-    btnRun.disabled=false;
-    btnRun.textContent='&#9654; ANALYZE WITH AI';
+async function runPipeline() {
+  const url = urlInput.value.trim();
+  let text = textarea.value.trim();
+
+  if (!url && !text) {
+    alert('Paste a URL or post text first.');
     return;
   }
 
-  await new Promise(r=>setTimeout(r,300));
-  animateStep();
-  await new Promise(r=>setTimeout(r,400));
-  for(let i=0;i<STEP_LABELS.length;i++){
-    document.getElementById('stepnum'+i).className='step-num done';
-    document.getElementById('stepnum'+i).textContent='\u2713';
-    document.getElementById('steptext'+i).className='step-text done';
+  btnRun.disabled = true;
+  btnRun.textContent = 'ANALYZING...';
+  document.getElementById('results').classList.add('hidden');
+  document.getElementById('results').innerHTML = '';
+
+  const pc = document.getElementById('pipelineCard');
+  pc.classList.remove('hidden');
+  const stepsEl = document.getElementById('steps');
+  stepsEl.innerHTML = STEP_LABELS.map((s, i) => `<div class="step inactive" id="step${i}"><div class="step-num idle" id="stepnum${i}">${i + 1}</div><div class="step-text idle" id="steptext${i}">${s}</div></div>`).join('');
+
+  let s = 0;
+  const animateStep = () => {
+    if (s > 0) {
+      document.getElementById('stepnum' + (s - 1)).className = 'step-num done';
+      document.getElementById('stepnum' + (s - 1)).textContent = '✓';
+      document.getElementById('steptext' + (s - 1)).className = 'step-text done';
+    }
+    document.getElementById('step' + s).className = 'step';
+    document.getElementById('stepnum' + s).className = 'step-num active';
+    document.getElementById('steptext' + s).className = 'step-text active';
+    s++;
+  };
+
+  try {
+    // Step 1-2: Hydration + Fetch
+    for (let i = 0; i < 2; i++) {
+      await new Promise(r => setTimeout(r, 450));
+      animateStep();
+    }
+
+    // Se c'è un URL, estrai il testo
+    if (url) {
+      await new Promise(r => setTimeout(r, 450));
+      animateStep();
+      
+      const extractedText = await fetchPostText(url);
+      textarea.value = extractedText;
+      charCount.textContent = extractedText.length + '/280';
+      
+      // Mostra il testo estratto
+      const extractedDiv = document.createElement('div');
+      extractedDiv.className = 'extracted-text fade-in';
+      extractedDiv.innerHTML = `&#8220;${extractedText.substring(0, 120)}${extractedText.length > 120 ? '...' : ''}&#8221;`;
+      document.getElementById('results').appendChild(extractedDiv);
+      
+      text = extractedText;
+    } else {
+      await new Promise(r => setTimeout(r, 450));
+      animateStep();
+    }
+
+    // Step 3-4: Groq + AI
+    await new Promise(r => setTimeout(r, 450));
+    animateStep();
+
+    const result = await analyzeWithWorker(text);
+
+    // Step 5: Final
+    await new Promise(r => setTimeout(r, 400));
+    animateStep();
+
+    // Completa tutti gli step
+    for (let i = 0; i < STEP_LABELS.length; i++) {
+      document.getElementById('stepnum' + i).className = 'step-num done';
+      document.getElementById('stepnum' + i).textContent = '✓';
+      document.getElementById('steptext' + i).className = 'step-text done';
+    }
+
+    currentResult = result;
+    showResults(result);
+
+  } catch (err) {
+    document.getElementById('stepnum' + (s - 1)).className = 'step-num active';
+    document.getElementById('stepnum' + (s - 1)).textContent = '✗';
+    document.getElementById('stepnum' + (s - 1)).style.borderColor = '#ff4d4d';
+    document.getElementById('stepnum' + (s - 1)).style.color = '#ff4d4d';
+
+    const el = document.getElementById('results');
+    el.innerHTML = `<div class="error-box fade-in">&#9888; ${err.message}</div>`;
+    el.classList.remove('hidden');
   }
 
-  currentResult=result;
-  showResults(result);
-  btnRun.disabled=false;
-  btnRun.textContent='&#9654; ANALYZE WITH AI';
+  btnRun.disabled = false;
+  btnRun.textContent = '&#9654; ANALYZE WITH AI';
 }
 
-function showResults(r){
-  const verdictColor=r.verdictColor||'#ffaa00';
-  const verdict=r.verdict||'MODERATE SIGNAL';
-  const barsHTML=Object.entries(r.scores||{}).map(([k,val])=>{
-    const m=METRICS[k];if(!m)return'';
-    return'<div class="bar-row"><div class="bar-meta"><span class="bar-label">'+m.icon+' '+m.label+'</span><span class="bar-val" style="color:'+m.color+'">'+val+'%</span></div><div class="bar-track"><div class="bar-fill" id="bar_'+k+'" style="width:0%;background:'+m.color+';box-shadow:0 0 8px '+m.color+'55"></div></div></div>';
+function showResults(r) {
+  const verdictColor = r.verdictColor || '#ffaa00';
+  const verdict = r.verdict || 'MODERATE SIGNAL';
+  const barsHTML = Object.entries(r.scores || {}).map(([k, val]) => {
+    const m = METRICS[k]; if (!m) return '';
+    return `<div class="bar-row"><div class="bar-meta"><span class="bar-label">${m.icon} ${m.label}</span><span class="bar-val" style="color:${m.color}">${val}%</span></div><div class="bar-track"><div class="bar-fill" id="bar_${k}" style="width:0%;background:${m.color};box-shadow:0 0 8px ${m.color}55"></div></div></div>`;
   }).join('');
-  const sigHTML=(r.signals||[]).map(s=>'<div class="signal"><span style="color:'+(s.positive?'#39ff14':'#ff4d4d')+';font-size:13px">'+(s.positive?'+':'\u2212')+'</span><span style="color:'+(s.positive?'#aaa':'#ff7070')+'">'+s.text+'</span></div>').join('')||'<div style="font-size:11px;color:#555">No signals detected.</div>';
-  const extractedHTML=r.extractedText?'<div class="extracted-text fade-in">&#8220;'+r.extractedText+'&#8221;</div>':'';
-  const el=document.getElementById('results');
-  el.innerHTML=
-    extractedHTML+
-    '<div class="card fade-in"><div class="card-label">FOR YOU RANKING SIGNAL</div><div class="score-row"><div id="radialContainer">'+radialSVG(0)+'</div><div class="score-info"><div class="score-verdict" style="color:'+verdictColor+'">'+verdict+'</div><div class="score-stats">'+(r.wordCount||'--')+' words &middot; '+(r.charCount||'--')+' chars<br>Hook strength: '+(r.hookScore||'--')+'/5</div></div></div></div>'+
-    '<div class="card fade-in" style="animation-delay:0.1s"><div class="card-label">PREDICTED ENGAGEMENT</div>'+barsHTML+'</div>'+
-    (r.insight?'<div class="card fade-in" style="animation-delay:0.15s"><div class="card-label">AI INSIGHT</div><div class="insight-text">'+r.insight+'</div></div>':'')+
-    '<div class="card fade-in" style="animation-delay:0.2s"><div class="card-label">SIGNAL ANALYSIS</div>'+sigHTML+'</div>'+
-    '<button class="btn-share fade-in" style="animation-delay:0.3s" onclick="shareOnX()">\u2197 SHARE YOUR RESULT ON X</button>'+
-    '<div class="disclaimer fade-in" style="animation-delay:0.35s">\u26A0 AI SIMULATION \u2014 Based on xai-org/x-algorithm (May 15 2026). Not affiliated with X Corp. Educational approximation only.</div>';
+  const sigHTML = (r.signals || []).map(s => `<div class="signal"><span style="color:${s.positive ? '#39ff14' : '#ff4d4d'};font-size:13px">${s.positive ? '+' : '−'}</span><span style="color:${s.positive ? '#aaa' : '#ff7070'}">${s.text}</span></div>`).join('') || '<div style="font-size:11px;color:#555">No signals detected.</div>';
+  const extractedHTML = r.extractedText ? `<div class="extracted-text fade-in">&#8220;${r.extractedText}&#8221;</div>` : '';
+  const el = document.getElementById('results');
+  el.innerHTML = extractedHTML +
+    `<div class="card fade-in"><div class="card-label">FOR YOU RANKING SIGNAL</div><div class="score-row"><div id="radialContainer">${radialSVG(0)}</div><div class="score-info"><div class="score-verdict" style="color:${verdictColor}">${verdict}</div><div class="score-stats">${(r.wordCount || '--')} words &middot; ${(r.charCount || '--')} chars<br>Hook strength: ${(r.hookScore || '--')}/5</div></div></div></div>` +
+    `<div class="card fade-in" style="animation-delay:0.1s"><div class="card-label">PREDICTED ENGAGEMENT</div>${barsHTML}</div>` +
+    (r.insight ? `<div class="card fade-in" style="animation-delay:0.15s"><div class="card-label">AI INSIGHT</div><div class="insight-text">${r.insight}</div></div>` : '') +
+    `<div class="card fade-in" style="animation-delay:0.2s"><div class="card-label">SIGNAL ANALYSIS</div>${sigHTML}</div>` +
+    `<button class="btn-share fade-in" style="animation-delay:0.3s" onclick="shareOnX()">&#2197; SHARE YOUR RESULT ON X</button>` +
+    `<div class="disclaimer fade-in" style="animation-delay:0.35s">&#26A0; AI SIMULATION — Based on xai-org/x-algorithm (May 15 2026). Not affiliated with X Corp. Educational approximation only.</div>`;
   el.classList.remove('hidden');
-  setTimeout(()=>{
-    document.getElementById('radialContainer').innerHTML=radialSVG(r.finalScore||50);
-    Object.keys(r.scores||{}).forEach(k=>{const b=document.getElementById('bar_'+k);if(b)setTimeout(()=>b.style.width=(r.scores[k]||0)+'%',50);});
-  },80);
+  setTimeout(() => {
+    document.getElementById('radialContainer').innerHTML = radialSVG(r.finalScore || 50);
+    Object.keys(r.scores || {}).forEach(k => { const b = document.getElementById('bar_' + k); if (b) setTimeout(() => b.style.width = (r.scores[k] || 0) + '%', 50); });
+  }, 80);
 }
 
-function shareOnX(){
-  if(!currentResult)return;
-  const score=currentResult.finalScore||50;
-  const v=score>=75?'HIGH RANKING POTENTIAL \uD83D\uDD25':score>=50?'MODERATE SIGNAL \u26A1':'LOW REACH PREDICTED';
-  window.open('https://x.com/intent/tweet?text='+encodeURIComponent('I just ran my post through the Phoenix algorithm AI simulator.\n\nScore: '+score+'/100 \u2014 '+v+'\n\nTest yours \uD83D\uDC47\nbjbeyond.it/Phoenix\n\n@bj_beyond #XAlgorithm #Phoenix'),'_blank');
+function radialSVG(score) {
+  const r = 44, circ = 2 * Math.PI * r, dash = (score / 100) * circ;
+  const color = score >= 70 ? '#00e5ff' : score >= 45 ? '#ffaa00' : '#ff4d4d';
+  return `<svg width="110" height="110" viewBox="0 0 100 100"><circle cx="50" cy="50" r="${r}" fill="none" stroke="#1a1a2e" stroke-width="8"/><circle cx="50" cy="50" r="${r}" fill="none" stroke="${color}" stroke-width="8" stroke-dasharray="${dash} ${circ}" stroke-linecap="round" transform="rotate(-90 50 50)" style="transition:stroke-dasharray 1.2s cubic-bezier(.4,0,.2,1)"/><text x="50" y="46" text-anchor="middle" fill="${color}" style="font-size:20px;font-family:Orbitron,monospace;font-weight:700">${score}</text><text x="50" y="60" text-anchor="middle" fill="#888" style="font-size:9px;font-family:monospace">/100</text></svg>`;
+}
+
+function shareOnX() {
+  if (!currentResult) return;
+  const score = currentResult.finalScore || 50;
+  const v = score >= 75 ? 'HIGH RANKING POTENTIAL 🔥' : score >= 50 ? 'MODERATE SIGNAL ⚡' : 'LOW REACH PREDICTED';
+  window.open('https://x.com/intent/tweet?text=' + encodeURIComponent('I just ran my post through the Phoenix algorithm AI simulator.\n\nScore: ' + score + '/100 — ' + v + '\n\nTest yours 👇\nbjbeyond.it/Phoenix\n\n@bj_beyond #XAlgorithm #Phoenix'), '_blank');
 }
 </script>
 </body>
