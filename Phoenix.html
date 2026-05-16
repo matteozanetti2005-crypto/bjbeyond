@@ -176,42 +176,67 @@
             const t = text.toLowerCase();
             const len = text.length;
             const wc = text.split(/\s+/).length;
-            const hasQ = t.includes('?');
+            const hasQ = t.includes('?') || t.includes('what') || t.includes('how') || t.includes('why');
             const hasLink = /https?:|t\.co\//.test(t);
-            const hasMedia = /image|video|dashboard/.test(t);
+            const hasMedia = /image|video|dashboard|chart|gif/.test(t);
+            const hasNumbers = /\d/.test(text);
+            const hasHashtag = /#\w+/.test(text);
+            const hasMention = /@\w+/.test(text);
+            const hasCTA = /try|check|link|dm|comment|reply|tag|click|see|watch/.test(t);
+            const isLong = len > 180;
+            const isShort = len < 60;
 
-            let hist = 0.5;
-            if (persona==='bi' && /power bi|dashboard|data/.test(t)) hist = 0.92;
-            if (persona==='finance' && /finance|excel/.test(t)) hist = 0.89;
-            if (persona==='creator' && /growth|algorithm/.test(t)) hist = 0.91;
+            // === FEATURE EXTRACTION MIGLIORATA ===
+            let hook = 58;
+            if (hasQ) hook += 16;
+            if (hasNumbers) hook += 8;
+            if (hasCTA) hook += 9;
+            if (wc > 25 && wc < 60) hook += 7;
+            hook = Math.min(98, hook);
 
-            const hook = Math.min(98, 62 + (hasQ?14:0) + (wc>22?11:0));
-            const qual = Math.min(96, 68 + (len>120?13:0) + (hasMedia?10:0));
-            const rel = Math.round(64 + hist*32);
-            const vir = Math.min(91, 55 + (hasLink?10:0) + (hasQ?9:0));
+            let quality = 62;
+            if (isLong) quality += 12;
+            if (hasMedia) quality += 11;
+            if (hasHashtag) quality += 6;
+            if (hasMention) quality += 5;
+            quality = Math.min(96, quality);
 
-            let niche = 0;
-            if (persona==='bi' && /power bi|dashboard/.test(t)) niche=15;
-            if (persona==='finance' && /finance|excel/.test(t)) niche=13;
-            if (persona==='creator' && /growth|algorithm/.test(t)) niche=14;
+            let relevance = 58;
+            if (persona === 'bi' && /power bi|dashboard|data|kpi|dax|measure/.test(t)) relevance += 22;
+            if (persona === 'finance' && /finance|excel|kpi|roi|budget|forecast/.test(t)) relevance += 20;
+            if (persona === 'creator' && /growth|algorithm|post|reach|engagement/.test(t)) relevance += 21;
+            relevance = Math.min(95, relevance);
 
-            let pLike = Math.round(Math.min(97, hook*0.37 + qual*0.31 + rel*0.32 - 9));
-            let pReply = Math.round(Math.min(90, (hasQ?67:39) + vir*0.21 + niche*0.6));
-            let pRepost = Math.round(Math.min(86, vir*0.47 + niche*0.9));
-            let pDwell = Math.round(Math.min(98, qual*0.79 + (len>160?11:0)));
-            let pClick = Math.round(Math.min(81, rel*0.61 + (hasLink?15:0)));
+            let virality = 52;
+            if (hasLink) virality += 14;
+            if (hasQ) virality += 9;
+            if (hasMedia) virality += 8;
+            if (isShort) virality += 7;
+            virality = Math.min(92, virality);
 
+            // === PROBABILITIES ===
+            let pLike = Math.round(Math.min(97, hook * 0.38 + quality * 0.32 + relevance * 0.30 - 8));
+            let pReply = Math.round(Math.min(90, (hasQ ? 68 : 38) + virality * 0.22 + (hasCTA ? 9 : 0)));
+            let pRepost = Math.round(Math.min(87, virality * 0.48 + (hasMedia ? 8 : 0) + (hasHashtag ? 7 : 0)));
+            let pDwell = Math.round(Math.min(98, quality * 0.78 + (isLong ? 10 : 0) + (hasNumbers ? 6 : 0)));
+            let pClick = Math.round(Math.min(82, relevance * 0.58 + (hasLink ? 16 : 0) + (hasCTA ? 8 : 0)));
+
+            // === OFFICIAL WEIGHTED SCORER ===
             const w = { like: 0.28, reply: 0.17, repost: 0.16, dwell: 0.24, click: 0.12 };
-            let score = (pLike * w.like) + (pReply * w.reply) + (pRepost * w.repost) + (pDwell * w.dwell) + (pClick * w.click) + (niche * 0.55);
+            let score = (pLike * w.like) + (pReply * w.reply) + (pRepost * w.repost) + (pDwell * w.dwell) + (pClick * w.click);
 
-            const divPen = (persona==='creator' || niche > 12) ? -0.65 : -0.28;
-            const oon = (vir > 75) ? 1.8 : 0.4;
+            const niche = (persona === 'bi' && /power bi|dashboard/.test(t)) ? 15 : 
+                          (persona === 'finance' && /finance|excel/.test(t)) ? 13 : 
+                          (persona === 'creator' && /growth|algorithm/.test(t)) ? 14 : 0;
 
-            const final = Math.round(Math.max(42, Math.min(97, score + oon + divPen)));
+            const divPen = (niche > 10) ? -0.65 : -0.28;
+            const oon = (virality > 75) ? 1.9 : 0.5;
+
+            const final = Math.round(Math.max(38, Math.min(97, score + niche * 0.55 + oon + divPen)));
 
             return {
                 overall: final, pLike, pReply, pRepost, pDwell, pClick,
-                hook, qual, rel, vir, divPen, oon, niche, _weights: w
+                hook, quality, relevance, virality, divPen, oon, niche, _weights: w
             };
         }
 
@@ -238,13 +263,13 @@
                 <div class="text-[9px] mt-1">like ${r.pLike}×${w.like} | reply ${r.pReply}×${w.reply} | repost ${r.pRepost}×${w.repost} | dwell ${r.pDwell}×${w.dwell}</div>
             `;
             document.getElementById('diversityDisplay').textContent = r.divPen.toFixed(2);
-            document.getElementById('oonDisplay').textContent = r.oon > 1 ? '+1.8' : '+0.4';
+            document.getElementById('oonDisplay').textContent = r.oon > 1 ? '+1.9' : '+0.5';
         }
 
         function init() {
             initPipeline();
             setTimeout(() => document.querySelector('.persona-btn')?.click(), 200);
-            document.getElementById('postInput').value = "Just launched my new Power BI dashboard that predicts X algorithm scores using the official Phoenix model.";
+            document.getElementById('postInput').value = "Just launched my new Power BI dashboard that predicts X algorithm scores using the official Phoenix model. What do you think?";
         }
         window.onload = init;
     </script>
