@@ -374,7 +374,382 @@ footer a{color:var(--text3)}footer a:hover{color:var(--text2)}
 // =============================================
 //  SOSTITUISCI CON LA TUA NUOVA API KEY
 // =============================================
+const API_KEY = '<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Phoenix — X Algorithm Simulator · bjbeyond</title>
+<meta name="description" content="Simulate how X's For You algorithm (Phoenix) scores and ranks your posts. Based on the xAI open-source release.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Syne:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#07080d;--surface:#0e1018;--surface2:#141620;--border:#1e2130;
+  --border-active:#2a3050;--text:#e8eaf2;--text2:#7a7f96;--text3:#4a4f66;
+  --cyan:#00d4ff;--cyan-dim:rgba(0,212,255,.12);--cyan-glow:rgba(0,212,255,.06);
+  --green:#22d3a0;--amber:#f5a623;--red:#ff5f57;--violet:#9b8ff7;
+  --r-sm:8px;--r-md:12px;--r-lg:18px;
+}
+body{background:var(--bg);color:var(--text);font-family:'Syne',sans-serif;min-height:100vh;line-height:1.6}
+a{color:var(--cyan);text-decoration:none}
+textarea,input,button{font-family:inherit}
+.nav{border-bottom:1px solid var(--border);padding:14px 24px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50;background:rgba(7,8,13,.9);backdrop-filter:blur(12px)}
+.nav-logo{display:flex;align-items:center;gap:10px}
+.nav-icon{width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,#00d4ff,#9b8ff7);display:flex;align-items:center;justify-content:center;font-size:16px;color:#07080d}
+.nav-title{font-size:18px;font-weight:700;letter-spacing:-.02em}
+.nav-sub{font-size:10px;color:var(--text3);letter-spacing:.15em;margin-top:-2px}
+.nav-badge{font-size:11px;padding:4px 10px;border-radius:20px;border:1px solid var(--border);color:var(--text2)}
+.wrap{max-width:1000px;margin:0 auto;padding:40px 24px 80px}
+.hero{text-align:center;margin-bottom:40px}
+.hero-chip{display:inline-flex;align-items:center;gap:6px;padding:4px 12px;border-radius:20px;border:1px solid var(--border);font-size:11px;color:var(--cyan);letter-spacing:.06em;margin-bottom:16px}
+.hero-chip::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--cyan);animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+.hero h1{font-size:clamp(36px,6vw,60px);font-weight:700;letter-spacing:-.03em;margin-bottom:8px;background:linear-gradient(135deg,#e8eaf2 30%,#9b8ff7);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.hero p{font-size:16px;color:var(--text2)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px}
+@media(max-width:640px){.grid2{grid-template-columns:1fr}}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-lg);padding:20px}
+.card-label{font-size:11px;color:var(--text3);letter-spacing:.1em;font-weight:600;margin-bottom:12px}
+textarea{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:var(--r-md);padding:12px;font-size:13px;color:var(--text);resize:vertical;min-height:110px;outline:none;transition:border .2s}
+textarea:focus{border-color:var(--border-active)}
+.personas{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:12px}
+.persona{background:transparent;border:1px solid var(--border);border-radius:var(--r-sm);padding:8px 10px;cursor:pointer;color:var(--text2);font-size:12px;font-family:inherit;display:flex;align-items:center;gap:7px;transition:all .2s}
+.persona:hover{border-color:var(--border-active);color:var(--text)}
+.persona.active{border-color:var(--cyan);background:var(--cyan-dim);color:var(--cyan)}
+.btn-run{width:100%;margin-top:12px;padding:12px;background:linear-gradient(135deg,var(--cyan),var(--violet));border:none;border-radius:var(--r-md);font-size:14px;font-weight:600;font-family:inherit;color:#07080d;cursor:pointer;transition:opacity .2s;letter-spacing:-.01em}
+.btn-run:disabled{opacity:.4;cursor:wait}
+.btn-run:hover:not(:disabled){opacity:.88}
+.pipeline-steps{display:flex;flex-direction:column;gap:6px}
+.pipe-step{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:var(--r-sm);border:1px solid var(--border);background:transparent;transition:all .25s}
+.pipe-step.active{border-color:var(--cyan);background:var(--cyan-glow)}
+.pipe-step .num{font-size:10px;color:var(--text3);font-family:'DM Mono',monospace;margin-left:auto}
+.pipe-icon{font-size:13px;color:var(--text3);width:16px;text-align:center;flex-shrink:0}
+.pipe-step.active .pipe-icon{color:var(--cyan)}
+.pipe-name{font-size:13px;color:var(--text2)}
+.pipe-step.active .pipe-name{color:var(--cyan)}
+#results{display:none;flex-direction:column;gap:14px}
+.score-wrap{display:flex;flex-direction:column;align-items:center}
+.score-inner{text-align:center;margin-top:-76px;position:relative;z-index:1;margin-bottom:32px}
+.score-num{font-size:36px;font-weight:700;line-height:1}
+.score-lbl{font-size:11px;color:var(--text2);letter-spacing:.08em;margin-top:2px}
+.metric{margin-bottom:11px}
+.metric-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:4px}
+.metric-name{font-size:12px;color:var(--text2)}
+.metric-val{font-size:12px;font-weight:500;font-family:'DM Mono',monospace}
+.bar-track{height:3px;background:var(--border);border-radius:3px;overflow:hidden}
+.bar-fill{height:100%;border-radius:3px;transition:width 1s cubic-bezier(.4,0,.2,1)}
+.results-grid{display:grid;grid-template-columns:auto 1fr 1fr;gap:0;background:var(--surface);border:1px solid var(--border);border-radius:var(--r-lg);overflow:hidden}
+.results-col{padding:20px}
+.results-col+.results-col{border-left:1px solid var(--border)}
+@media(max-width:640px){.results-grid{grid-template-columns:1fr}.results-col+.results-col{border-left:none;border-top:1px solid var(--border)}}
+.formula{font-family:'DM Mono',monospace;font-size:11px;color:var(--text2);line-height:1.8}
+.formula .eq{color:var(--cyan)}
+.adj-row{display:flex;justify-content:space-between;font-size:11px;margin-top:6px}
+.analysis-box{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-lg);padding:20px}
+.analysis-head{display:flex;align-items:center;gap:8px;margin-bottom:12px}
+.analysis-text{font-size:14px;color:var(--text);line-height:1.75;white-space:pre-wrap}
+.skeleton{height:13px;background:var(--surface2);border-radius:4px;margin-bottom:8px;animation:shimmer 1.4s infinite}
+.skeleton:nth-child(2){width:88%}.skeleton:nth-child(3){width:72%}
+@keyframes shimmer{0%,100%{opacity:.5}50%{opacity:1}}
+.signals{display:flex;flex-wrap:wrap;gap:6px;padding:12px 16px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--r-md)}
+.sig{font-size:11px;padding:3px 9px;border-radius:20px;font-family:'DM Mono',monospace}
+.sig.on{background:rgba(34,211,160,.1);color:var(--green);border:1px solid rgba(34,211,160,.25)}
+.sig.off{background:rgba(255,95,87,.06);color:#ff5f57;border:1px solid rgba(255,95,87,.15)}
+.error-box{padding:12px 16px;background:rgba(255,95,87,.08);border:1px solid rgba(255,95,87,.25);border-radius:var(--r-md);font-size:13px;color:#ff5f57;margin-top:10px;display:none}
+footer{text-align:center;padding:24px;border-top:1px solid var(--border);font-size:12px;color:var(--text3)}
+footer a{color:var(--text3)}footer a:hover{color:var(--text2)}
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav-logo">
+    <div class="nav-icon"><i class="fa-solid fa-infinity"></i></div>
+    <div>
+      <div class="nav-title">PHOENIX</div>
+      <div class="nav-sub">X ALGORITHM SIMULATOR</div>
+    </div>
+  </div>
+  <a href="https://bjbeyond.com" class="nav-badge">bjbeyond.com</a>
+</nav>
+
+<div class="wrap">
+  <div class="hero">
+    <div class="hero-chip">BASED ON xAI OPEN-SOURCE RELEASE · MAY 2026</div>
+    <h1>Phoenix Simulator</h1>
+    <p>Real-time AI simulation of X's For You algorithm</p>
+  </div>
+
+  <div class="grid2">
+    <div class="card">
+      <div class="card-label">POST TEXT</div>
+      <textarea id="postInput" placeholder="Paste your X post here…">Just launched my new Power BI dashboard that predicts X algorithm scores using the official Phoenix model. What do you think? 📊</textarea>
+      <div class="card-label" style="margin-top:14px">AUDIENCE PERSONA</div>
+      <div class="personas">
+        <button class="persona active" onclick="setPer(this,'bi')"><i class="fa-solid fa-chart-bar fa-xs"></i> BI Analyst</button>
+        <button class="persona" onclick="setPer(this,'finance')"><i class="fa-solid fa-building fa-xs"></i> Finance Pro</button>
+        <button class="persona" onclick="setPer(this,'creator')"><i class="fa-solid fa-rocket fa-xs"></i> X Creator</button>
+        <button class="persona" onclick="setPer(this,'dev')"><i class="fa-solid fa-code fa-xs"></i> Developer</button>
+      </div>
+      <button class="btn-run" id="runBtn" onclick="run()">RUN PHOENIX SIMULATION</button>
+      <div class="error-box" id="errorBox"></div>
+    </div>
+
+    <div class="card">
+      <div class="card-label">OFFICIAL PHOENIX PIPELINE</div>
+      <div class="pipeline-steps" id="pipeline"></div>
+    </div>
+  </div>
+
+  <div id="results">
+    <div class="results-grid">
+      <div class="results-col" style="display:flex;align-items:center;justify-content:center">
+        <div class="score-wrap">
+          <svg width="108" height="108" viewBox="0 0 108 108" style="transform:rotate(-90deg)">
+            <circle cx="54" cy="54" r="44" fill="none" stroke="#1e2130" stroke-width="8"/>
+            <circle id="scoreCircle" cx="54" cy="54" r="44" fill="none" stroke="#00d4ff" stroke-width="8" stroke-linecap="round" stroke-dasharray="276.46" stroke-dashoffset="276.46" style="transition:stroke-dashoffset 1s cubic-bezier(.4,0,.2,1)"/>
+          </svg>
+          <div class="score-inner">
+            <div class="score-num" id="scoreNum">—</div>
+            <div class="score-lbl">OVERALL</div>
+          </div>
+          <div id="scoreGrade" style="font-size:13px;font-weight:600;letter-spacing:.06em"></div>
+        </div>
+      </div>
+      <div class="results-col">
+        <div class="card-label">ENGAGEMENT PREDICTIONS</div>
+        <div id="metrics"></div>
+      </div>
+      <div class="results-col">
+        <div class="card-label">WEIGHTED SCORER</div>
+        <div class="formula">
+          <div><span class="eq">Score</span> = Σ(wᵢ × Pᵢ)</div>
+          <div style="margin-top:6px">like  ×0.29</div>
+          <div>reply ×0.16</div>
+          <div>repost×0.15</div>
+          <div>dwell ×0.25</div>
+          <div>click ×0.11</div>
+        </div>
+        <div style="border-top:1px solid var(--border);margin-top:10px;padding-top:10px">
+          <div class="adj-row"><span style="color:var(--text2)">Diversity penalty</span><span id="divPen" style="color:#ff5f57;font-family:'DM Mono',monospace;font-size:11px"></span></div>
+          <div class="adj-row"><span style="color:var(--text2)">OON boost</span><span id="oonBoost" style="color:var(--green);font-family:'DM Mono',monospace;font-size:11px"></span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="analysis-box">
+      <div class="analysis-head">
+        <i class="fa-solid fa-sparkles" style="color:var(--cyan);font-size:13px"></i>
+        <span style="font-size:11px;color:var(--text3);letter-spacing:.08em;font-weight:600">AI ANALYSIS</span>
+      </div>
+      <div id="analysisContent">
+        <div class="skeleton"></div><div class="skeleton"></div><div class="skeleton"></div>
+      </div>
+    </div>
+
+    <div class="signals" id="signals"></div>
+  </div>
+</div>
+
+<footer>
+  <p>Phoenix Simulator · <a href="https://bjbeyond.com">bjbeyond.com</a> · Based on <a href="https://github.com/xai-org/x-algorithm" target="_blank">xAI open-source release</a> · Powered by Claude AI</p>
+</footer>
+
+<script>
+// =============================================
+//  SOSTITUISCI CON LA TUA NUOVA API KEY
+// =============================================
 const API_KEY = 'YOUR_API_KEY_HERE';
+// =============================================
+
+const STEPS = [
+  {id:'hydration',  label:'Query hydration',      icon:'fa-droplet'},
+  {id:'sourcing',   label:'Candidate sourcing',   icon:'fa-database'},
+  {id:'prefilter',  label:'Pre-filters',           icon:'fa-filter'},
+  {id:'transformer',label:'Phoenix transformer',  icon:'fa-microchip'},
+  {id:'scoring',    label:'Weighted + diversity',  icon:'fa-sliders'},
+  {id:'ranking',    label:'Final ranking',         icon:'fa-trophy'},
+];
+const PERSONAS = {
+  bi:'BI Analyst', finance:'Finance Pro', creator:'X Creator', dev:'Developer'
+};
+const METRICS = [
+  {key:'pLike',   label:'P(like)',   color:'#ff5f57'},
+  {key:'pReply',  label:'P(reply)',  color:'#4a90d9'},
+  {key:'pRepost', label:'P(repost)', color:'#22d3a0'},
+  {key:'pDwell',  label:'P(dwell)',  color:'#9b8ff7'},
+  {key:'pClick',  label:'P(click)',  color:'#f5a623'},
+];
+const SIG_LABELS = {
+  hasQ:'question', hasLink:'link', hasMedia:'media', hasNumbers:'numbers',
+  hasHashtag:'hashtag', hasCTA:'CTA', isLong:'long-form', isShort:'too short', nicheMatch:'niche match'
+};
+
+let currentPersona = 'bi';
+let running = false;
+
+(function(){
+  const c = document.getElementById('pipeline');
+  STEPS.forEach((s,i) => {
+    const d = document.createElement('div');
+    d.id = 'step-'+s.id;
+    d.className = 'pipe-step';
+    d.innerHTML = `<i class="fa-solid ${s.icon} pipe-icon"></i><span class="pipe-name">${s.label}</span><span class="num">${i+1}</span>`;
+    c.appendChild(d);
+  });
+})();
+
+function setPer(el,p){
+  document.querySelectorAll('.persona').forEach(e=>e.classList.remove('active'));
+  el.classList.add('active');
+  currentPersona=p;
+}
+
+function setStep(idx){
+  STEPS.forEach((s,i)=>document.getElementById('step-'+s.id).classList.toggle('active',i===idx));
+}
+
+function showError(msg){
+  const b=document.getElementById('errorBox');
+  b.textContent=msg; b.style.display='block';
+}
+function hideError(){
+  document.getElementById('errorBox').style.display='none';
+}
+
+async function run(){
+  if(running) return;
+  const text=document.getElementById('postInput').value.trim();
+  if(!text){showError('Incolla prima un post!');return;}
+  hideError();
+  running=true;
+  document.getElementById('runBtn').disabled=true;
+  document.getElementById('runBtn').textContent='Running simulation…';
+  document.getElementById('results').style.display='none';
+
+  const animP=(async()=>{
+    for(let i=0;i<STEPS.length;i++){await delay(300);setStep(i);}
+  })();
+  const apiP=callAPI(text,currentPersona);
+  await animP;
+  const result=await apiP;
+  setStep(-1);
+
+  if(result.error){
+    showError('Errore API: '+result.error);
+  } else {
+    renderResults(result);
+    document.getElementById('results').style.display='flex';
+  }
+  running=false;
+  document.getElementById('runBtn').disabled=false;
+  document.getElementById('runBtn').textContent='RUN PHOENIX SIMULATION';
+}
+
+async function callAPI(postText,persona){
+  const personaLabel=PERSONAS[persona];
+  const prompt=`You are simulating X's "Phoenix" recommendation algorithm (open-source release, May 2026).
+
+Analyze this post for a ${personaLabel} audience persona.
+
+POST: "${postText}"
+
+Return ONLY a valid JSON object (no markdown, no backticks) with this exact shape:
+{
+  "overall": <integer 0-100>,
+  "pLike": <integer 0-100>,
+  "pReply": <integer 0-100>,
+  "pRepost": <integer 0-100>,
+  "pDwell": <integer 0-100>,
+  "pClick": <integer 0-100>,
+  "divPenalty": <float negative e.g. -0.4>,
+  "oonBoost": <float e.g. 1.8>,
+  "signals": {
+    "hasQ": <bool>,
+    "hasLink": <bool>,
+    "hasMedia": <bool>,
+    "hasNumbers": <bool>,
+    "hasHashtag": <bool>,
+    "hasCTA": <bool>,
+    "isLong": <bool>,
+    "isShort": <bool>,
+    "nicheMatch": <bool>
+  },
+  "analysis": "<3 paragraphs separated by \\n\\n: 1) what works for the ${personaLabel} niche, 2) what limits reach, 3) one specific rewrite suggestion with a revised opening line. Plain prose, no bullets, no headers.>"
+}
+
+Score guidelines:
+- overall: 20-40 low-effort/vague, 45-65 average, 70-90 strong niche-specific engaging posts
+- Be honest and differentiated — a weak post must score very differently from a strong one`;
+
+  try{
+    const resp=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',
+      headers:{
+        'Content-Type':'application/json',
+        'x-api-key':API_KEY,
+        'anthropic-version':'2023-06-01',
+        'anthropic-dangerous-direct-browser-access':'true',
+      },
+      body:JSON.stringify({
+        model:'claude-haiku-4-5-20251001',
+        max_tokens:1000,
+        messages:[{role:'user',content:prompt}],
+      }),
+    });
+    const data=await resp.json();
+    if(data.error) return {error:data.error.type+': '+data.error.message};
+    const raw=data.content?.find(b=>b.type==='text')?.text||'{}';
+    const clean=raw.replace(/```json|```/g,'').trim();
+    return JSON.parse(clean);
+  }catch(e){
+    return {error:e.message};
+  }
+}
+
+function renderResults(r){
+  const circ=2*Math.PI*44;
+  const offset=circ*(1-r.overall/100);
+  const circle=document.getElementById('scoreCircle');
+  circle.setAttribute('stroke-dasharray',circ.toFixed(2));
+  setTimeout(()=>circle.setAttribute('stroke-dashoffset',offset.toFixed(2)),50);
+
+  const color=r.overall>=85?'#22d3a0':r.overall>=70?'#00d4ff':r.overall>=50?'#f5a623':'#ff5f57';
+  circle.setAttribute('stroke',color);
+  document.getElementById('scoreNum').textContent=r.overall;
+  const grade=r.overall>=85?'EXCELLENT':r.overall>=70?'STRONG':r.overall>=50?'MODERATE':'WEAK';
+  const gradeEl=document.getElementById('scoreGrade');
+  gradeEl.textContent=grade; gradeEl.style.color=color;
+
+  document.getElementById('metrics').innerHTML=METRICS.map(m=>`
+    <div class="metric">
+      <div class="metric-top">
+        <span class="metric-name">${m.label}</span>
+        <span class="metric-val" style="color:${m.color}">${r[m.key]}%</span>
+      </div>
+      <div class="bar-track"><div class="bar-fill" style="width:0%;background:${m.color}" data-w="${r[m.key]}"></div></div>
+    </div>`).join('');
+  setTimeout(()=>document.querySelectorAll('.bar-fill').forEach(b=>b.style.width=b.dataset.w+'%'),80);
+
+  document.getElementById('divPen').textContent=r.divPenalty;
+  document.getElementById('oonBoost').textContent='+'+Number(r.oonBoost).toFixed(1);
+
+  document.getElementById('analysisContent').innerHTML=r.analysis
+    ?`<div class="analysis-text">${r.analysis}</div>`
+    :'<div class="skeleton"></div><div class="skeleton"></div><div class="skeleton"></div>';
+
+  document.getElementById('signals').innerHTML=Object.entries(r.signals||{}).map(([k,v])=>
+    `<span class="sig ${v?'on':'off'}">${v?'✓':'✗'} ${SIG_LABELS[k]||k}</span>`
+  ).join('');
+}
+
+function delay(ms){return new Promise(r=>setTimeout(r,ms));}
+</script>
+</body>
+</html>';
 // =============================================
 
 const STEPS = [
