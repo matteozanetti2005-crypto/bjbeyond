@@ -63,6 +63,7 @@ textarea::placeholder { color:#2a2a3a; }
 .fade-in { animation:fadeIn 0.5s ease forwards; }
 @keyframes fadeIn { from{opacity:0;transform:translateY(8px);} to{opacity:1;transform:none;} }
 .hidden { display:none; }
+.api-key-section { margin-bottom: 16px; }
 </style>
 </head>
 <body>
@@ -74,6 +75,12 @@ textarea::placeholder { color:#2a2a3a; }
       Based on <a href="https://github.com/xai-org/x-algorithm" target="_blank">xai-org/x-algorithm</a> · May 15 2026 · <a href="https://bjbeyond.it">bjbeyond.it</a>
     </div>
     <div class="badge"><div class="badge-dot"></div>POWERED BY GROQ</div>
+  </div>
+
+  <div class="card api-key-section">
+    <div class="card-label">GROQ API KEY</div>
+    <input type="password" id="apiKeyInput" class="url-input" placeholder="gsk_...">
+    <button onclick="saveApiKey()" style="margin-top:10px; padding:8px 18px; background:#00e5ff; color:#0a0a14; border:none; border-radius:6px; font-size:11px; font-family:'Orbitron', monospace; letter-spacing:1px; cursor:pointer;">SALVA CHIAVE</button>
   </div>
 
   <div class="card">
@@ -102,9 +109,27 @@ textarea::placeholder { color:#2a2a3a; }
 
 <script>
 // =============================================
-//  IMPORTANT: Replace with your own Groq API key
+//  API KEY MANAGEMENT
 // =============================================
-const GROQ_KEY = 'YOUR_GROQ_API_KEY_HERE';   // <--- REPLACE THIS
+let GROQ_KEY = localStorage.getItem('phoenix_groq_key') || '';
+
+function saveApiKey() {
+  const input = document.getElementById('apiKeyInput');
+  if (input.value.trim()) {
+    localStorage.setItem('phoenix_groq_key', input.value.trim());
+    GROQ_KEY = input.value.trim();
+    alert('Chiave salvata!');
+  }
+}
+
+window.onload = function() {
+  const saved = localStorage.getItem('phoenix_groq_key');
+  if (saved) {
+    document.getElementById('apiKeyInput').value = saved;
+    GROQ_KEY = saved;
+  }
+};
+
 // =============================================
 
 async function analyzeWithGroq(postText) {
@@ -159,6 +184,10 @@ async function runPipeline() {
 
   if (!url && !text) {
     alert('Paste a URL or post text first.');
+    return;
+  }
+  if (!GROQ_KEY) {
+    alert('Inserisci prima la tua Groq API Key!');
     return;
   }
 
