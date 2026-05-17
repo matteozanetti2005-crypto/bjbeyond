@@ -48,7 +48,7 @@ Perfect for creators, marketers, and data analysts who want to understand and op
 
 1. Clone or download this repo
 2. Open `index.html` for the main BJ Beyond site
-3. Open `phoenix.html` or `phoenix-worker.js` for the simulator
+3. Open `Phoenix/index.html` for the simulator at bjbeyond.it/Phoenix
 4. (Optional) Replace the API keys in the files with your own
 
 > **Note**: The current versions contain placeholder/demo API keys. Replace them before going live.
@@ -60,6 +60,8 @@ Perfect for creators, marketers, and data analysts who want to understand and op
 ```
 bjbeyond/
 ├── index.html              # Main personal site (BJ Beyond brand)
+├── Phoenix/
+│   └── index.html        # Phoenix Simulator (accessible at bjbeyond.it/Phoenix)
 ├── phoenix.html            # Advanced Phoenix Simulator (Claude)
 ├── phoenix-worker.js       # Lightweight Phoenix Simulator (Groq)
 ├── Official Music Soundtrack.mp4
@@ -67,7 +69,7 @@ bjbeyond/
 ├── privacy-policy.md
 ├── cookie-policy.md
 ├── CNAME
-└── README.md
+└── README.md               # Last forced deploy: 17 May 2026 - 12:52 CEST
 ```
 
 ---
