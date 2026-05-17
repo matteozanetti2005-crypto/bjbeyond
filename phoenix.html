@@ -33,13 +33,13 @@ textarea,input,button{font-family:inherit}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
 .hero h1{font-size:clamp(36px,6vw,60px);font-weight:700;letter-spacing:-.03em;margin-bottom:8px;background:linear-gradient(135deg,#e8eaf2 30%,#9b8ff7);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
 .hero p{font-size:16px;color:var(--text2)}
-.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px}
+.grid2{display:grid;grid:template-columns:1fr 1fr;gap:14px;margin-bottom:14px}
 @media(max-width:640px){.grid2{grid-template-columns:1fr}}
 .card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-lg);padding:20px}
 .card-label{font-size:11px;color:var(--text3);letter-spacing:.1em;font-weight:600;margin-bottom:12px}
 textarea{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:var(--r-md);padding:12px;font-size:13px;color:var(--text);resize:vertical;min-height:110px;outline:none;transition:border .2s}
 textarea:focus{border-color:var(--border-active)}
-.personas{display:grid;grid:template-columns:1fr 1fr;gap:6px;margin-top:12px}
+.personas{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:12px}
 .persona{background:transparent;border:1px solid var(--border);border-radius:var(--r-sm);padding:8px 10px;cursor:pointer;color:var(--text2);font-size:12px;font-family:inherit;display:flex;align-items:center;gap:7px;transition:all .2s}
 .persona:hover{border-color:var(--border-active);color:var(--text)}
 .persona.active{border-color:var(--cyan);background:var(--cyan-dim);color:var(--cyan)}
@@ -68,7 +68,7 @@ textarea:focus{border-color:var(--border-active)}
 .results-grid{display:grid;grid-template-columns:auto 1fr 1fr;gap:0;background:var(--surface);border:1px solid var(--border);border-radius:var(--r-lg);overflow:hidden}
 .results-col{padding:20px}
 .results-col+.results-col{border-left:1px solid var(--border)}
-@media(max-width:640px){.results-grid{grid-template-columns:1fr}.results-col+.results-col{border-left:none;border-top:1px solid var(--border)}}
+@media(max-width:640px){.results-grid{grid:template-columns:1fr}.results-col+.results-col{border-left:none;border-top:1px solid var(--border)}}
 .formula{font-family:'DM Mono',monospace;font-size:11px;color:var(--text2);line-height:1.8}
 .formula .eq{color:var(--cyan)}
 .adj-row{display:flex;justify-content:space-between;font-size:11px;margin-top:6px}
@@ -83,6 +83,9 @@ textarea:focus{border-color:var(--border-active)}
 .sig.on{background:rgba(34,211,160,.1);color:var(--green);border:1px solid rgba(34,211,160,.25)}
 .sig.off{background:rgba(255,95,87,.06);color:#ff5f57;border:1px solid rgba(255,95,87,.15)}
 .error-box{padding:12px 16px;background:rgba(255,95,87,.08);border:1px solid rgba(255,95,87,.25);border-radius:var(--r-md);font-size:13px;color:#ff5f57;margin-top:10px;display:none}
+.api-key-section{margin-bottom:20px}
+.api-key-input{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:var(--r-md);padding:10px 12px;font-size:13px;color:var(--text);font-family:'DM Mono',monospace}
+.api-key-input:focus{border-color:var(--cyan)}
 footer{text-align:center;padding:24px;border-top:1px solid var(--border);font-size:12px;color:var(--text3)}
 footer a{color:var(--text3)}footer a:hover{color:var(--text2)}
 </style>
@@ -104,6 +107,13 @@ footer a{color:var(--text3)}footer a:hover{color:var(--text2)}
     <div class="hero-chip">BASED ON xAI OPEN-SOURCE RELEASE · MAY 2026</div>
     <h1>Phoenix Simulator</h1>
     <p>Real-time AI simulation of X's For You algorithm</p>
+  </div>
+
+  <div class="api-key-section card">
+    <div class="card-label">ANTHROPIC API KEY (Claude)</div>
+    <input type="password" id="apiKeyInput" class="api-key-input" placeholder="sk-ant-api03-...">
+    <button onclick="saveApiKey()" style="margin-top:8px;padding:8px 16px;background:var(--cyan);color:#07080d;border:none;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer">Salva Chiave</button>
+    <div style="font-size:10px;color:var(--text3);margin-top:6px">La chiave viene salvata solo nel tuo browser (localStorage)</div>
   </div>
 
   <div class="grid2">
@@ -183,9 +193,28 @@ footer a{color:var(--text3)}footer a:hover{color:var(--text2)}
 
 <script>
 // =============================================
-//  IMPORTANT: Replace with your own Anthropic API key
+//  API KEY MANAGEMENT
 // =============================================
-const API_KEY = 'YOUR_ANTHROPIC_API_KEY_HERE';   // <--- REPLACE THIS
+let API_KEY = localStorage.getItem('phoenix_api_key') || '';
+
+function saveApiKey() {
+  const input = document.getElementById('apiKeyInput');
+  if (input.value.trim()) {
+    localStorage.setItem('phoenix_api_key', input.value.trim());
+    API_KEY = input.value.trim();
+    alert('Chiave salvata con successo!');
+  }
+}
+
+// Carica la chiave salvata all'avvio
+window.onload = function() {
+  const savedKey = localStorage.getItem('phoenix_api_key');
+  if (savedKey) {
+    document.getElementById('apiKeyInput').value = savedKey;
+    API_KEY = savedKey;
+  }
+};
+
 // =============================================
 
 const STEPS = [
@@ -247,6 +276,7 @@ async function run(){
   if(running) return;
   const text=document.getElementById('postInput').value.trim();
   if(!text){showError('Incolla prima un post!');return;}
+  if(!API_KEY || API_KEY === 'YOUR_ANTHROPIC_API_KEY_HERE'){showError('Inserisci prima la tua Anthropic API Key!');return;}
   hideError();
   running=true;
   document.getElementById('runBtn').disabled=true;
