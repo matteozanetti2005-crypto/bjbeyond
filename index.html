@@ -6,194 +6,114 @@
     <title>BJ Beyond — One step beyond AI</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Space Grotesk', system-ui, sans-serif; }
-        .font-display { font-family: 'Space Grotesk', sans-serif; font-weight: 700; }
-        .section { scroll-margin-top: 80px; }
-        .metric-card { transition: transform 0.2s ease, box-shadow 0.2s ease; }
-        .metric-card:hover { transform: translateY(-4px); box-shadow: 0 8px 32px rgba(99,102,241,0.15); }
-        .lang-active { background-color: #6366f1 !important; color: white !important; }
-        .bar-fill { transition: width 1.2s cubic-bezier(0.4,0,0.2,1); }
-        .project-card { transition: transform 0.2s ease, border-color 0.2s ease; }
-        .project-card:hover { transform: translateY(-4px); border-color: #6366f1; }
-        @keyframes fadeUp {
-            from { opacity: 0; transform: translateY(24px); }
-            to   { opacity: 1; transform: translateY(0); }
-        }
-        .fade-up { animation: fadeUp 0.7s ease both; }
-        .fade-up-1 { animation-delay: 0.1s; }
-        .fade-up-2 { animation-delay: 0.25s; }
-        .fade-up-3 { animation-delay: 0.4s; }
-        .glow-dot {
-            width: 6px; height: 6px;
-            background: #6366f1;
-            border-radius: 50%;
-            box-shadow: 0 0 8px 2px #6366f1aa;
-            display: inline-block;
-        }
+        body { font-family: system-ui, -apple-system, sans-serif; }
+        .hero-bg { background: radial-gradient(circle at center, #312e81 0%, transparent 70%); }
     </style>
 </head>
 <body class="bg-zinc-950 text-zinc-200">
 
-<!-- ==================== COOKIE BANNER ==================== -->
+<!-- COOKIE BANNER -->
 <div id="cookie-banner" class="fixed bottom-6 left-1/2 -translate-x-1/2 bg-zinc-900 border border-zinc-700 rounded-3xl px-6 py-5 max-w-md shadow-2xl z-50 hidden flex-col gap-4">
     <p class="text-sm text-zinc-400">
         Usiamo solo cookie tecnici e di preferenza per il corretto funzionamento del sito.<br>
         <a href="#cookie-policy" onclick="showCookiePolicy()" class="text-indigo-400 hover:underline">Leggi la Cookie Policy</a>
     </p>
     <div class="flex gap-3">
-        <button onclick="acceptAllCookies()" 
-                class="flex-1 bg-white text-zinc-900 font-semibold py-3 rounded-2xl text-sm hover:bg-zinc-100">
+        <button onclick="acceptAllCookies()" class="flex-1 bg-white text-zinc-900 font-semibold py-3 rounded-2xl text-sm hover:bg-zinc-100">
             Accetta tutti
         </button>
-        <button onclick="acceptNecessaryCookies()" 
-                class="flex-1 border border-zinc-600 hover:bg-zinc-800 font-medium py-3 rounded-2xl text-sm">
+        <button onclick="acceptNecessaryCookies()" class="flex-1 border border-zinc-600 hover:bg-zinc-800 font-medium py-3 rounded-2xl text-sm">
             Solo necessari
         </button>
     </div>
 </div>
 
-<!-- ==================== NAVBAR ==================== -->
+<!-- NAVBAR -->
 <nav class="fixed top-0 left-0 right-0 z-50 bg-zinc-950/95 border-b border-zinc-800 backdrop-blur-lg">
     <div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
         <div class="flex items-center gap-x-3">
-            <div class="w-9 h-9 bg-indigo-600 rounded-2xl flex items-center justify-center">
-                <span class="text-white font-bold text-2xl">B</span>
-            </div>
-            <span class="font-display text-2xl tracking-tighter">BJ Beyond</span>
+            <div class="w-9 h-9 bg-indigo-600 rounded-2xl flex items-center justify-center text-white font-bold text-2xl">B</div>
+            <span class="font-bold text-2xl tracking-tighter">BJ Beyond</span>
         </div>
-
-        <!-- SELETTORE LINGUA -->
-        <div class="flex items-center bg-zinc-900 rounded-3xl p-1 border border-zinc-800">
-            <button onclick="switchLang('it')" id="lang-it" class="px-4 py-1.5 text-sm font-medium rounded-3xl flex items-center gap-x-1.5 lang-active">🇮🇹 IT</button>
-            <button onclick="switchLang('en')" id="lang-en" class="px-4 py-1.5 text-sm font-medium rounded-3xl flex items-center gap-x-1.5">🇬🇧 EN</button>
-        </div>
-
-        <div class="hidden md:flex items-center gap-x-8 text-sm font-medium">
-            <a href="#about" class="hover:text-indigo-400 transition" data-it="Chi sono" data-en="About">Chi sono</a>
-            <a href="#human-edge" class="hover:text-indigo-400 transition" data-it="Human Edge Index" data-en="Human Edge Index">Human Edge Index</a>
-            <a href="#projects" class="hover:text-indigo-400 transition" data-it="Progetti" data-en="Projects">Progetti</a>
-        </div>
-
-        <div class="flex items-center gap-x-3">
-            <a href="https://x.com/Bj_Beyond" target="_blank" class="px-5 py-2.5 text-sm font-semibold bg-white text-zinc-950 rounded-3xl hover:bg-zinc-100 transition flex items-center gap-x-2">
-                <i class="fa-brands fa-x-twitter"></i>
-                <span data-it="Seguimi" data-en="Follow">Seguimi</span>
-            </a>
-            <button onclick="document.getElementById('human-edge').scrollIntoView({ behavior: 'smooth' })" class="px-5 py-2.5 text-sm font-semibold bg-indigo-600 hover:bg-indigo-700 rounded-3xl transition" data-it="Scopri il Report" data-en="Read Report">Scopri il Report</button>
+        
+        <div class="flex items-center gap-8 text-sm">
+            <a href="#about" class="hover:text-indigo-400">Chi sono</a>
+            <a href="#human-edge" class="hover:text-indigo-400">Human Edge</a>
+            <a href="#projects" class="hover:text-indigo-400">Progetti</a>
         </div>
     </div>
 </nav>
 
-<!-- ==================== HERO ==================== -->
-<section class="min-h-screen flex items-center justify-center pt-20 pb-12 relative overflow-hidden">
-    <div class="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-indigo-900/20 rounded-full blur-3xl pointer-events-none"></div>
-
-    <div class="max-w-4xl mx-auto px-6 text-center relative z-10">
-        <div class="inline-flex items-center gap-x-2 bg-zinc-900 border border-zinc-700 rounded-full px-4 py-1.5 text-xs font-medium text-zinc-400 mb-8 fade-up">
-            <span class="glow-dot"></span>
-            <span data-it="Q1 2026 • Venice Biennale Edition" data-en="Q1 2026 • Venice Biennale Edition">Q1 2026 • Venice Biennale Edition</span>
+<!-- HERO -->
+<section class="min-h-screen flex items-center pt-20 hero-bg">
+    <div class="max-w-5xl mx-auto px-6 text-center">
+        <div class="inline-flex items-center gap-2 bg-zinc-900 px-4 py-2 rounded-full text-sm mb-6">
+            <span class="w-2 h-2 bg-emerald-400 rounded-full animate-pulse"></span>
+            Q1 2026 • Venice Biennale Edition
         </div>
-
-        <h1 class="font-display text-6xl md:text-7xl lg:text-8xl tracking-tighter leading-none mb-6 fade-up fade-up-1">
-            <span class="text-white">BJ Beyond</span><br>
-            <span class="text-indigo-400" data-it="One step beyond AI" data-en="One step beyond AI">One step beyond AI</span>
+        <h1 class="text-6xl md:text-7xl font-bold tracking-tighter leading-none mb-6">
+            BJ Beyond<br>
+            <span class="text-indigo-400">One step beyond AI</span>
         </h1>
-
-        <p class="text-zinc-400 text-lg md:text-xl max-w-xl mx-auto mb-10 fade-up fade-up-2" data-it="Intelligence è lo standard.&nbsp; Noi andiamo oltre." data-en="Intelligence is the standard.&nbsp; We go beyond.">
-            Intelligence è lo standard.&nbsp; Noi andiamo oltre.
+        <p class="text-xl text-zinc-400 max-w-xl mx-auto mb-10">
+            Intelligence è lo standard. Noi andiamo oltre.
         </p>
-
-        <div class="flex flex-col sm:flex-row items-center justify-center gap-4 fade-up fade-up-3">
-            <a href="#human-edge" class="w-full sm:w-auto px-8 py-3.5 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-3xl transition text-sm" data-it="Leggi il Report Q1 2026" data-en="Read Q1 2026 Report">Leggi il Report Q1 2026</a>
-            <a href="https://x.com/Bj_Beyond" target="_blank" class="w-full sm:w-auto px-8 py-3.5 bg-zinc-800 hover:bg-zinc-700 text-zinc-200 font-semibold rounded-3xl transition text-sm flex items-center justify-center gap-x-2">
-                <i class="fa-brands fa-x-twitter"></i>
-                <span data-it="Segui su X" data-en="Follow on X">Segui su X</span>
+        <div class="flex flex-col sm:flex-row gap-4 justify-center">
+            <a href="#human-edge" class="px-8 py-4 bg-indigo-600 hover:bg-indigo-700 rounded-3xl font-semibold text-lg">Leggi il Report</a>
+            <a href="https://x.com/Bj_Beyond" target="_blank" class="px-8 py-4 border border-zinc-700 hover:bg-zinc-900 rounded-3xl font-semibold text-lg flex items-center justify-center gap-2">
+                <i class="fa-brands fa-x-twitter"></i> Seguimi su X
             </a>
         </div>
     </div>
 </section>
 
-<!-- ==================== ABOUT ==================== -->
-<section id="about" class="section py-24 bg-zinc-900/40 border-y border-zinc-800">
-    <!-- ... (tutto il contenuto about originale rimane invariato) ... -->
+<!-- ABOUT -->
+<section id="about" class="py-24 border-t border-zinc-800">
     <div class="max-w-5xl mx-auto px-6">
-        <div class="text-center mb-16">
-            <p class="text-xs font-semibold tracking-widest text-indigo-400 uppercase mb-4" data-it="CHI SONO" data-en="ABOUT">CHI SONO</p>
-            <h2 class="font-display text-4xl md:text-5xl tracking-tighter mb-6" data-it="All'incrocio tra<br>arte e intelligenza" data-en="At the intersection of<br>art and intelligence">
-                All'incrocio tra<br>arte e intelligenza
-            </h2>
-            <p class="text-zinc-400 max-w-2xl mx-auto text-lg" data-it="BJ Beyond produce intelligence, dati e analisi sul mercato dell'arte contemporanea nell'era dell'AI. Tracciamo il valore tra ciò che le macchine generano e ciò che gli umani percepiscono." data-en="BJ Beyond produces intelligence, data and analysis on the contemporary art market in the AI era. We track the value gap between what machines generate and what humans perceive.">
-                BJ Beyond produce intelligence, dati e analisi sul mercato dell'arte contemporanea nell'era dell'AI.<br>
-                Tracciamo il valore tra ciò che le macchine generano e ciò che gli umani percepiscono.
-            </p>
-        </div>
-
-        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <div class="metric-card bg-zinc-900 border border-zinc-800 rounded-2xl p-6 text-center">
-                <div class="font-display text-4xl text-indigo-400 mb-2">+62%</div>
-                <div class="text-xs text-zinc-500 leading-snug" data-it="Human Premium Q1 2026" data-en="Human Premium Q1 2026">Human Premium<br>Q1 2026</div>
-            </div>
-            <!-- altre metriche... (mantieni tutto il blocco originale) -->
-        </div>
+        <h2 class="text-4xl font-bold mb-8 text-center">All'incrocio tra arte e intelligenza</h2>
+        <p class="text-zinc-400 text-lg text-center max-w-3xl mx-auto">
+            BJ Beyond produce intelligence, dati e analisi sul mercato dell'arte contemporanea nell'era dell'AI.
+        </p>
     </div>
 </section>
 
-<!-- ==================== HUMAN EDGE + PROJECTS ==================== -->
-<!-- (Mantieni invariati tutti i tuoi contenuti originali di Human Edge Index e Projects) -->
-
-<!-- ==================== COOKIE POLICY SECTION ==================== -->
-<section id="cookie-policy" class="section py-24 bg-zinc-900/40 border-t border-zinc-800 hidden">
+<!-- COOKIE POLICY SECTION -->
+<section id="cookie-policy" class="py-24 bg-zinc-900 hidden">
     <div class="max-w-4xl mx-auto px-6">
-        <h2 class="font-display text-4xl mb-4">Cookie Policy</h2>
+        <h2 class="text-4xl font-bold mb-4">Cookie Policy</h2>
         <p class="text-zinc-500 mb-10">Ultimo aggiornamento: 20 Maggio 2026</p>
-
-        <div class="prose prose-invert max-w-none text-zinc-300">
-            <p>Questo sito utilizza cookie tecnici necessari per il funzionamento e cookie di preferenza.</p>
-            
-            <div class="my-10 bg-zinc-900 p-8 rounded-3xl">
-                <ul class="space-y-6 text-sm">
-                    <li><strong class="text-emerald-400">Cookie Tecnici</strong> — Obbligatori (navigazione, lingua, Phoenix Simulator)</li>
-                    <li><strong>Cookie di Preferenza</strong> — Ricordano le tue scelte (lingua IT/EN)</li>
-                    <li><strong>Cookie Analitici</strong> — Statistiche anonime (opzionali)</li>
-                </ul>
-            </div>
-
-            <p class="font-medium">Non utilizziamo cookie di profilazione o advertising.</p>
-
-            <p class="mt-10 text-sm text-zinc-400">
-                Puoi gestire i cookie dal browser in qualsiasi momento.<br>
-                Per i tuoi dati personali consulta la <a href="#privacy" class="text-indigo-400 hover:underline">Privacy Policy</a>.
-            </p>
+        
+        <div class="bg-zinc-950 border border-zinc-800 rounded-3xl p-8">
+            <p class="mb-6">Questo sito utilizza solo cookie tecnici e di preferenza.</p>
+            <ul class="space-y-4 text-sm">
+                <li><strong class="text-emerald-400">• Tecnici</strong> — Obbligatori per navigazione e Phoenix Simulator</li>
+                <li><strong>• Preferenza</strong> — Lingua e impostazioni</li>
+                <li><strong>• Analitici</strong> — Statistiche anonime (opzionali)</li>
+            </ul>
+            <p class="mt-8 text-sm text-zinc-400">Non usiamo cookie di profilazione o advertising.</p>
         </div>
 
-        <button onclick="hideCookiePolicy()" class="mt-12 px-8 py-3.5 bg-zinc-800 hover:bg-zinc-700 rounded-3xl text-sm font-medium">
-            Chiudi sezione
+        <button onclick="hideCookiePolicy()" class="mt-8 px-8 py-3 bg-zinc-800 hover:bg-zinc-700 rounded-3xl">
+            Chiudi
         </button>
     </div>
 </section>
 
-<!-- ==================== FOOTER ==================== -->
-<footer class="bg-zinc-950 border-t border-zinc-800 py-16">
-    <div class="max-w-5xl mx-auto px-6 text-center text-zinc-500 text-sm">
-        <div class="flex justify-center gap-x-8 mb-8 text-2xl">
-            <a href="https://x.com/Bj_Beyond" target="_blank" class="hover:text-white transition"><i class="fa-brands fa-x-twitter"></i></a>
-            <a href="https://www.tiktok.com/@bj_beyond" target="_blank" class="hover:text-white transition"><i class="fa-brands fa-tiktok"></i></a>
-            <a href="https://linktr.ee/Bj_Beyond" target="_blank" class="hover:text-white transition"><i class="fa-solid fa-link"></i></a>
+<!-- FOOTER -->
+<footer class="bg-zinc-950 border-t border-zinc-800 py-12">
+    <div class="max-w-5xl mx-auto px-6 text-center text-zinc-500">
+        <p>© 2026 BJ Beyond — Matteo Zanetti • Milano, Italia</p>
+        <div class="flex justify-center gap-6 mt-6 text-sm">
+            <a href="#cookie-policy" onclick="showCookiePolicy()" class="hover:text-zinc-300">Cookie Policy</a>
+            <a href="#" class="hover:text-zinc-300">Privacy Policy</a>
         </div>
-        <div class="flex flex-wrap justify-center gap-x-6 gap-y-2 mb-6">
-            <a href="#privacy" class="hover:text-zinc-300 transition">Privacy Policy</a>
-            <a href="#cookie-policy" onclick="showCookiePolicy()" class="hover:text-zinc-300 transition">Cookie Policy</a>
-        </div>
-        <p>© 2026 BJ Beyond — Matteo Zanetti • Milano</p>
-        <p class="mt-1 text-xs">One step beyond AI 🕊️</p>
+        <p class="mt-6 text-xs">One step beyond AI 🕊️</p>
     </div>
 </footer>
 
 <script>
-    // ==================== COOKIE FUNCTIONS ====================
+    // Cookie functions
     function showCookieBanner() {
         if (!localStorage.getItem('cookiesAccepted')) {
             document.getElementById('cookie-banner').classList.remove('hidden');
@@ -219,47 +139,11 @@
         document.getElementById('cookie-policy').classList.add('hidden');
     }
 
-    // ==================== SOUNDTRACK (originale) ====================
-    const soundtrack = document.getElementById('bj-soundtrack');
-    let hasInteracted = false;
-    function playSoundtrack() {
-        if (hasInteracted) return;
-        hasInteracted = true;
-        if (soundtrack) {
-            soundtrack.volume = 0.35;
-            soundtrack.play().catch(() => {});
-        }
-    }
-
-    // ==================== LINGUA (originale) ====================
-    function switchLang(lang) {
-        document.getElementById('lang-it').classList.remove('lang-active');
-        document.getElementById('lang-en').classList.remove('lang-active');
-        document.getElementById('lang-' + lang).classList.add('lang-active');
-
-        document.querySelectorAll('[data-it]').forEach(el => {
-            const val = (lang === 'it') ? el.getAttribute('data-it') : el.getAttribute('data-en');
-            if (val) el.innerHTML = val;
-        });
-        document.documentElement.lang = lang;
-    }
-
-    // ==================== INIT ====================
+    // Init
     window.onload = function() {
         showCookieBanner();
-        document.getElementById('lang-it').classList.add('lang-active');
-        
-        // Event listeners per soundtrack
-        ['click', 'touchstart', 'scroll'].forEach(ev => {
-            document.addEventListener(ev, playSoundtrack, { once: true });
-        });
     };
 </script>
-
-<!-- Audio (se lo usi) -->
-<audio id="bj-soundtrack" loop preload="none">
-    <source src="Official Music Soundtrack.mp4" type="audio/mp4">
-</audio>
 
 </body>
 </html>
