@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cookie Policy — BJ Beyond</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #0a0a0a;
+      --surface: #111111;
+      --border: #1e1e1e;
+      --text: #e8e3dc;
+      --muted: #6b6560;
+      --accent: #c8b99a;
+      --accent-dim: #7a6e60;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'DM Mono', monospace;
+      font-size: 14px;
+      line-height: 1.8;
+      min-height: 100vh;
+    }
+
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      padding: 1.2rem 2.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--border);
+      background: rgba(10,10,10,0.92);
+      backdrop-filter: blur(12px);
+    }
+
+    .nav-brand {
+      font-family: 'DM Serif Display', serif;
+      font-size: 1.1rem;
+      color: var(--text);
+      text-decoration: none;
+      letter-spacing: 0.02em;
+    }
+
+    .nav-back {
+      font-size: 11px;
+      color: var(--muted);
+      text-decoration: none;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      transition: color 0.2s;
+    }
+    .nav-back:hover { color: var(--accent); }
+
+    .hero {
+      padding: 9rem 2.5rem 4rem;
+      max-width: 760px;
+      margin: 0 auto;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .hero-label {
+      font-size: 10px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--accent-dim);
+      margin-bottom: 1.2rem;
+    }
+
+    .hero h1 {
+      font-family: 'DM Serif Display', serif;
+      font-size: clamp(2.2rem, 5vw, 3.5rem);
+      line-height: 1.1;
+      color: var(--text);
+      margin-bottom: 1rem;
+    }
+
+    .hero-meta {
+      font-size: 11px;
+      color: var(--muted);
+      letter-spacing: 0.08em;
+    }
+
+    .content {
+      max-width: 760px;
+      margin: 0 auto;
+      padding: 3rem 2.5rem 6rem;
+    }
+
+    .section {
+      margin-bottom: 3rem;
+      padding-bottom: 3rem;
+      border-bottom: 1px solid var(--border);
+    }
+    .section:last-child { border-bottom: none; }
+
+    .section-number {
+      font-size: 10px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--accent-dim);
+      margin-bottom: 0.6rem;
+    }
+
+    .section h2 {
+      font-family: 'DM Serif Display', serif;
+      font-size: 1.4rem;
+      color: var(--text);
+      margin-bottom: 1.2rem;
+      font-weight: 400;
+    }
+
+    p {
+      color: #b5b0a8;
+      margin-bottom: 1rem;
+    }
+
+    ul {
+      list-style: none;
+      padding: 0;
+      margin-bottom: 1rem;
+    }
+
+    ul li {
+      color: #b5b0a8;
+      padding: 0.35rem 0 0.35rem 1.2rem;
+      position: relative;
+    }
+    ul li::before {
+      content: '—';
+      position: absolute;
+      left: 0;
+      color: var(--accent-dim);
+    }
+
+    /* Cookie table */
+    .cookie-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 1.2rem 0;
+      font-size: 12px;
+    }
+
+    .cookie-table th {
+      text-align: left;
+      padding: 0.7rem 1rem;
+      border-bottom: 1px solid var(--border);
+      color: var(--accent-dim);
+      font-weight: 400;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      font-size: 10px;
+    }
+
+    .cookie-table td {
+      padding: 0.7rem 1rem;
+      border-bottom: 1px solid var(--border);
+      color: #b5b0a8;
+      vertical-align: top;
+    }
+
+    .cookie-table tr:last-child td { border-bottom: none; }
+
+    .badge {
+      display: inline-block;
+      font-size: 9px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 0.15rem 0.5rem;
+      border: 1px solid;
+    }
+    .badge-required { border-color: #3a3a3a; color: var(--muted); }
+    .badge-optional { border-color: var(--accent-dim); color: var(--accent-dim); }
+
+    /* Consent toggle */
+    .consent-box {
+      border: 1px solid var(--border);
+      background: var(--surface);
+      padding: 1.5rem;
+      margin: 1.5rem 0;
+    }
+
+    .consent-box h3 {
+      font-family: 'DM Serif Display', serif;
+      font-size: 1rem;
+      color: var(--text);
+      margin-bottom: 0.8rem;
+      font-weight: 400;
+    }
+
+    .consent-box p {
+      font-size: 12px;
+      margin-bottom: 1rem;
+    }
+
+    .consent-btn {
+      display: inline-block;
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 0.6rem 1.2rem;
+      border: 1px solid var(--accent-dim);
+      color: var(--accent);
+      background: transparent;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .consent-btn:hover {
+      background: var(--accent);
+      color: var(--bg);
+      border-color: var(--accent);
+    }
+
+    a {
+      color: var(--accent);
+      text-decoration: none;
+      border-bottom: 1px solid var(--accent-dim);
+      transition: border-color 0.2s, color 0.2s;
+    }
+    a:hover {
+      color: var(--text);
+      border-color: var(--text);
+    }
+
+    strong { color: var(--text); font-weight: 400; }
+
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 2rem 2.5rem;
+      max-width: 760px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .footer-copy { font-size: 11px; color: var(--muted); letter-spacing: 0.06em; }
+
+    .footer-links { display: flex; gap: 1.5rem; }
+    .footer-links a {
+      font-size: 11px;
+      color: var(--muted);
+      border-bottom-color: transparent;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+    .footer-links a:hover { color: var(--accent); }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a href="/" class="nav-brand">BJ Beyond</a>
+  <a href="/" class="nav-back">← Home</a>
+</nav>
+
+<header class="hero">
+  <p class="hero-label">Documento legale</p>
+  <h1>Cookie Policy</h1>
+  <p class="hero-meta">Ultimo aggiornamento: 27 Maggio 2026 &nbsp;·&nbsp; Versione 1.0</p>
+</header>
+
+<main class="content">
+
+  <div class="section">
+    <p class="section-number">Premessa</p>
+    <h2>Cosa sono i cookie</h2>
+    <p>I cookie sono piccoli file di testo che i siti web salvano sul tuo dispositivo durante la navigazione. Vengono utilizzati per far funzionare il sito correttamente, ricordare le tue preferenze e raccogliere informazioni statistiche anonime.</p>
+    <p>La presente Cookie Policy si applica al sito <strong>bjbeyond.it</strong> ed è redatta in conformità all'art. 122 del D.Lgs. 196/2003, alle Linee Guida del Garante Privacy del 10 giugno 2021 e al Provvedimento del Garante dell'8 maggio 2014.</p>
+  </div>
+
+  <div class="section">
+    <p class="section-number">01</p>
+    <h2>Cookie utilizzati da questo sito</h2>
+    <p>bjbeyond.it utilizza esclusivamente cookie propri. Non sono presenti cookie di terze parti a scopo di profilazione o advertising.</p>
+
+    <table class="cookie-table">
+      <thead>
+        <tr>
+          <th>Nome</th>
+          <th>Tipo</th>
+          <th>Finalità</th>
+          <th>Durata</th>
+          <th>Consenso</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>session_id</code></td>
+          <td>Tecnico</td>
+          <td>Gestione sessione di navigazione</td>
+          <td>Sessione</td>
+          <td><span class="badge badge-required">Non richiesto</span></td>
+        </tr>
+        <tr>
+          <td><code>lang_pref</code></td>
+          <td>Preferenza</td>
+          <td>Memorizza la lingua selezionata</td>
+          <td>12 mesi</td>
+          <td><span class="badge badge-required">Non richiesto</span></td>
+        </tr>
+        <tr>
+          <td><code>ui_pref</code></td>
+          <td>Preferenza</td>
+          <td>Impostazioni interfaccia (es. Phoenix Simulator)</td>
+          <td>12 mesi</td>
+          <td><span class="badge badge-required">Non richiesto</span></td>
+        </tr>
+        <tr>
+          <td><code>_analytics</code></td>
+          <td>Analitico</td>
+          <td>Statistiche anonime di navigazione</td>
+          <td>12 mesi</td>
+          <td><span class="badge badge-optional">Richiesto</span></td>
+        </tr>
+        <tr>
+          <td><code>cookie_consent</code></td>
+          <td>Tecnico</td>
+          <td>Memorizza la scelta espressa sul banner cookie</td>
+          <td>12 mesi</td>
+          <td><span class="badge badge-required">Non richiesto</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="section">
+    <p class="section-number">02</p>
+    <h2>Cookie tecnici e di preferenza</h2>
+    <p>I cookie tecnici sono necessari per il funzionamento del sito e non richiedono il consenso dell'utente ai sensi dell'art. 122, comma 1, D.Lgs. 196/2003. Senza di essi alcune funzionalità potrebbero non essere disponibili.</p>
+    <p>I cookie di preferenza memorizzano le impostazioni scelte dall'utente (lingua, configurazioni) per migliorare l'esperienza di navigazione nelle visite successive. Anche questi non richiedono consenso.</p>
+  </div>
+
+  <div class="section">
+    <p class="section-number">03</p>
+    <h2>Cookie analitici</h2>
+    <p>Il sito utilizza cookie analitici in forma anonimizzata per raccogliere statistiche aggregate sull'utilizzo del sito (pagine visitate, durata della sessione, provenienza geografica aggregata). I dati sono trattati in modo che non sia possibile risalire all'identità del singolo utente.</p>
+
+    <div class="consent-box">
+      <h3>Gestione del consenso</h3>
+      <p>Puoi modificare la tua scelta in qualsiasi momento. La revoca del consenso non pregiudica la liceità del trattamento basato sul consenso prima della revoca.</p>
+      <button class="consent-btn" onclick="revokeConsent()">Revoca consenso analitico</button>
+    </div>
+  </div>
+
+  <div class="section">
+    <p class="section-number">04</p>
+    <h2>Come disabilitare i cookie dal browser</h2>
+    <p>Puoi controllare e gestire i cookie direttamente tramite le impostazioni del tuo browser. Di seguito i link alle istruzioni dei principali browser:</p>
+    <ul>
+      <li><a href="https://support.google.com/chrome/answer/95647" target="_blank" rel="noopener">Google Chrome</a></li>
+      <li><a href="https://support.mozilla.org/it/kb/Attivare%20e%20disattivare%20i%20cookie" target="_blank" rel="noopener">Mozilla Firefox</a></li>
+      <li><a href="https://support.apple.com/it-it/guide/safari/sfri11471/mac" target="_blank" rel="noopener">Apple Safari</a></li>
+      <li><a href="https://support.microsoft.com/it-it/microsoft-edge/eliminare-i-cookie-in-microsoft-edge" target="_blank" rel="noopener">Microsoft Edge</a></li>
+    </ul>
+    <p>Attenzione: disabilitare tutti i cookie potrebbe compromettere alcune funzionalità del sito.</p>
+  </div>
+
+  <div class="section">
+    <p class="section-number">05</p>
+    <h2>Titolare del trattamento</h2>
+    <p><strong>Matteo Zanetti</strong> — BJ Beyond<br />
+    Milano, Italia<br />
+    Email: <a href="mailto:info@bjbeyond.it">info@bjbeyond.it</a></p>
+    <p>Per informazioni più dettagliate sul trattamento dei dati personali, consulta la <a href="/privacy-policy.html">Privacy Policy</a>.</p>
+  </div>
+
+</main>
+
+<footer>
+  <span class="footer-copy">© 2026 BJ Beyond — Matteo Zanetti · Milano, Italia</span>
+  <nav class="footer-links">
+    <a href="/privacy-policy.html">Privacy Policy</a>
+    <a href="/">Home</a>
+  </nav>
+</footer>
+
+<script>
+  function revokeConsent() {
+    // Rimuovi il cookie di consenso analitico
+    document.cookie = "_analytics=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+    document.cookie = "cookie_consent=rejected; max-age=31536000; path=/;";
+    alert("Consenso revocato. I cookie analitici sono stati rimossi.");
+  }
+</script>
+
+</body>
+</html>
