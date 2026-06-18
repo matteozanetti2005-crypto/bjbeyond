@@ -2,13 +2,12 @@
 
 **Ultimo aggiornamento: 20 Maggio 2026**
 
-BJ Beyond (di Matteo Zanetti) si impegna a proteggere la tua privacy. Questa Informativa Privacy descrive come raccogliamo, utilizziamo e proteggiamo i tuoi dati personali in conformità con il **GDPR 2016/679** e il Codice Privacy italiano.
+BJ Beyond si impegna a proteggere la tua privacy. Questa Informativa Privacy descrive come raccogliamo, utilizziamo e proteggiamo i tuoi dati personali in conformità con il **GDPR 2016/679** e il Codice Privacy italiano.
 
 ### Titolare del Trattamento
-- **Matteo Zanetti** (BJ Beyond)  
-- P.IVA / CF: [inserisci qui]  
+- **BJ Beyond**  
 - Sede: Milano, Italia  
-- Email: [inserisci la tua email]  
+- Email: info@bjbeyond.it  
 - X: @Bj_Beyond
 
 ### Dati raccolti
@@ -23,7 +22,7 @@ BJ Beyond (di Matteo Zanetti) si impegna a proteggere la tua privacy. Questa Inf
 
 ### I tuoi diritti (GDPR)
 Puoi richiedere: accesso, rettifica, cancellazione, limitazione, portabilità, opposizione.  
-Scrivi a [tua-email].
+Scrivi a info@bjbeyond.it.
 
 ### Conservazione dei dati
 I dati vengono conservati solo per il tempo necessario (max 24 mesi per log anonimi).
@@ -33,4 +32,4 @@ Utilizziamo fornitori (Vercel, Anthropic, Groq) con clausole contrattuali standa
 
 ---
 
-Per info: [contattami]
+Per info: contattami su X @Bj_Beyond
