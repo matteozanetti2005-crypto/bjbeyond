@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="it">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -921,18 +921,18 @@
           </a>
         </div>
       </div>
-      <form class="contact-form" onsubmit="handleSubmit(event)">
+      <form action="https://formspree.io/f/xqakgzjd" method="POST" class="contact-form">
         <div class="form-group">
           <label>Name</label>
-          <input type="text" placeholder="Your name" required>
+          <input type="text" name="name" placeholder="Your name" required>
         </div>
         <div class="form-group">
           <label>Email</label>
-          <input type="email" placeholder="you@company.com" required>
+          <input type="email" name="_replyto" placeholder="you@company.com" required>
         </div>
         <div class="form-group">
           <label>Service Interest</label>
-          <select>
+          <select name="service">
             <option>Art Market Intelligence</option>
             <option>Power BI & Data Systems</option>
             <option>AI + Human Edge Strategy</option>
@@ -941,7 +941,7 @@
         </div>
         <div class="form-group">
           <label>Message</label>
-          <textarea placeholder="Tell me about your project..."></textarea>
+          <textarea name="message" placeholder="Tell me about your project..." required></textarea>
         </div>
         <button type="submit" class="form-submit">Send Message →</button>
       </form>
@@ -951,7 +951,7 @@
 
 <footer class="footer">
   <div class="footer-logo">BJ <span>Beyond</span></div>
-  <p class="footer-text">© 2026 BJ Beyond. Intelligence is the standard. We go further.</p>
+  <p class="footer-text">© 2026 BJ Beyond. Intelligence is the standard. We go further. Milano, Italia</p>
 </footer>
 
 <script>
@@ -1021,7 +1021,8 @@
         <div class="chart-bar" 
              style="height: 0%;" 
              data-value="${d.value}"
-             data-target="${(d.value / maxVal * 100).toFixed(1)}%"></div>
+             data-target="${(d.value / maxVal * 100).toFixed(1)}%">
+        </div>
         <span class="chart-label">${d.label}</span>
       </div>
     `).join('');
@@ -1035,24 +1036,11 @@
   
   function updateChart(key) {
     document.querySelectorAll('.viz-filter').forEach(f => f.classList.remove('active'));
-    event.target.classList.add('active');
+    if (event) event.target.classList.add('active');
     renderChart(key);
   }
   
   renderChart('all');
-  
-  function handleSubmit(e) {
-    e.preventDefault();
-    const btn = e.target.querySelector('.form-submit');
-    const originalText = btn.textContent;
-    btn.textContent = 'Message Sent! ✓';
-    btn.style.background = 'linear-gradient(135deg, #22c55e, #16a34a)';
-    setTimeout(() => {
-      btn.textContent = originalText;
-      btn.style.background = '';
-      e.target.reset();
-    }, 3000);
-  }
 </script>
 
 </body>
