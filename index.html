@@ -1,72 +1,96 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BJ Beyond • One Step Beyond AI</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-</head>
-<body class="bg-zinc-950 text-zinc-200">
-
-    <!-- NAV -->
-    <nav class="fixed top-0 left-0 right-0 z-50 bg-zinc-950/95 backdrop-blur-lg border-b border-zinc-800">
-        <div class="max-w-6xl mx-auto px-8 h-20 flex items-center justify-between">
-            <div class="flex items-center gap-x-3">
-                <div class="w-10 h-10 bg-zinc-800 rounded flex items-center justify-center text-xl font-bold border border-zinc-700">BJ</div>
-                <span class="text-3xl font-bold tracking-tighter">BJ Beyond</span>
-            </div>
-            <div class="flex items-center gap-x-8 text-sm font-medium">
-                <a href="#about" class="hover:text-white">About</a>
-                <a href="#phoenix" class="hover:text-white">Phoenix Soulfire</a>
-                <a href="#services" class="hover:text-white">Services</a>
-                <a href="https://x.com/BJ_Beyond" target="_blank" class="hover:text-white">X</a>
-            </div>
-        </div>
-    </nav>
-
-    <!-- HERO -->
-    <section class="min-h-screen flex items-center pt-20">
-        <div class="max-w-4xl mx-auto px-8 text-center">
-            <div class="flex justify-center mb-8">
-                <div class="w-24 h-24 bg-zinc-800 rounded-2xl flex items-center justify-center text-5xl font-bold border border-zinc-700">BJ</div>
-            </div>
-            <h1 class="text-7xl md:text-8xl font-bold tracking-[-5px] leading-none mb-6">One step beyond AI</h1>
-            <p class="text-2xl text-zinc-400 max-w-md mx-auto mb-10">Intelligence is the standard.<br>We go further.</p>
-            <div class="flex flex-col sm:flex-row gap-4 justify-center">
-                <a href="#phoenix" class="px-10 py-4 bg-white text-zinc-950 font-semibold rounded-3xl text-lg">Explore Phoenix Soulfire</a>
-                <a href="#services" class="px-10 py-4 border border-zinc-700 hover:bg-zinc-900 font-semibold rounded-3xl text-lg">See what I do</a>
-            </div>
-        </div>
-    </section>
-
-    <!-- ABOUT -->
-    <section id="about" class="max-w-4xl mx-auto px-8 py-20 border-t border-zinc-800">
-        <h2 class="text-5xl font-semibold tracking-tight mb-8">About</h2>
-        <div class="max-w-3xl text-xl text-zinc-400 space-y-6">
-            <p>BJ Beyond is an independent practice at the intersection of data, AI, and human intuition.</p>
-            <p>I help artists, collectors, and companies navigate the new creative economy with clarity and powerful tools.</p>
-        </div>
-    </section>
-
-    <!-- PHOENIX SOULFIRE -->
-    <section id="phoenix" class="bg-zinc-900 py-20">
-        <div class="max-w-5xl mx-auto px-8">
-            <h2 class="text-6xl font-semibold tracking-[-2px] mb-12">Phoenix Soulfire</h2>
-            <div class="grid md:grid-cols-5 gap-4">
-                <div class="bg-zinc-950 p-8 rounded-3xl border border-zinc-800"><div class="text-indigo-400 text-sm font-medium mb-3">01</div><div class="text-2xl font-semibold mb-2">Soul</div><p class="text-zinc-400">The irreplaceable human core.</p></div>
-                <div class="bg-zinc-950 p-8 rounded-3xl border border-zinc-800"><div class="text-indigo-400 text-sm font-medium mb-3">02</div><div class="text-2xl font-semibold mb-2">Edge</div><p class="text-zinc-400">Human intuition + AI power.</p></div>
-                <div class="bg-zinc-950 p-8 rounded-3xl border border-zinc-800"><div class="text-indigo-400 text-sm font-medium mb-3">03</div><div class="text-2xl font-semibold mb-2">Clarity</div><p class="text-zinc-400">Complexity into insight.</p></div>
-                <div class="bg-zinc-950 p-8 rounded-3xl border border-zinc-800"><div class="text-indigo-400 text-sm font-medium mb-3">04</div><div class="text-2xl font-semibold mb-2">Impact</div><p class="text-zinc-400">Results that matter.</p></div>
-                <div class="bg-zinc-950 p-8 rounded-3xl border border-zinc-800"><div class="text-indigo-400 text-sm font-medium mb-3">05</div><div class="text-2xl font-semibold mb-2">Legacy</div><p class="text-zinc-400">Work built to last.</p></div>
-            </div>
-        </div>
-    </section>
-
-    <!-- SERVICES -->
-    <section id="services" class="max-w-5xl mx-auto px-8 py-20 border-t border-zinc-800">
-        <h2 class="text-6xl font-semibold tracking-[-2px] mb-12">What I do</h2>
-        <div class="grid md:grid-cols-2 gap-x-16 gap-y-10 text-xl">
-            <div><div class="font-semibold mb-2">Art Market Intelligence</div><p class="text-zinc-400">Artist evaluations and Phoenix Soulfire scorecards.</p></div>
-            <div><div class="font-semibold mb-2">Power BI &amp; Data Systems</div><p class="text-zinc-400">Custom dashboards that actually get used.</p></div>
-            <div><div class="font-semibold mb-2">AI + Human Edge Strategy</div><p class
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BJ Beyond • One Step Beyond AI</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-primary: #0a0a0f;
+      --bg-secondary: #111118;
+      --bg-card: #16161f;
+      --accent: #e8c547;
+      --accent-glow: rgba(232, 197, 71, 0.15);
+      --text-primary: #f5f5f7;
+      --text-secondary: #a0a0b0;
+      --text-muted: #6b6b7b;
+      --border: rgba(255,255,255,0.06);
+      --gradient-1: #e8c547;
+      --gradient-2: #c9a227;
+      --gradient-3: #f0d878;
+    }
+    
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+    
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: var(--bg-primary); }
+    ::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 3px; }
+    
+    .nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 1000;
+      padding: 1.5rem 3rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: rgba(10,10,15,0.8);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border);
+      transition: all 0.3s ease;
+    }
+    
+    .nav-logo {
+      font-size: 1.5rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      color: var(--text-primary);
+    }
+    .nav-logo span { color: var(--accent); }
+    
+    .nav-links {
+      display: flex;
+      gap: 2.5rem;
+      list-style: none;
+    }
+    
+    .nav-links a {
+      color: var(--text-secondary);
+      text-decoration: none;
+      font-size: 0.9rem;
+      font-weight: 500;
+      transition: color 0.3s ease;
+      position: relative;
+    }
+    
+    .nav-links a:hover { color: var(--accent); }
+    .nav-links a::after {
+      content: '';
+      position: absolute;
+      bottom: -4px; left: 0;
+      width: 0; height: 2px;
+      background: var(--accent);
+      transition: width 0.3s ease;
+    }
+    .nav-links a:hover::after { width: 100%; }
+    
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 8rem 2rem 4rem;
+      position: relative;
+      overflow: hidden
