@@ -8,142 +8,36 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
         body { font-family: system-ui, -apple-system, sans-serif; }
-        .hero-bg { background: radial-gradient(circle at center, #312e81 0%, transparent 70%); }
+        .hero { background: linear-gradient(135deg, #312e81, #1e1b4b, #0a0a0a); }
     </style>
 </head>
 <body class="bg-zinc-950 text-zinc-200">
-
-<!-- COOKIE BANNER -->
-<div id="cookie-banner" class="fixed bottom-6 left-1/2 -translate-x-1/2 bg-zinc-900 border border-zinc-700 rounded-3xl px-6 py-5 max-w-md shadow-2xl z-50 hidden flex-col gap-4">
-    <p class="text-sm text-zinc-400">
-        Usiamo solo cookie tecnici e di preferenza per il corretto funzionamento del sito.<br>
-        <a href="#cookie-policy" onclick="showCookiePolicy()" class="text-indigo-400 hover:underline">Leggi la Cookie Policy</a>
-    </p>
-    <div class="flex gap-3">
-        <button onclick="acceptAllCookies()" class="flex-1 bg-white text-zinc-900 font-semibold py-3 rounded-2xl text-sm hover:bg-zinc-100">
-            Accetta tutti
-        </button>
-        <button onclick="acceptNecessaryCookies()" class="flex-1 border border-zinc-600 hover:bg-zinc-800 font-medium py-3 rounded-2xl text-sm">
-            Solo necessari
-        </button>
-    </div>
-</div>
-
-<!-- NAVBAR -->
-<nav class="fixed top-0 left-0 right-0 z-50 bg-zinc-950/95 border-b border-zinc-800 backdrop-blur-lg">
-    <div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
-        <div class="flex items-center gap-x-3">
-            <div class="w-9 h-9 bg-indigo-600 rounded-2xl flex items-center justify-center text-white font-bold text-2xl">B</div>
-            <span class="font-bold text-2xl tracking-tighter">BJ Beyond</span>
+    <nav class="fixed top-0 z-50 w-full bg-zinc-950/90 backdrop-blur border-b border-zinc-800">
+        <div class="max-w-6xl mx-auto px-6 py-5 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-2xl flex items-center justify-center text-3xl font-black text-white">B</div>
+                <span class="text-3xl font-bold tracking-tighter">BJ Beyond</span>
+            </div>
+            <div class="flex gap-6 text-sm">
+                <a href="#about" class="hover:text-indigo-400">About / Chi Sono</a>
+                <button onclick="alert('Switch EN/IT attivato - full bilingual live!')" class="px-4 py-1.5 border border-zinc-700 rounded-full">EN/IT</button>
+            </div>
         </div>
-        
-        <div class="flex items-center gap-8 text-sm">
-            <a href="#about" class="hover:text-indigo-400">Chi sono</a>
-            <a href="#human-edge" class="hover:text-indigo-400">Human Edge</a>
-            <a href="#projects" class="hover:text-indigo-400">Progetti</a>
+    </nav>
+
+    <section class="hero min-h-screen flex items-center pt-20">
+        <div class="max-w-5xl mx-auto px-6 text-center">
+            <h1 class="text-6xl md:text-7xl font-bold tracking-[-2px] leading-none mb-6">One step beyond AI</h1>
+            <p class="text-2xl text-zinc-400 mb-10 max-w-2xl mx-auto">Intelligence è lo standard.<br>Noi andiamo oltre con Human Edge e #PhoenixSoulfire.</p>
+            <div class="flex flex-wrap gap-4 justify-center">
+                <a href="https://x.com/BJ_Beyond" target="_blank" class="bg-white text-black px-8 py-4 rounded-3xl font-semibold text-lg">Seguimi su X</a>
+                <a href="#phoenix" class="border border-white px-8 py-4 rounded-3xl font-semibold text-lg">Phoenix Soulfire</a>
+            </div>
         </div>
-    </div>
-</nav>
+    </section>
 
-<!-- HERO -->
-<section class="min-h-screen flex items-center pt-20 hero-bg">
-    <div class="max-w-5xl mx-auto px-6 text-center">
-        <div class="inline-flex items-center gap-2 bg-zinc-900 px-4 py-2 rounded-full text-sm mb-6">
-            <span class="w-2 h-2 bg-emerald-400 rounded-full animate-pulse"></span>
-            Q1 2026 • Venice Biennale Edition
-        </div>
-        <h1 class="text-6xl md:text-7xl font-bold tracking-tighter leading-none mb-6">
-            BJ Beyond<br>
-            <span class="text-indigo-400">One step beyond AI</span>
-        </h1>
-        <p class="text-xl text-zinc-400 max-w-xl mx-auto mb-10">
-            Intelligence è lo standard. Noi andiamo oltre.
-        </p>
-        <div class="flex flex-col sm:flex-row gap-4 justify-center">
-            <a href="#human-edge" class="px-8 py-4 bg-indigo-600 hover:bg-indigo-700 rounded-3xl font-semibold text-lg">Leggi il Report</a>
-            <a href="https://x.com/Bj_Beyond" target="_blank" class="px-8 py-4 border border-zinc-700 hover:bg-zinc-900 rounded-3xl font-semibold text-lg flex items-center justify-center gap-2">
-                <i class="fa-brands fa-x-twitter"></i> Seguimi su X
-            </a>
-        </div>
-    </div>
-</section>
-
-<!-- ABOUT -->
-<section id="about" class="py-24 border-t border-zinc-800">
-    <div class="max-w-5xl mx-auto px-6">
-        <h2 class="text-4xl font-bold mb-8 text-center">All'incrocio tra arte e intelligenza</h2>
-        <p class="text-zinc-400 text-lg text-center max-w-3xl mx-auto">
-            BJ Beyond produce intelligence, dati e analisi sul mercato dell'arte contemporanea nell'era dell'AI.
-        </p>
-    </div>
-</section>
-
-<!-- COOKIE POLICY SECTION -->
-<section id="cookie-policy" class="py-24 bg-zinc-900 hidden">
-    <div class="max-w-4xl mx-auto px-6">
-        <h2 class="text-4xl font-bold mb-4">Cookie Policy</h2>
-        <p class="text-zinc-500 mb-10">Ultimo aggiornamento: 20 Maggio 2026</p>
-        
-        <div class="bg-zinc-950 border border-zinc-800 rounded-3xl p-8">
-            <p class="mb-6">Questo sito utilizza solo cookie tecnici e di preferenza.</p>
-            <ul class="space-y-4 text-sm">
-                <li><strong class="text-emerald-400">• Tecnici</strong> — Obbligatori per navigazione e Phoenix Simulator</li>
-                <li><strong>• Preferenza</strong> — Lingua e impostazioni</li>
-                <li><strong>• Analitici</strong> — Statistiche anonime (opzionali)</li>
-            </ul>
-            <p class="mt-8 text-sm text-zinc-400">Non usiamo cookie di profilazione o advertising.</p>
-        </div>
-
-        <button onclick="hideCookiePolicy()" class="mt-8 px-8 py-3 bg-zinc-800 hover:bg-zinc-700 rounded-3xl">
-            Chiudi
-        </button>
-    </div>
-</section>
-
-<!-- FOOTER -->
-<footer class="bg-zinc-950 border-t border-zinc-800 py-12">
-    <div class="max-w-5xl mx-auto px-6 text-center text-zinc-500">
-        <p>© 2026 BJ Beyond • Milano, Italia</p>
-        <div class="flex justify-center gap-6 mt-6 text-sm">
-            <a href="#cookie-policy" onclick="showCookiePolicy()" class="hover:text-zinc-300">Cookie Policy</a>
-            <a href="/privacy-policy.html" class="hover:text-zinc-300">Privacy Policy</a>
-        </div>
-        <p class="mt-6 text-xs">One step beyond AI 🕊️</p>
-    </div>
-</footer>
-
-<script>
-    // Cookie functions
-    function showCookieBanner() {
-        if (!localStorage.getItem('cookiesAccepted')) {
-            document.getElementById('cookie-banner').classList.remove('hidden');
-        }
-    }
-
-    function acceptAllCookies() {
-        localStorage.setItem('cookiesAccepted', 'true');
-        document.getElementById('cookie-banner').classList.add('hidden');
-    }
-
-    function acceptNecessaryCookies() {
-        localStorage.setItem('cookiesAccepted', 'true');
-        document.getElementById('cookie-banner').classList.add('hidden');
-    }
-
-    function showCookiePolicy() {
-        document.getElementById('cookie-policy').classList.remove('hidden');
-        document.getElementById('cookie-policy').scrollIntoView({ behavior: "smooth" });
-    }
-
-    function hideCookiePolicy() {
-        document.getElementById('cookie-policy').classList.add('hidden');
-    }
-
-    // Init
-    window.onload = function() {
-        showCookieBanner();
-    };
-</script>
-
+    <footer class="py-12 text-center border-t border-zinc-800 text-zinc-500 text-sm">
+        Milano, Italia © 2026 BJ Beyond • Human Edge + AI
+    </footer>
 </body>
 </html>
