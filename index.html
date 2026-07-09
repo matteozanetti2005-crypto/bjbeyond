@@ -1,43 +1,80 @@
 <!DOCTYPE html>
-<html lang="it">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BJ Beyond — One step beyond AI</title>
+    <title>BJ Beyond • One Step Beyond AI</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <style>
-        body { font-family: system-ui, -apple-system, sans-serif; }
-        .hero { background: linear-gradient(135deg, #312e81, #1e1b4b, #0a0a0a); }
-    </style>
 </head>
 <body class="bg-zinc-950 text-zinc-200">
-    <nav class="fixed top-0 z-50 w-full bg-zinc-950/90 backdrop-blur border-b border-zinc-800">
-        <div class="max-w-6xl mx-auto px-6 py-5 flex items-center justify-between">
-            <div class="flex items-center gap-3">
-                <div class="w-10 h-10 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-2xl flex items-center justify-center text-3xl font-black text-white">B</div>
+
+    <nav class="fixed top-0 left-0 right-0 z-50 bg-zinc-950/95 backdrop-blur-lg border-b border-zinc-800">
+        <div class="max-w-6xl mx-auto px-8 h-20 flex items-center justify-between">
+            <div class="flex items-center gap-x-3">
+                <img src="IMG_1833.jpg" alt="BJ Logo" class="w-10 h-10 object-contain">
                 <span class="text-3xl font-bold tracking-tighter">BJ Beyond</span>
             </div>
-            <div class="flex gap-6 text-sm">
-                <a href="#about" class="hover:text-indigo-400">About / Chi Sono</a>
-                <button onclick="alert('Switch EN/IT attivato - full bilingual live!')" class="px-4 py-1.5 border border-zinc-700 rounded-full">EN/IT</button>
+            <div class="flex items-center gap-x-8 text-sm font-medium">
+                <a href="#about" class="hover:text-white">About</a>
+                <a href="#phoenix" class="hover:text-white">Phoenix Soulfire</a>
+                <a href="#services" class="hover:text-white">Services</a>
+                <a href="https://x.com/BJ_Beyond" target="_blank" class="hover:text-white">X</a>
             </div>
         </div>
     </nav>
 
-    <section class="hero min-h-screen flex items-center pt-20">
-        <div class="max-w-5xl mx-auto px-6 text-center">
-            <h1 class="text-6xl md:text-7xl font-bold tracking-[-2px] leading-none mb-6">One step beyond AI</h1>
-            <p class="text-2xl text-zinc-400 mb-10 max-w-2xl mx-auto">Intelligence è lo standard.<br>Noi andiamo oltre con Human Edge e #PhoenixSoulfire.</p>
-            <div class="flex flex-wrap gap-4 justify-center">
-                <a href="https://x.com/BJ_Beyond" target="_blank" class="bg-white text-black px-8 py-4 rounded-3xl font-semibold text-lg">Seguimi su X</a>
-                <a href="#phoenix" class="border border-white px-8 py-4 rounded-3xl font-semibold text-lg">Phoenix Soulfire</a>
+    <section class="min-h-screen flex items-center pt-20">
+        <div class="max-w-4xl mx-auto px-8 text-center">
+            <div class="flex justify-center mb-8">
+                <img src="IMG_1833.jpg" alt="BJ Logo" class="w-20 h-20 object-contain">
+            </div>
+            <h1 class="text-7xl md:text-8xl font-bold tracking-[-5px] leading-none mb-6">One step beyond AI</h1>
+            <p class="text-2xl text-zinc-400 max-w-md mx-auto mb-10">Intelligence is the standard.<br>We go further.</p>
+            <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                <a href="#phoenix" class="px-10 py-4 bg-white text-zinc-950 font-semibold rounded-3xl text-lg">Explore Phoenix Soulfire</a>
+                <a href="#services" class="px-10 py-4 border border-zinc-700 hover:bg-zinc-900 font-semibold rounded-3xl text-lg">See what I do</a>
             </div>
         </div>
     </section>
 
-    <footer class="py-12 text-center border-t border-zinc-800 text-zinc-500 text-sm">
-        Milano, Italia © 2026 BJ Beyond • Human Edge + AI
+    <section id="about" class="max-w-4xl mx-auto px-8 py-20 border-t border-zinc-800">
+        <h2 class="text-5xl font-semibold tracking-tight mb-8">About</h2>
+        <div class="max-w-3xl text-xl text-zinc-400 space-y-6">
+            <p>BJ Beyond is an independent practice at the intersection of data, AI, and human intuition.</p>
+            <p>I help artists, collectors, and companies navigate the new creative economy with clarity and powerful tools.</p>
+        </div>
+    </section>
+
+    <section id="phoenix" class="bg-zinc-900 py-20">
+        <div class="max-w-5xl mx-auto px-8">
+            <h2 class="text-6xl font-semibold tracking-[-2px] mb-12">Phoenix Soulfire</h2>
+            <div class="grid md:grid-cols-5 gap-4">
+                <div class="bg-zinc-950 p-8 rounded-3xl border border-zinc-800"><div class="text-indigo-400 text-sm font-medium mb-3">01</div><div class="text-2xl font-semibold mb-2">Soul</div><p class="text-zinc-400">The irreplaceable human core.</p></div>
+                <div class="bg-zinc-950 p-8 rounded-3xl border border-zinc-800"><div class="text-indigo-400 text-sm font-medium mb-3">02</div><div class="text-2xl font-semibold mb-2">Edge</div><p class="text-zinc-400">Human intuition + AI power.</p></div>
+                <div class="bg-zinc-950 p-8 rounded-3xl border border-zinc-800"><div class="text-indigo-400 text-sm font-medium mb-3">03</div><div class="text-2xl font-semibold mb-2">Clarity</div><p class="text-zinc-400">Complexity into insight.</p></div>
+                <div class="bg-zinc-950 p-8 rounded-3xl border border-zinc-800"><div class="text-indigo-400 text-sm font-medium mb-3">04</div><div class="text-2xl font-semibold mb-2">Impact</div><p class="text-zinc-400">Results that matter.</p></div>
+                <div class="bg-zinc-950 p-8 rounded-3xl border border-zinc-800"><div class="text-indigo-400 text-sm font-medium mb-3">05</div><div class="text-2xl font-semibold mb-2">Legacy</div><p class="text-zinc-400">Work built to last.</p></div>
+            </div>
+        </div>
+    </section>
+
+    <section id="services" class="max-w-5xl mx-auto px-8 py-20 border-t border-zinc-800">
+        <h2 class="text-6xl font-semibold tracking-[-2px] mb-12">What I do</h2>
+        <div class="grid md:grid-cols-2 gap-x-16 gap-y-10 text-xl">
+            <div><div class="font-semibold mb-2">Art Market Intelligence</div><p class="text-zinc-400">Artist evaluations and Phoenix Soulfire scorecards.</p></div>
+            <div><div class="font-semibold mb-2">Power BI &amp; Data Systems</div><p class="text-zinc-400">Custom dashboards that actually get used.</p></div>
+            <div><div class="font-semibold mb-2">AI + Human Edge Strategy</div><p class="text-zinc-400">Integrating AI without losing soul.</p></div>
+            <div><div class="font-semibold mb-2">Custom Tools &amp; Agents</div><p class="text-zinc-400">Practical AI systems and automation.</p></div>
+        </div>
+    </section>
+
+    <footer class="border-t border-zinc-800 py-16">
+        <div class="max-w-4xl mx-auto px-8 text-center">
+            <p class="text-2xl mb-8">Ready to go beyond?</p>
+            <a href="https://x.com/BJ_Beyond" target="_blank" class="inline-flex items-center gap-x-3 px-8 py-4 bg-white text-zinc-950 font-semibold rounded-3xl text-lg">Message me on X</a>
+            <p class="mt-10 text-sm text-zinc-500">© 2026 BJ Beyond • Milano, Italia</p>
+        </div>
     </footer>
 </body>
 </html>
