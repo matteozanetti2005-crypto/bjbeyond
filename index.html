@@ -93,4 +93,1041 @@
       text-align: center;
       padding: 8rem 2rem 4rem;
       position: relative;
-      overflow: hidden
+      overflow: hidden;
+    }
+    
+    .hero-bg {
+      position: absolute;
+      inset: 0;
+      background: 
+        radial-gradient(ellipse at 20% 50%, rgba(232,197,71,0.08) 0%, transparent 50%),
+        radial-gradient(ellipse at 80% 20%, rgba(232,197,71,0.05) 0%, transparent 50%),
+        radial-gradient(ellipse at 50% 80%, rgba(200,160,40,0.06) 0%, transparent 50%);
+      animation: heroPulse 8s ease-in-out infinite;
+    }
+    
+    @keyframes heroPulse {
+      0%, 100% { opacity: 0.6; }
+      50% { opacity: 1; }
+    }
+    
+    .hero-content { position: relative; z-index: 2; max-width: 900px; }
+    
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.5rem 1rem;
+      background: rgba(232,197,71,0.1);
+      border: 1px solid rgba(232,197,71,0.2);
+      border-radius: 100px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--accent);
+      margin-bottom: 2rem;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+    
+    .hero-badge::before {
+      content: '';
+      width: 6px; height: 6px;
+      background: var(--accent);
+      border-radius: 50%;
+      animation: pulse 2s ease-in-out infinite;
+    }
+    
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.5; transform: scale(0.8); }
+    }
+    
+    .hero h1 {
+      font-size: clamp(3rem, 8vw, 6rem);
+      font-weight: 900;
+      line-height: 1.05;
+      letter-spacing: -0.03em;
+      margin-bottom: 1.5rem;
+    }
+    
+    .hero h1 .gradient-text {
+      background: linear-gradient(135deg, var(--gradient-1), var(--gradient-3), var(--gradient-2));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    
+    .hero-subtitle {
+      font-size: clamp(1.1rem, 2.5vw, 1.5rem);
+      color: var(--text-secondary);
+      font-weight: 400;
+      max-width: 600px;
+      margin: 0 auto 3rem;
+      line-height: 1.6;
+    }
+    
+    .hero-cta {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+    
+    .btn {
+      padding: 1rem 2.5rem;
+      border-radius: 100px;
+      font-size: 0.95rem;
+      font-weight: 600;
+      text-decoration: none;
+      transition: all 0.3s ease;
+      cursor: pointer;
+      border: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    
+    .btn-primary {
+      background: linear-gradient(135deg, var(--gradient-1), var(--gradient-2));
+      color: var(--bg-primary);
+      box-shadow: 0 4px 30px rgba(232,197,71,0.3);
+    }
+    
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 40px rgba(232,197,71,0.4);
+    }
+    
+    .btn-secondary {
+      background: transparent;
+      color: var(--text-primary);
+      border: 1px solid var(--border);
+    }
+    
+    .btn-secondary:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+      background: rgba(232,197,71,0.05);
+    }
+    
+    .scroll-indicator {
+      position: absolute;
+      bottom: 2rem;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.5rem;
+      color: var(--text-muted);
+      font-size: 0.75rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      animation: bounce 2s ease-in-out infinite;
+    }
+    
+    @keyframes bounce {
+      0%, 100% { transform: translateX(-50%) translateY(0); }
+      50% { transform: translateX(-50%) translateY(-10px); }
+    }
+    
+    section { padding: 6rem 2rem; position: relative; }
+    .container { max-width: 1200px; margin: 0 auto; }
+    
+    .section-header {
+      text-align: center;
+      margin-bottom: 4rem;
+    }
+    
+    .section-label {
+      font-size: 0.8rem;
+      font-weight: 700;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 1rem;
+      display: block;
+    }
+    
+    .section-title {
+      font-size: clamp(2rem, 5vw, 3.5rem);
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      line-height: 1.1;
+      margin-bottom: 1rem;
+    }
+    
+    .section-desc {
+      color: var(--text-secondary);
+      font-size: 1.1rem;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+    
+    .about { background: var(--bg-secondary); }
+    
+    .about-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 4rem;
+      align-items: center;
+    }
+    
+    .about-text h3 {
+      font-size: 2rem;
+      font-weight: 700;
+      margin-bottom: 1.5rem;
+      line-height: 1.3;
+    }
+    
+    .about-text p {
+      color: var(--text-secondary);
+      font-size: 1.1rem;
+      line-height: 1.8;
+      margin-bottom: 1.5rem;
+    }
+    
+    .about-stats {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1.5rem;
+    }
+    
+    .stat-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 1.5rem;
+      transition: all 0.3s ease;
+    }
+    
+    .stat-card:hover {
+      border-color: rgba(232,197,71,0.3);
+      transform: translateY(-4px);
+      box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+    }
+    
+    .stat-number {
+      font-size: 2.5rem;
+      font-weight: 800;
+      color: var(--accent);
+      line-height: 1;
+      margin-bottom: 0.5rem;
+    }
+    
+    .stat-label {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      font-weight: 500;
+    }
+    
+    .soulfire { background: var(--bg-primary); }
+    
+    .soulfire-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 1.5rem;
+    }
+    
+    .soulfire-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 2rem 1.5rem;
+      text-align: center;
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .soulfire-card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg, transparent 0%, rgba(232,197,71,0.05) 100%);
+      opacity: 0;
+      transition: opacity 0.4s ease;
+    }
+    
+    .soulfire-card:hover::before { opacity: 1; }
+    
+    .soulfire-card:hover {
+      transform: translateY(-8px);
+      border-color: rgba(232,197,71,0.3);
+      box-shadow: 0 20px 60px rgba(0,0,0,0.4), 0 0 30px var(--accent-glow);
+    }
+    
+    .soulfire-number {
+      font-size: 3rem;
+      font-weight: 900;
+      color: rgba(232,197,71,0.15);
+      line-height: 1;
+      margin-bottom: 1rem;
+      transition: color 0.3s ease;
+    }
+    
+    .soulfire-card:hover .soulfire-number {
+      color: var(--accent);
+    }
+    
+    .soulfire-icon {
+      width: 48px;
+      height: 48px;
+      margin: 0 auto 1rem;
+      background: rgba(232,197,71,0.1);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      transition: all 0.3s ease;
+    }
+    
+    .soulfire-card:hover .soulfire-icon {
+      background: var(--accent);
+      transform: scale(1.1);
+    }
+    
+    .soulfire-title {
+      font-size: 1.1rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+    }
+    
+    .soulfire-desc {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+    
+    .services { background: var(--bg-secondary); }
+    
+    .services-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2rem;
+    }
+    
+    .service-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 2.5rem;
+      transition: all 0.4s ease;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .service-card::after {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, var(--gradient-1), var(--gradient-3));
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform 0.4s ease;
+    }
+    
+    .service-card:hover::after { transform: scaleX(1); }
+    
+    .service-card:hover {
+      transform: translateY(-4px);
+      border-color: rgba(232,197,71,0.2);
+      box-shadow: 0 15px 50px rgba(0,0,0,0.3);
+    }
+    
+    .service-icon {
+      width: 56px;
+      height: 56px;
+      background: rgba(232,197,71,0.1);
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.75rem;
+      margin-bottom: 1.5rem;
+      transition: all 0.3s ease;
+    }
+    
+    .service-card:hover .service-icon {
+      background: var(--accent);
+      transform: rotate(-5deg) scale(1.1);
+    }
+    
+    .service-title {
+      font-size: 1.25rem;
+      font-weight: 700;
+      margin-bottom: 0.75rem;
+    }
+    
+    .service-desc {
+      color: var(--text-secondary);
+      font-size: 0.95rem;
+      line-height: 1.7;
+      margin-bottom: 1.5rem;
+    }
+    
+    .service-features {
+      list-style: none;
+    }
+    
+    .service-features li {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      margin-bottom: 0.5rem;
+    }
+    
+    .service-features li::before {
+      content: '→';
+      color: var(--accent);
+      font-weight: 700;
+    }
+    
+    .data-viz { background: var(--bg-primary); }
+    
+    .viz-container {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 2rem;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+    
+    .viz-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 2rem;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+    
+    .viz-title {
+      font-size: 1.1rem;
+      font-weight: 600;
+    }
+    
+    .viz-filters {
+      display: flex;
+      gap: 0.5rem;
+    }
+    
+    .viz-filter {
+      padding: 0.4rem 1rem;
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+      border-radius: 100px;
+      color: var(--text-secondary);
+      font-size: 0.8rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    
+    .viz-filter.active, .viz-filter:hover {
+      background: rgba(232,197,71,0.15);
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+    
+    .chart-area {
+      height: 300px;
+      position: relative;
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-around;
+      padding: 1rem 0;
+      gap: 1rem;
+    }
+    
+    .chart-bar-group {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    
+    .chart-bar {
+      width: 100%;
+      max-width: 60px;
+      background: linear-gradient(180deg, var(--gradient-1), var(--gradient-2));
+      border-radius: 8px 8px 0 0;
+      position: relative;
+      transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+      cursor: pointer;
+    }
+    
+    .chart-bar:hover {
+      filter: brightness(1.2);
+      transform: scaleX(1.1);
+    }
+    
+    .chart-bar::after {
+      content: attr(data-value);
+      position: absolute;
+      top: -25px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--accent);
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+    
+    .chart-bar:hover::after { opacity: 1; }
+    
+    .chart-label {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      text-align: center;
+      white-space: nowrap;
+    }
+    
+    .chart-legend {
+      display: flex;
+      justify-content: center;
+      gap: 2rem;
+      margin-top: 1.5rem;
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+    }
+    
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    
+    .legend-dot {
+      width: 10px; height: 10px;
+      border-radius: 50%;
+    }
+    
+    .contact { background: var(--bg-secondary); }
+    
+    .contact-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 4rem;
+      align-items: start;
+    }
+    
+    .contact-info h3 {
+      font-size: 2rem;
+      font-weight: 800;
+      margin-bottom: 1rem;
+    }
+    
+    .contact-info p {
+      color: var(--text-secondary);
+      margin-bottom: 2rem;
+      font-size: 1.1rem;
+    }
+    
+    .contact-links {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+    
+    .contact-link {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding: 1rem 1.5rem;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      color: var(--text-primary);
+      text-decoration: none;
+      font-weight: 500;
+      transition: all 0.3s ease;
+    }
+    
+    .contact-link:hover {
+      border-color: var(--accent);
+      background: rgba(232,197,71,0.05);
+      transform: translateX(4px);
+    }
+    
+    .contact-form {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 2.5rem;
+    }
+    
+    .form-group {
+      margin-bottom: 1.5rem;
+    }
+    
+    .form-group label {
+      display: block;
+      font-size: 0.85rem;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+      color: var(--text-secondary);
+    }
+    
+    .form-group input,
+    .form-group textarea,
+    .form-group select {
+      width: 100%;
+      padding: 0.875rem 1rem;
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      color: var(--text-primary);
+      font-size: 0.95rem;
+      font-family: inherit;
+      transition: all 0.3s ease;
+    }
+    
+    .form-group input:focus,
+    .form-group textarea:focus,
+    .form-group select:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px var(--accent-glow);
+    }
+    
+    .form-group textarea {
+      min-height: 120px;
+      resize: vertical;
+    }
+    
+    .form-submit {
+      width: 100%;
+      padding: 1rem;
+      background: linear-gradient(135deg, var(--gradient-1), var(--gradient-2));
+      color: var(--bg-primary);
+      border: none;
+      border-radius: 10px;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    
+    .form-submit:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 30px rgba(232,197,71,0.3);
+    }
+    
+    .footer {
+      background: var(--bg-primary);
+      border-top: 1px solid var(--border);
+      padding: 3rem 2rem;
+      text-align: center;
+    }
+    
+    .footer-logo {
+      font-size: 1.5rem;
+      font-weight: 800;
+      margin-bottom: 1rem;
+    }
+    
+    .footer-logo span { color: var(--accent); }
+    
+    .footer-text {
+      color: var(--text-muted);
+      font-size: 0.9rem;
+    }
+    
+    .fade-in {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    
+    .fade-in.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    
+    @media (max-width: 1024px) {
+      .soulfire-grid { grid-template-columns: repeat(3, 1fr); }
+      .services-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+    
+    @media (max-width: 768px) {
+      .nav { padding: 1rem 1.5rem; }
+      .nav-links { display: none; }
+      .about-grid,
+      .contact-grid { grid-template-columns: 1fr; }
+      .soulfire-grid { grid-template-columns: repeat(2, 1fr); }
+      .services-grid { grid-template-columns: 1fr; }
+      .chart-area { height: 250px; }
+      section { padding: 4rem 1.5rem; }
+    }
+    
+    @media (max-width: 480px) {
+      .soulfire-grid { grid-template-columns: 1fr; }
+      .hero-cta { flex-direction: column; width: 100%; }
+      .btn { width: 100%; justify-content: center; }
+    }
+  </style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav-logo">BJ <span>Beyond</span></div>
+  <ul class="nav-links">
+    <li><a href="#about">About</a></li>
+    <li><a href="#soulfire">Phoenix Soulfire</a></li>
+    <li><a href="#services">Services</a></li>
+    <li><a href="#data">Intelligence</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+</nav>
+
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-content">
+    <div class="hero-badge">One Step Beyond AI</div>
+    <h1>
+      Intelligence is<br>the <span class="gradient-text">standard</span>.
+    </h1>
+    <p class="hero-subtitle">
+      We go further. At the intersection of data, AI, and human intuition — navigating the new creative economy with clarity and powerful tools.
+    </p>
+    <div class="hero-cta">
+      <a href="#contact" class="btn btn-primary">Start a Project →</a>
+      <a href="#soulfire" class="btn btn-secondary">Explore the Method</a>
+    </div>
+  </div>
+  <div class="scroll-indicator">
+    <span>Scroll</span>
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <path d="M12 5v14M5 12l7 7 7-7"/>
+    </svg>
+  </div>
+</section>
+
+<section class="about" id="about">
+  <div class="container">
+    <div class="about-grid fade-in">
+      <div class="about-text">
+        <span class="section-label">About</span>
+        <h3>Independent practice at the intersection of data, AI, and human intuition.</h3>
+        <p>BJ Beyond helps artists, collectors, and companies navigate the new creative economy. We combine deep art market expertise with cutting-edge data science and AI tools.</p>
+        <p>From artist evaluations to custom Power BI dashboards, we deliver intelligence that actually gets used — not just reports that sit in inboxes.</p>
+      </div>
+      <div class="about-stats">
+        <div class="stat-card">
+          <div class="stat-number">5</div>
+          <div class="stat-label">Phoenix Soulfire Pillars</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number">∞</div>
+          <div class="stat-label">Data Points Analyzed</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number">AI+</div>
+          <div class="stat-label">Human-Edge Strategy</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number">1:1</div>
+          <div class="stat-label">Bespoke Approach</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="soulfire" id="soulfire">
+  <div class="container">
+    <div class="section-header fade-in">
+      <span class="section-label">Framework</span>
+      <h2 class="section-title">Phoenix Soulfire</h2>
+      <p class="section-desc">The five-pillar methodology for evaluating creative potential in the AI era.</p>
+    </div>
+    <div class="soulfire-grid">
+      <div class="soulfire-card fade-in">
+        <div class="soulfire-number">01</div>
+        <div class="soulfire-icon">🔥</div>
+        <h4 class="soulfire-title">Soul</h4>
+        <p class="soulfire-desc">The irreplaceable human core. Authenticity that algorithms can't replicate.</p>
+      </div>
+      <div class="soulfire-card fade-in">
+        <div class="soulfire-number">02</div>
+        <div class="soulfire-icon">⚡</div>
+        <h4 class="soulfire-title">Edge</h4>
+        <p class="soulfire-desc">Human intuition amplified by AI power. The competitive advantage.</p>
+      </div>
+      <div class="soulfire-card fade-in">
+        <div class="soulfire-number">03</div>
+        <div class="soulfire-icon">🔮</div>
+        <h4 class="soulfire-title">Clarity</h4>
+        <p class="soulfire-desc">Complexity distilled into insight. Data that tells a story.</p>
+      </div>
+      <div class="soulfire-card fade-in">
+        <div class="soulfire-number">04</div>
+        <div class="soulfire-icon">🎯</div>
+        <h4 class="soulfire-title">Impact</h4>
+        <p class="soulfire-desc">Results that matter. Measurable outcomes, not just metrics.</p>
+      </div>
+      <div class="soulfire-card fade-in">
+        <div class="soulfire-number">05</div>
+        <div class="soulfire-icon">🏛️</div>
+        <h4 class="soulfire-title">Legacy</h4>
+        <p class="soulfire-desc">Work built to last. Strategies that endure beyond trends.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="services" id="services">
+  <div class="container">
+    <div class="section-header fade-in">
+      <span class="section-label">What I Do</span>
+      <h2 class="section-title">Services</h2>
+      <p class="section-desc">Three core offerings designed for the art market and creative industries.</p>
+    </div>
+    <div class="services-grid">
+      <div class="service-card fade-in">
+        <div class="service-icon">📊</div>
+        <h3 class="service-title">Art Market Intelligence</h3>
+        <p class="service-desc">Deep-dive artist evaluations and Phoenix Soulfire scorecards. Understand value, trajectory, and positioning in the contemporary art market.</p>
+        <ul class="service-features">
+          <li>Artist valuation models</li>
+          <li>Market positioning analysis</li>
+          <li>Phoenix Soulfire scorecards</li>
+          <li>Competitive landscape mapping</li>
+        </ul>
+      </div>
+      <div class="service-card fade-in">
+        <div class="service-icon">📈</div>
+        <h3 class="service-title">Power BI & Data Systems</h3>
+        <p class="service-desc">Custom dashboards that actually get used. Transform raw data into actionable visual intelligence for your team.</p>
+        <ul class="service-features">
+          <li>Interactive Power BI dashboards</li>
+          <li>Automated data pipelines</li>
+          <li>Real-time KPI monitoring</li>
+          <li>Executive-ready reporting</li>
+        </ul>
+      </div>
+      <div class="service-card fade-in">
+        <div class="service-icon">🧠</div>
+        <h3 class="service-title">AI + Human Edge Strategy</h3>
+        <p class="service-desc">Strategic consulting that combines AI capabilities with human creative judgment. Navigate disruption with confidence.</p>
+        <ul class="service-features">
+          <li>AI readiness assessment</li>
+          <li>Creative workflow optimization</li>
+          <li>Human-AI collaboration design</li>
+          <li>Future-proofing strategies</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="data-viz" id="data">
+  <div class="container">
+    <div class="section-header fade-in">
+      <span class="section-label">Live Intelligence</span>
+      <h2 class="section-title">Art Market Pulse</h2>
+      <p class="section-desc">A glimpse into the kind of data intelligence BJ Beyond delivers.</p>
+    </div>
+    <div class="viz-container fade-in">
+      <div class="viz-header">
+        <span class="viz-title">📈 Contemporary Art Market Index — Q3 2026</span>
+        <div class="viz-filters">
+          <button class="viz-filter active" onclick="updateChart('all')">All</button>
+          <button class="viz-filter" onclick="updateChart('paintings')">Paintings</button>
+          <button class="viz-filter" onclick="updateChart('digital')">Digital</button>
+          <button class="viz-filter" onclick="updateChart('sculpture')">Sculpture</button>
+        </div>
+      </div>
+      <div class="chart-area" id="chartArea"></div>
+      <div class="chart-legend">
+        <div class="legend-item">
+          <div class="legend-dot" style="background: var(--gradient-1)"></div>
+          <span>Market Volume</span>
+        </div>
+        <div class="legend-item">
+          <div class="legend-dot" style="background: var(--text-muted)"></div>
+          <span>Baseline</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="contact" id="contact">
+  <div class="container">
+    <div class="section-header fade-in">
+      <span class="section-label">Get in Touch</span>
+      <h2 class="section-title">Let's Build Intelligence Together</h2>
+      <p class="section-desc">Ready to go one step beyond? Start a conversation.</p>
+    </div>
+    <div class="contact-grid fade-in">
+      <div class="contact-info">
+        <h3>Start your<br><span class="gradient-text">next project</span></h3>
+        <p>Whether you need art market intelligence, a custom data dashboard, or strategic AI guidance — let's talk.</p>
+        <div class="contact-links">
+          <a href="mailto:hello@bjbeyond.it" class="contact-link">
+            <span>📧</span> hello@bjbeyond.it
+          </a>
+          <a href="#" class="contact-link">
+            <span>💼</span> LinkedIn
+          </a>
+          <a href="#" class="contact-link">
+            <span>📍</span> Milan, Italy
+          </a>
+        </div>
+      </div>
+      <form class="contact-form" onsubmit="handleSubmit(event)">
+        <div class="form-group">
+          <label>Name</label>
+          <input type="text" placeholder="Your name" required>
+        </div>
+        <div class="form-group">
+          <label>Email</label>
+          <input type="email" placeholder="you@company.com" required>
+        </div>
+        <div class="form-group">
+          <label>Service Interest</label>
+          <select>
+            <option>Art Market Intelligence</option>
+            <option>Power BI & Data Systems</option>
+            <option>AI + Human Edge Strategy</option>
+            <option>General Inquiry</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Message</label>
+          <textarea placeholder="Tell me about your project..."></textarea>
+        </div>
+        <button type="submit" class="form-submit">Send Message →</button>
+      </form>
+    </div>
+  </div>
+</section>
+
+<footer class="footer">
+  <div class="footer-logo">BJ <span>Beyond</span></div>
+  <p class="footer-text">© 2026 BJ Beyond. Intelligence is the standard. We go further.</p>
+</footer>
+
+<script>
+  const observerOptions = { threshold: 0.1, rootMargin: '0px 0px -50px 0px' };
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) entry.target.classList.add('visible');
+    });
+  }, observerOptions);
+  
+  document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+  
+  document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function(e) {
+      e.preventDefault();
+      const target = document.querySelector(this.getAttribute('href'));
+      if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+  });
+  
+  const chartData = {
+    all: [
+      { label: 'Jan', value: 65 },
+      { label: 'Feb', value: 78 },
+      { label: 'Mar', value: 72 },
+      { label: 'Apr', value: 89 },
+      { label: 'May', value: 95 },
+      { label: 'Jun', value: 88 },
+      { label: 'Jul', value: 102 }
+    ],
+    paintings: [
+      { label: 'Jan', value: 55 },
+      { label: 'Feb', value: 62 },
+      { label: 'Mar', value: 58 },
+      { label: 'Apr', value: 71 },
+      { label: 'May', value: 78 },
+      { label: 'Jun', value: 74 },
+      { label: 'Jul', value: 82 }
+    ],
+    digital: [
+      { label: 'Jan', value: 85 },
+      { label: 'Feb', value: 92 },
+      { label: 'Mar', value: 88 },
+      { label: 'Apr', value: 105 },
+      { label: 'May', value: 118 },
+      { label: 'Jun', value: 112 },
+      { label: 'Jul', value: 125 }
+    ],
+    sculpture: [
+      { label: 'Jan', value: 45 },
+      { label: 'Feb', value: 52 },
+      { label: 'Mar', value: 48 },
+      { label: 'Apr', value: 58 },
+      { label: 'May', value: 62 },
+      { label: 'Jun', value: 59 },
+      { label: 'Jul', value: 68 }
+    ]
+  };
+  
+  function renderChart(dataKey) {
+    const container = document.getElementById('chartArea');
+    const data = chartData[dataKey];
+    const maxVal = Math.max(...data.map(d => d.value));
+    
+    container.innerHTML = data.map((d, i) => `
+      <div class="chart-bar-group">
+        <div class="chart-bar" 
+             style="height: 0%;" 
+             data-value="${d.value}"
+             data-target="${(d.value / maxVal * 100).toFixed(1)}%"></div>
+        <span class="chart-label">${d.label}</span>
+      </div>
+    `).join('');
+    
+    setTimeout(() => {
+      container.querySelectorAll('.chart-bar').forEach((bar, i) => {
+        setTimeout(() => { bar.style.height = bar.dataset.target; }, i * 100);
+      });
+    }, 100);
+  }
+  
+  function updateChart(key) {
+    document.querySelectorAll('.viz-filter').forEach(f => f.classList.remove('active'));
+    event.target.classList.add('active');
+    renderChart(key);
+  }
+  
+  renderChart('all');
+  
+  function handleSubmit(e) {
+    e.preventDefault();
+    const btn = e.target.querySelector('.form-submit');
+    const originalText = btn.textContent;
+    btn.textContent = 'Message Sent! ✓';
+    btn.style.background = 'linear-gradient(135deg, #22c55e, #16a34a)';
+    setTimeout(() => {
+      btn.textContent = originalText;
+      btn.style.background = '';
+      e.target.reset();
+    }, 3000);
+  }
+  
+  window.addEventListener('scroll', () => {
+    const nav = document.querySelector('.nav');
+    if (window.scrollY > 50) {
+      nav.style.background = 'rgba(10,10,15,0.95)';
+      nav.style.boxShadow = '0 4px 30px rgba(0,0,0,0.3)';
+    } else {
+      nav.style.background = 'rgba(10,10,15,0.8)';
+      nav.style.boxShadow = 'none';
+    }
+  });
+</script>
+
+</body>
+</html>
