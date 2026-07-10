@@ -21,57 +21,643 @@
       --gradient-2: #c9a227;
       --gradient-3: #f0d878;
     }
+    
     * { margin: 0; padding: 0; box-sizing: border-box; }
+    
     body {
       font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
       background: var(--bg-primary);
       color: var(--text-primary);
       line-height: 1.6;
       overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
     }
-    .nav { position: fixed; top: 0; left: 0; right: 0; z-index: 1000; padding: 1.2rem 1.5rem; display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.85); backdrop-filter: blur(20px); border-bottom: 1px solid var(--border); }
-    .nav-logo { font-size: 1.3rem; font-weight: 800; letter-spacing: -0.02em; }
+    
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: var(--bg-primary); }
+    ::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 3px; }
+    
+    .nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 1000;
+      padding: 1.2rem 1.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: rgba(0,0,0,0.85);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border);
+    }
+    
+    .nav-logo {
+      font-size: 1.3rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      color: var(--text-primary);
+    }
     .nav-logo span { color: var(--accent); }
-    .nav-links { display: flex; gap: 1.5rem; list-style: none; }
-    .nav-links a { color: var(--text-secondary); text-decoration: none; font-size: 0.85rem; font-weight: 500; }
+    
+    .nav-links {
+      display: flex;
+      gap: 1.5rem;
+      list-style: none;
+    }
+    
+    .nav-links a {
+      color: var(--text-secondary);
+      text-decoration: none;
+      font-size: 0.85rem;
+      font-weight: 500;
+      transition: color 0.3s ease;
+    }
+    
     .nav-links a:hover { color: var(--accent); }
     
-    .hero { min-height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 6rem 1.5rem 4rem; }
-    .hero-logo { width: 200px; margin-bottom: 2rem; }
-    .hero-badge { display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.5rem 1rem; background: rgba(232,197,71,0.08); border: 1px solid rgba(232,197,71,0.2); border-radius: 100px; font-size: 0.75rem; font-weight: 600; color: var(--accent); margin-bottom: 1.5rem; }
-    .hero h1 { font-size: clamp(2.5rem, 7vw, 5rem); font-weight: 900; line-height: 1.05; letter-spacing: -0.03em; margin-bottom: 1rem; }
-    .hero h1 .gradient-text { background: linear-gradient(135deg, var(--gradient-1), var(--gradient-3), var(--gradient-2)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-    .hero-subtitle { font-size: clamp(1rem, 2.2vw, 1.3rem); color: var(--text-secondary); max-width: 550px; margin: 0 auto 2.5rem; }
-    .hero-cta { display: flex; gap: 0.75rem; flex-wrap: wrap; justify-content: center; }
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 6rem 1.5rem 4rem;
+      position: relative;
+      background: var(--bg-primary);
+    }
     
-    .btn { padding: 0.9rem 2rem; border-radius: 100px; font-size: 0.9rem; font-weight: 600; text-decoration: none; cursor: pointer; }
-    .btn-primary { background: linear-gradient(135deg, var(--gradient-1), var(--gradient-2)); color: #000; }
-    .btn-secondary { background: transparent; color: var(--text-primary); border: 1px solid var(--border); }
+    .hero-logo {
+      width: 200px;
+      height: auto;
+      margin-bottom: 2rem;
+      filter: drop-shadow(0 0 40px rgba(232,197,71,0.1));
+      animation: logoFloat 6s ease-in-out infinite;
+    }
     
-    section { padding: 5rem 1.5rem; }
+    @keyframes logoFloat {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
+    
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.5rem 1rem;
+      background: rgba(232,197,71,0.08);
+      border: 1px solid rgba(232,197,71,0.2);
+      border-radius: 100px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--accent);
+      margin-bottom: 1.5rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+    
+    .hero h1 {
+      font-size: clamp(2.5rem, 7vw, 5rem);
+      font-weight: 900;
+      line-height: 1.05;
+      letter-spacing: -0.03em;
+      margin-bottom: 1rem;
+    }
+    
+    .hero h1 .gradient-text {
+      background: linear-gradient(135deg, var(--gradient-1), var(--gradient-3), var(--gradient-2));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    
+    .hero-subtitle {
+      font-size: clamp(1rem, 2.2vw, 1.3rem);
+      color: var(--text-secondary);
+      font-weight: 400;
+      max-width: 550px;
+      margin: 0 auto 2.5rem;
+      line-height: 1.6;
+    }
+    
+    .hero-cta {
+      display: flex;
+      gap: 0.75rem;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+    
+    .btn {
+      padding: 0.9rem 2rem;
+      border-radius: 100px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      text-decoration: none;
+      transition: all 0.3s ease;
+      cursor: pointer;
+      border: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+    
+    .btn-primary {
+      background: linear-gradient(135deg, var(--gradient-1), var(--gradient-2));
+      color: #000;
+      box-shadow: 0 4px 25px rgba(232,197,71,0.25);
+    }
+    
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 35px rgba(232,197,71,0.35);
+    }
+    
+    .btn-secondary {
+      background: transparent;
+      color: var(--text-primary);
+      border: 1px solid var(--border);
+    }
+    
+    .btn-secondary:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+    
+    section { padding: 5rem 1.5rem; position: relative; }
     .container { max-width: 1100px; margin: 0 auto; }
-    .section-header { text-align: center; margin-bottom: 3rem; }
-    .section-label { font-size: 0.75rem; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase; color: var(--accent); }
-    .section-title { font-size: clamp(1.8rem, 4.5vw, 3rem); font-weight: 800; margin-bottom: 0.75rem; }
-    .section-desc { color: var(--text-secondary); max-width: 500px; margin: 0 auto; }
+    
+    .section-header {
+      text-align: center;
+      margin-bottom: 3rem;
+    }
+    
+    .section-label {
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 0.75rem;
+      display: block;
+    }
+    
+    .section-title {
+      font-size: clamp(1.8rem, 4.5vw, 3rem);
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      line-height: 1.1;
+      margin-bottom: 0.75rem;
+    }
+    
+    .section-desc {
+      color: var(--text-secondary);
+      font-size: 1rem;
+      max-width: 500px;
+      margin: 0 auto;
+    }
     
     .about { background: var(--bg-secondary); }
+    
+    .about-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 3rem;
+      align-items: center;
+    }
+    
+    .about-text h3 {
+      font-size: 1.6rem;
+      font-weight: 700;
+      margin-bottom: 1.2rem;
+      line-height: 1.3;
+    }
+    
+    .about-text p {
+      color: var(--text-secondary);
+      font-size: 1rem;
+      line-height: 1.7;
+      margin-bottom: 1.2rem;
+    }
+    
+    .about-stats {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1rem;
+    }
+    
+    .stat-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 1.25rem;
+      transition: all 0.3s ease;
+    }
+    
+    .stat-card:hover {
+      border-color: rgba(232,197,71,0.25);
+      transform: translateY(-3px);
+    }
+    
+    .stat-number {
+      font-size: 2rem;
+      font-weight: 800;
+      color: var(--accent);
+      line-height: 1;
+      margin-bottom: 0.4rem;
+    }
+    
+    .stat-label {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      font-weight: 500;
+    }
+    
     .soulfire { background: var(--bg-primary); }
+    
+    .soulfire-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 1rem;
+    }
+    
+    .soulfire-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 1.5rem 1rem;
+      text-align: center;
+      transition: all 0.4s ease;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .soulfire-card:hover {
+      transform: translateY(-6px);
+      border-color: rgba(232,197,71,0.25);
+      box-shadow: 0 15px 40px rgba(0,0,0,0.5), 0 0 20px var(--accent-glow);
+    }
+    
+    .soulfire-number {
+      font-size: 2.5rem;
+      font-weight: 900;
+      color: rgba(232,197,71,0.12);
+      line-height: 1;
+      margin-bottom: 0.75rem;
+      transition: color 0.3s ease;
+    }
+    
+    .soulfire-card:hover .soulfire-number {
+      color: var(--accent);
+    }
+    
+    .soulfire-icon {
+      width: 40px;
+      height: 40px;
+      margin: 0 auto 0.75rem;
+      background: rgba(232,197,71,0.08);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.25rem;
+      transition: all 0.3s ease;
+    }
+    
+    .soulfire-card:hover .soulfire-icon {
+      background: var(--accent);
+      transform: scale(1.1);
+    }
+    
+    .soulfire-title {
+      font-size: 1rem;
+      font-weight: 700;
+      margin-bottom: 0.4rem;
+    }
+    
+    .soulfire-desc {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+    
     .services { background: var(--bg-secondary); }
+    
+    .services-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.5rem;
+    }
+    
+    .service-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 2rem;
+      transition: all 0.4s ease;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .service-card::after {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, var(--gradient-1), var(--gradient-3));
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform 0.4s ease;
+    }
+    
+    .service-card:hover::after { transform: scaleX(1); }
+    
+    .service-card:hover {
+      transform: translateY(-3px);
+      border-color: rgba(232,197,71,0.15);
+    }
+    
+    .service-icon {
+      width: 48px;
+      height: 48px;
+      background: rgba(232,197,71,0.08);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      margin-bottom: 1.25rem;
+      transition: all 0.3s ease;
+    }
+    
+    .service-card:hover .service-icon {
+      background: var(--accent);
+      transform: rotate(-3deg) scale(1.05);
+    }
+    
+    .service-title {
+      font-size: 1.1rem;
+      font-weight: 700;
+      margin-bottom: 0.6rem;
+    }
+    
+    .service-desc {
+      color: var(--text-secondary);
+      font-size: 0.9rem;
+      line-height: 1.6;
+      margin-bottom: 1.25rem;
+    }
+    
+    .service-features {
+      list-style: none;
+    }
+    
+    .service-features li {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      margin-bottom: 0.4rem;
+    }
+    
+    .service-features li::before {
+      content: '→';
+      color: var(--accent);
+      font-weight: 700;
+    }
+    
     .data-viz { background: var(--bg-primary); }
+    
+    .viz-container {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 1.5rem;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+    
+    .viz-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.5rem;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+    }
+    
+    .viz-title {
+      font-size: 0.95rem;
+      font-weight: 600;
+    }
+    
+    .viz-filters {
+      display: flex;
+      gap: 0.4rem;
+    }
+    
+    .viz-filter {
+      padding: 0.35rem 0.9rem;
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+      border-radius: 100px;
+      color: var(--text-secondary);
+      font-size: 0.75rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    
+    .viz-filter.active, .viz-filter:hover {
+      background: rgba(232,197,71,0.12);
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+    
+    .chart-area {
+      height: 260px;
+      position: relative;
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-around;
+      padding: 0.5rem 0;
+      gap: 0.75rem;
+    }
+    
+    .chart-bar-group {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.4rem;
+    }
+    
+    .chart-bar {
+      width: 100%;
+      max-width: 50px;
+      background: linear-gradient(180deg, var(--gradient-1), var(--gradient-2));
+      border-radius: 6px 6px 0 0;
+      position: relative;
+      transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+      cursor: pointer;
+    }
+    
+    .chart-bar:hover {
+      filter: brightness(1.2);
+      transform: scaleX(1.1);
+    }
+    
+    .chart-bar::after {
+      content: attr(data-value);
+      position: absolute;
+      top: -22px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 0.7rem;
+      font-weight: 700;
+      color: var(--accent);
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+    
+    .chart-bar:hover::after { opacity: 1; }
+    
+    .chart-label {
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      text-align: center;
+    }
+    
+    .chart-legend {
+      display: flex;
+      justify-content: center;
+      gap: 1.5rem;
+      margin-top: 1rem;
+      font-size: 0.75rem;
+      color: var(--text-secondary);
+    }
+    
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+    
+    .legend-dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+    }
+    
     .contact { background: var(--bg-secondary); }
     
-    .viz-container { background: var(--bg-card); border: 1px solid var(--border); border-radius: 20px; padding: 1.5rem; max-width: 800px; margin: 0 auto; }
-    .chart-area { height: 260px; display: flex; align-items: flex-end; justify-content: space-around; padding: 0.5rem 0; gap: 0.75rem; }
-    .chart-bar-group { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 0.4rem; }
-    .chart-bar { width: 100%; max-width: 50px; background: linear-gradient(180deg, var(--gradient-1), var(--gradient-2)); border-radius: 6px 6px 0 0; transition: all 0.6s ease; }
-    .chart-label { font-size: 0.7rem; color: var(--text-muted); }
+    .contact-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 3rem;
+      align-items: start;
+    }
     
-    .contact-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; }
-    .contact-link { display: flex; align-items: center; gap: 0.875rem; padding: 1rem 1.25rem; background: var(--bg-card); border: 1px solid var(--border); border-radius: 14px; color: var(--text-primary); text-decoration: none; }
-    .contact-link.gold-border { border-color: var(--accent); background: rgba(232,197,71,0.04); }
+    .contact-info h3 {
+      font-size: 1.8rem;
+      font-weight: 800;
+      margin-bottom: 0.75rem;
+      line-height: 1.2;
+    }
     
-    .footer { background: var(--bg-primary); padding: 2.5rem 1.5rem; text-align: center; border-top: 1px solid var(--border); }
+    .contact-info p {
+      color: var(--text-secondary);
+      margin-bottom: 1.5rem;
+      font-size: 1rem;
+      line-height: 1.6;
+    }
+    
+    .contact-links {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+    
+    .contact-link {
+      display: flex;
+      align-items: center;
+      gap: 0.875rem;
+      padding: 1rem 1.25rem;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      color: var(--text-primary);
+      text-decoration: none;
+      font-weight: 500;
+      font-size: 0.95rem;
+      transition: all 0.3s ease;
+    }
+    
+    .contact-link:hover {
+      border-color: var(--accent);
+      background: rgba(232,197,71,0.05);
+      transform: translateX(3px);
+    }
+    
+    .contact-link.gold-border {
+      border-color: var(--accent);
+      background: rgba(232,197,71,0.04);
+    }
+    
+    .footer {
+      background: var(--bg-primary);
+      border-top: 1px solid var(--border);
+      padding: 2.5rem 1.5rem;
+      text-align: center;
+    }
+    
+    .footer-logo {
+      font-size: 1.3rem;
+      font-weight: 800;
+      margin-bottom: 0.75rem;
+    }
+    
+    .footer-logo span { color: var(--accent); }
+    
+    .footer-text {
+      color: var(--text-muted);
+      font-size: 0.85rem;
+    }
+    
+    .fade-in {
+      opacity: 0;
+      transform: translateY(25px);
+      transition: all 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    
+    .fade-in.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    
+    @media (max-width: 1024px) {
+      .soulfire-grid { grid-template-columns: repeat(3, 1fr); }
+      .services-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+    
+    @media (max-width: 768px) {
+      .nav { padding: 1rem; }
+      .nav-links { display: none; }
+      .about-grid,
+      .contact-grid { grid-template-columns: 1fr; gap: 2rem; }
+      .soulfire-grid { grid-template-columns: repeat(2, 1fr); }
+      .services-grid { grid-template-columns: 1fr; }
+      .chart-area { height: 220px; }
+      section { padding: 3.5rem 1rem; }
+      .hero-logo { width: 150px; }
+    }
+    
+    @media (max-width: 480px) {
+      .soulfire-grid { grid-template-columns: 1fr; }
+      .hero-cta { flex-direction: column; width: 100%; }
+      .btn { width: 100%; justify-content: center; }
+      .viz-filters { flex-wrap: wrap; }
+      .contact-links { gap: 0.6rem; }
+      .contact-link { padding: 0.875rem 1rem; font-size: 0.9rem; }
+    }
   </style>
 </head>
 <body>
@@ -90,8 +676,12 @@
 <section class="hero">
   <img src="https://i.imgur.com/BJLogo.png" alt="BJ Beyond Logo" class="hero-logo" onerror="this.style.display='none'">
   <div class="hero-badge">One Step Beyond AI</div>
-  <h1>Intelligence is<br>the <span class="gradient-text">standard</span>.</h1>
-  <p class="hero-subtitle">We go further. At the intersection of data, AI, and human intuition.</p>
+  <h1>
+    Intelligence is<br>the <span class="gradient-text">standard</span>.
+  </h1>
+  <p class="hero-subtitle">
+    We go further. At the intersection of data, AI, and human intuition.
+  </p>
   <div class="hero-cta">
     <a href="#contact" class="btn btn-primary">Start a Project →</a>
     <a href="#soulfire" class="btn btn-secondary">Explore the Method</a>
@@ -100,98 +690,59 @@
 
 <section class="about" id="about">
   <div class="container">
-    <div class="section-header">
-      <span class="section-label">About</span>
-      <h2 class="section-title">Independent practice at the intersection of data, AI, and human intuition.</h2>
+    <div class="about-grid fade-in">
+      <div class="about-text">
+        <span class="section-label">About</span>
+        <h3>Independent practice at the intersection of data, AI, and human intuition.</h3>
+        <p>BJ Beyond helps artists, collectors, and companies navigate the new creative economy. We combine deep art market expertise with cutting-edge data science and AI tools.</p>
+        <p>From artist evaluations to custom Power BI dashboards, we deliver intelligence that actually gets used.</p>
+      </div>
+      <div class="about-stats">
+        <div class="stat-card">
+          <div class="stat-number">5</div>
+          <div class="stat-label">Phoenix Soulfire Pillars</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number">∞</div>
+          <div class="stat-label">Data Points Analyzed</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number">AI+</div>
+          <div class="stat-label">Human-Edge Strategy</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number">1:1</div>
+          <div class="stat-label">Bespoke Approach</div>
+        </div>
+      </div>
     </div>
-    <p>BJ Beyond helps artists, collectors, and companies navigate the new creative economy.</p>
   </div>
 </section>
 
 <section class="soulfire" id="soulfire">
   <div class="container">
-    <div class="section-header">
+    <div class="section-header fade-in">
       <span class="section-label">Framework</span>
       <h2 class="section-title">Phoenix Soulfire</h2>
+      <p class="section-desc">The five-pillar methodology for evaluating creative potential in the AI era.</p>
     </div>
-    <!-- Soulfire cards here if needed -->
-  </div>
-</section>
-
-<section class="services" id="services">
-  <div class="container">
-    <div class="section-header">
-      <span class="section-label">What I Do</span>
-      <h2 class="section-title">Services</h2>
-    </div>
-    <!-- Services cards -->
-  </div>
-</section>
-
-<section class="data-viz" id="data">
-  <div class="container">
-    <div class="section-header">
-      <span class="section-label">Live Intelligence</span>
-      <h2 class="section-title">Art Market Pulse</h2>
-      <p class="section-desc">A glimpse into the data intelligence BJ Beyond delivers.</p>
-    </div>
-    <div class="viz-container">
-      <div class="viz-header">
-        <span class="viz-title">📈 Contemporary Art Market Index — Q3 2026</span>
-        <div class="viz-filters">
-          <button class="viz-filter active" onclick="updateChart('all')">All</button>
-          <button class="viz-filter" onclick="updateChart('paintings')">Paintings</button>
-          <button class="viz-filter" onclick="updateChart('digital')">Digital</button>
-          <button class="viz-filter" onclick="updateChart('sculpture')">Sculpture</button>
-        </div>
+    <div class="soulfire-grid">
+      <div class="soulfire-card fade-in">
+        <div class="soulfire-number">01</div>
+        <div class="soulfire-icon">🔥</div>
+        <h4 class="soulfire-title">Soul</h4>
+        <p class="soulfire-desc">The irreplaceable human core.</p>
       </div>
-      <div class="chart-area" id="chartArea"></div>
-    </div>
-  </div>
-</section>
-
-<section class="contact" id="contact">
-  <div class="container">
-    <div class="section-header">
-      <span class="section-label">Get in Touch</span>
-      <h2 class="section-title">Let's Build Intelligence Together</h2>
-      <p class="section-desc">Ready to go one step beyond? Start a conversation.</p>
-    </div>
-    <div class="contact-grid">
-      <div class="contact-info">
-        <h3>Start your<br><span class="gradient-text">next project</span></h3>
-        <p>Whether you need art market intelligence, a custom data dashboard, or strategic AI guidance — let's talk.</p>
-        <div class="contact-links">
-          <a href="mailto:Bj_beyond@tutamail.com" class="contact-link gold-border">
-            <span>📧</span> Bj_beyond@tutamail.com
-          </a>
-        </div>
+      <div class="soulfire-card fade-in">
+        <div class="soulfire-number">02</div>
+        <div class="soulfire-icon">⚡</div>
+        <h4 class="soulfire-title">Edge</h4>
+        <p class="soulfire-desc">Human intuition + AI power.</p>
       </div>
-    </div>
-  </div>
-</section>
-
-<footer class="footer">
-  <div class="footer-logo">BJ <span>Beyond</span></div>
-  <p class="footer-text">© 2026 BJ Beyond. Intelligence is the standard. We go further. Milano, Italia</p>
-</footer>
-
-<script>
-  const chartData = {
-    all: [{label:'Jan',value:65},{label:'Feb',value:78},{label:'Mar',value:72},{label:'Apr',value:89},{label:'May',value:95},{label:'Jun',value:88},{label:'Jul',value:102}]
-  };
-  function renderChart() {
-    const container = document.getElementById('chartArea');
-    const data = chartData.all;
-    const maxVal = Math.max(...data.map(d => d.value));
-    container.innerHTML = data.map(d => `
-      <div class="chart-bar-group">
-        <div class="chart-bar" style="height: ${(d.value / maxVal * 100)}%"></div>
-        <span class="chart-label">${d.label}</span>
+      <div class="soulfire-card fade-in">
+        <div class="soulfire-number">03</div>
+        <div class="soulfire-icon">🔮</div>
+        <h4 class="soulfire-title">Clarity</h4>
+        <p class="soulfire-desc">Complexity into insight.</p>
       </div>
-    `).join('');
-  }
-  renderChart();
-</script>
-</body>
-</html>
+      <div class="soulfire-card fade-in
