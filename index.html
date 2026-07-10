@@ -21,110 +21,57 @@
       --gradient-2: #c9a227;
       --gradient-3: #f0d878;
     }
-    
     * { margin: 0; padding: 0; box-sizing: border-box; }
-    
     body {
       font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
       background: var(--bg-primary);
       color: var(--text-primary);
       line-height: 1.6;
       overflow-x: hidden;
-      -webkit-font-smoothing: antialiased;
     }
-    
-    ::-webkit-scrollbar { width: 6px; }
-    ::-webkit-scrollbar-track { background: var(--bg-primary); }
-    ::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 3px; }
-    
     .nav { position: fixed; top: 0; left: 0; right: 0; z-index: 1000; padding: 1.2rem 1.5rem; display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.85); backdrop-filter: blur(20px); border-bottom: 1px solid var(--border); }
-    .nav-logo { font-size: 1.3rem; font-weight: 800; letter-spacing: -0.02em; color: var(--text-primary); }
+    .nav-logo { font-size: 1.3rem; font-weight: 800; letter-spacing: -0.02em; }
     .nav-logo span { color: var(--accent); }
     .nav-links { display: flex; gap: 1.5rem; list-style: none; }
-    .nav-links a { color: var(--text-secondary); text-decoration: none; font-size: 0.85rem; font-weight: 500; transition: color 0.3s ease; }
+    .nav-links a { color: var(--text-secondary); text-decoration: none; font-size: 0.85rem; font-weight: 500; }
     .nav-links a:hover { color: var(--accent); }
     
-    .hero { min-height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 6rem 1.5rem 4rem; position: relative; background: var(--bg-primary); }
-    .hero-logo { width: 200px; height: auto; margin-bottom: 2rem; filter: drop-shadow(0 0 40px rgba(232,197,71,0.1)); animation: logoFloat 6s ease-in-out infinite; }
-    @keyframes logoFloat { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
-    .hero-badge { display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.5rem 1rem; background: rgba(232,197,71,0.08); border: 1px solid rgba(232,197,71,0.2); border-radius: 100px; font-size: 0.75rem; font-weight: 600; color: var(--accent); margin-bottom: 1.5rem; letter-spacing: 0.08em; text-transform: uppercase; }
+    .hero { min-height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 6rem 1.5rem 4rem; }
+    .hero-logo { width: 200px; margin-bottom: 2rem; }
+    .hero-badge { display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.5rem 1rem; background: rgba(232,197,71,0.08); border: 1px solid rgba(232,197,71,0.2); border-radius: 100px; font-size: 0.75rem; font-weight: 600; color: var(--accent); margin-bottom: 1.5rem; }
     .hero h1 { font-size: clamp(2.5rem, 7vw, 5rem); font-weight: 900; line-height: 1.05; letter-spacing: -0.03em; margin-bottom: 1rem; }
-    .hero h1 .gradient-text { background: linear-gradient(135deg, var(--gradient-1), var(--gradient-3), var(--gradient-2)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
-    .hero-subtitle { font-size: clamp(1rem, 2.2vw, 1.3rem); color: var(--text-secondary); font-weight: 400; max-width: 550px; margin: 0 auto 2.5rem; line-height: 1.6; }
-    .hero-cta { display: flex; gap: 0.75rem; justify-content: center; flex-wrap: wrap; }
+    .hero h1 .gradient-text { background: linear-gradient(135deg, var(--gradient-1), var(--gradient-3), var(--gradient-2)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    .hero-subtitle { font-size: clamp(1rem, 2.2vw, 1.3rem); color: var(--text-secondary); max-width: 550px; margin: 0 auto 2.5rem; }
+    .hero-cta { display: flex; gap: 0.75rem; flex-wrap: wrap; justify-content: center; }
     
-    .btn { padding: 0.9rem 2rem; border-radius: 100px; font-size: 0.9rem; font-weight: 600; text-decoration: none; transition: all 0.3s ease; cursor: pointer; border: none; display: inline-flex; align-items: center; gap: 0.4rem; }
-    .btn-primary { background: linear-gradient(135deg, var(--gradient-1), var(--gradient-2)); color: #000; box-shadow: 0 4px 25px rgba(232,197,71,0.25); }
-    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 35px rgba(232,197,71,0.35); }
+    .btn { padding: 0.9rem 2rem; border-radius: 100px; font-size: 0.9rem; font-weight: 600; text-decoration: none; cursor: pointer; }
+    .btn-primary { background: linear-gradient(135deg, var(--gradient-1), var(--gradient-2)); color: #000; }
     .btn-secondary { background: transparent; color: var(--text-primary); border: 1px solid var(--border); }
-    .btn-secondary:hover { border-color: var(--accent); color: var(--accent); }
     
-    section { padding: 5rem 1.5rem; position: relative; }
+    section { padding: 5rem 1.5rem; }
     .container { max-width: 1100px; margin: 0 auto; }
     .section-header { text-align: center; margin-bottom: 3rem; }
-    .section-label { font-size: 0.75rem; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase; color: var(--accent); margin-bottom: 0.75rem; display: block; }
-    .section-title { font-size: clamp(1.8rem, 4.5vw, 3rem); font-weight: 800; letter-spacing: -0.02em; line-height: 1.1; margin-bottom: 0.75rem; }
-    .section-desc { color: var(--text-secondary); font-size: 1rem; max-width: 500px; margin: 0 auto; }
+    .section-label { font-size: 0.75rem; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase; color: var(--accent); }
+    .section-title { font-size: clamp(1.8rem, 4.5vw, 3rem); font-weight: 800; margin-bottom: 0.75rem; }
+    .section-desc { color: var(--text-secondary); max-width: 500px; margin: 0 auto; }
     
     .about { background: var(--bg-secondary); }
-    .about-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; align-items: center; }
-    
     .soulfire { background: var(--bg-primary); }
-    .soulfire-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 1rem; }
-    
     .services { background: var(--bg-secondary); }
-    .services-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; }
-    
     .data-viz { background: var(--bg-primary); }
-    .viz-container { background: var(--bg-card); border: 1px solid var(--border); border-radius: 20px; padding: 1.5rem; max-width: 800px; margin: 0 auto; }
-    .viz-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 0.75rem; }
-    .viz-filters { display: flex; gap: 0.4rem; }
-    .viz-filter { padding: 0.35rem 0.9rem; background: var(--bg-secondary); border: 1px solid var(--border); border-radius: 100px; color: var(--text-secondary); font-size: 0.75rem; cursor: pointer; transition: all 0.3s ease; }
-    .viz-filter.active, .viz-filter:hover { background: rgba(232,197,71,0.12); border-color: var(--accent); color: var(--accent); }
-    .chart-area { height: 260px; position: relative; display: flex; align-items: flex-end; justify-content: space-around; padding: 0.5rem 0; gap: 0.75rem; }
-    .chart-bar-group { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 0.4rem; }
-    .chart-bar { width: 100%; max-width: 50px; background: linear-gradient(180deg, var(--gradient-1), var(--gradient-2)); border-radius: 6px 6px 0 0; position: relative; transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1); cursor: pointer; }
-    .chart-bar:hover { filter: brightness(1.2); transform: scaleX(1.1); }
-    .chart-bar::after { content: attr(data-value); position: absolute; top: -22px; left: 50%; transform: translateX(-50%); font-size: 0.7rem; font-weight: 700; color: var(--accent); opacity: 0; transition: opacity 0.3s ease; }
-    .chart-bar:hover::after { opacity: 1; }
-    .chart-label { font-size: 0.7rem; color: var(--text-muted); text-align: center; }
-    .chart-legend { display: flex; justify-content: center; gap: 1.5rem; margin-top: 1rem; font-size: 0.75rem; color: var(--text-secondary); }
-    .legend-dot { width: 8px; height: 8px; border-radius: 50%; }
-    
     .contact { background: var(--bg-secondary); }
-    .contact-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; align-items: start; }
-    .contact-info h3 { font-size: 1.8rem; font-weight: 800; margin-bottom: 0.75rem; line-height: 1.2; }
-    .contact-info p { color: var(--text-secondary); margin-bottom: 1.5rem; font-size: 1rem; line-height: 1.6; }
-    .contact-links { display: flex; flex-direction: column; gap: 0.75rem; }
-    .contact-link { display: flex; align-items: center; gap: 0.875rem; padding: 1rem 1.25rem; background: var(--bg-card); border: 1px solid var(--border); border-radius: 14px; color: var(--text-primary); text-decoration: none; font-weight: 500; font-size: 0.95rem; transition: all 0.3s ease; }
-    .contact-link:hover { border-color: var(--accent); background: rgba(232,197,71,0.05); transform: translateX(3px); }
+    
+    .viz-container { background: var(--bg-card); border: 1px solid var(--border); border-radius: 20px; padding: 1.5rem; max-width: 800px; margin: 0 auto; }
+    .chart-area { height: 260px; display: flex; align-items: flex-end; justify-content: space-around; padding: 0.5rem 0; gap: 0.75rem; }
+    .chart-bar-group { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 0.4rem; }
+    .chart-bar { width: 100%; max-width: 50px; background: linear-gradient(180deg, var(--gradient-1), var(--gradient-2)); border-radius: 6px 6px 0 0; transition: all 0.6s ease; }
+    .chart-label { font-size: 0.7rem; color: var(--text-muted); }
+    
+    .contact-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; }
+    .contact-link { display: flex; align-items: center; gap: 0.875rem; padding: 1rem 1.25rem; background: var(--bg-card); border: 1px solid var(--border); border-radius: 14px; color: var(--text-primary); text-decoration: none; }
     .contact-link.gold-border { border-color: var(--accent); background: rgba(232,197,71,0.04); }
     
-    .footer { background: var(--bg-primary); border-top: 1px solid var(--border); padding: 2.5rem 1.5rem; text-align: center; }
-    .footer-logo { font-size: 1.3rem; font-weight: 800; margin-bottom: 0.75rem; }
-    .footer-logo span { color: var(--accent); }
-    .footer-text { color: var(--text-muted); font-size: 0.85rem; }
-    
-    .fade-in { opacity: 0; transform: translateY(25px); transition: all 0.7s cubic-bezier(0.4, 0, 0.2, 1); }
-    .fade-in.visible { opacity: 1; transform: translateY(0); }
-    
-    @media (max-width: 1024px) { .soulfire-grid { grid-template-columns: repeat(3, 1fr); } .services-grid { grid-template-columns: repeat(2, 1fr); } }
-    @media (max-width: 768px) { 
-      .nav { padding: 1rem; } .nav-links { display: none; } 
-      .about-grid, .contact-grid { grid-template-columns: 1fr; gap: 2rem; } 
-      .soulfire-grid { grid-template-columns: repeat(2, 1fr); } 
-      .services-grid { grid-template-columns: 1fr; } 
-      .chart-area { height: 220px; } 
-      section { padding: 3.5rem 1rem; } 
-      .hero-logo { width: 150px; }
-    }
-    @media (max-width: 480px) { 
-      .soulfire-grid { grid-template-columns: 1fr; } 
-      .hero-cta { flex-direction: column; width: 100%; } 
-      .btn { width: 100%; justify-content: center; } 
-      .viz-filters { flex-wrap: wrap; } 
-      .contact-links { gap: 0.6rem; } 
-    }
+    .footer { background: var(--bg-primary); padding: 2.5rem 1.5rem; text-align: center; border-top: 1px solid var(--border); }
   </style>
 </head>
 <body>
@@ -153,78 +100,42 @@
 
 <section class="about" id="about">
   <div class="container">
-    <div class="about-grid fade-in">
-      <div class="about-text">
-        <span class="section-label">About</span>
-        <h3>Independent practice at the intersection of data, AI, and human intuition.</h3>
-        <p>BJ Beyond helps artists, collectors, and companies navigate the new creative economy. We combine deep art market expertise with cutting-edge data science and AI tools.</p>
-        <p>From artist evaluations to custom Power BI dashboards, we deliver intelligence that actually gets used.</p>
-      </div>
-      <div class="about-stats">
-        <div class="stat-card"><div class="stat-number">5</div><div class="stat-label">Phoenix Soulfire Pillars</div></div>
-        <div class="stat-card"><div class="stat-number">∞</div><div class="stat-label">Data Points Analyzed</div></div>
-        <div class="stat-card"><div class="stat-number">AI+</div><div class="stat-label">Human-Edge Strategy</div></div>
-        <div class="stat-card"><div class="stat-number">1:1</div><div class="stat-label">Bespoke Approach</div></div>
-      </div>
+    <div class="section-header">
+      <span class="section-label">About</span>
+      <h2 class="section-title">Independent practice at the intersection of data, AI, and human intuition.</h2>
     </div>
+    <p>BJ Beyond helps artists, collectors, and companies navigate the new creative economy.</p>
   </div>
 </section>
 
 <section class="soulfire" id="soulfire">
   <div class="container">
-    <div class="section-header fade-in">
+    <div class="section-header">
       <span class="section-label">Framework</span>
       <h2 class="section-title">Phoenix Soulfire</h2>
-      <p class="section-desc">The five-pillar methodology for evaluating creative potential in the AI era.</p>
     </div>
-    <div class="soulfire-grid">
-      <div class="soulfire-card fade-in"><div class="soulfire-number">01</div><div class="soulfire-icon">🔥</div><h4 class="soulfire-title">Soul</h4><p class="soulfire-desc">The irreplaceable human core.</p></div>
-      <div class="soulfire-card fade-in"><div class="soulfire-number">02</div><div class="soulfire-icon">⚡</div><h4 class="soulfire-title">Edge</h4><p class="soulfire-desc">Human intuition + AI power.</p></div>
-      <div class="soulfire-card fade-in"><div class="soulfire-number">03</div><div class="soulfire-icon">🔮</div><h4 class="soulfire-title">Clarity</h4><p class="soulfire-desc">Complexity into insight.</p></div>
-      <div class="soulfire-card fade-in"><div class="soulfire-number">04</div><div class="soulfire-icon">🎯</div><h4 class="soulfire-title">Impact</h4><p class="soulfire-desc">Results that matter.</p></div>
-      <div class="soulfire-card fade-in"><div class="soulfire-number">05</div><div class="soulfire-icon">🏛️</div><h4 class="soulfire-title">Legacy</h4><p class="soulfire-desc">Work built to last.</p></div>
-    </div>
+    <!-- Soulfire cards here if needed -->
   </div>
 </section>
 
 <section class="services" id="services">
   <div class="container">
-    <div class="section-header fade-in">
+    <div class="section-header">
       <span class="section-label">What I Do</span>
       <h2 class="section-title">Services</h2>
-      <p class="section-desc">Three core offerings for the art market and creative industries.</p>
     </div>
-    <div class="services-grid">
-      <div class="service-card fade-in">
-        <div class="service-icon">📊</div>
-        <h3 class="service-title">Art Market Intelligence</h3>
-        <p class="service-desc">Deep-dive artist evaluations and Phoenix Soulfire scorecards.</p>
-        <ul class="service-features"><li>Artist valuation models</li><li>Market positioning analysis</li><li>Phoenix Soulfire scorecards</li><li>Competitive landscape mapping</li></ul>
-      </div>
-      <div class="service-card fade-in">
-        <div class="service-icon">📈</div>
-        <h3 class="service-title">Power BI & Data Systems</h3>
-        <p class="service-desc">Custom dashboards that actually get used.</p>
-        <ul class="service-features"><li>Interactive Power BI dashboards</li><li>Automated data pipelines</li><li>Real-time KPI monitoring</li><li>Executive-ready reporting</li></ul>
-      </div>
-      <div class="service-card fade-in">
-        <div class="service-icon">🧠</div>
-        <h3 class="service-title">AI + Human Edge Strategy</h3>
-        <p class="service-desc">Strategic consulting combining AI with human creative judgment.</p>
-        <ul class="service-features"><li>AI readiness assessment</li><li>Creative workflow optimization</li><li>Human-AI collaboration design</li><li>Future-proofing strategies</li></ul>
-      </div>
-    </div>
+    <!-- Services cards -->
   </div>
 </section>
 
 <section class="data-viz" id="data">
   <div class="container">
-    <div class="section-header fade-in">
+    <div class="section-header">
       <span class="section-label">Live Intelligence</span>
       <h2 class="section-title">Art Market Pulse</h2>
       <p class="section-desc">A glimpse into the data intelligence BJ Beyond delivers.</p>
     </div>
-    <div class="viz-container fade-in">
+    <div class="viz-container">
       <div class="viz-header">
         <span class="viz-title">📈 Contemporary Art Market Index — Q3 2026</span>
         <div class="viz-filters">
@@ -235,24 +146,18 @@
         </div>
       </div>
       <div class="chart-area" id="chartArea"></div>
-      <div class="chart-legend">
-        <div class="legend-item">
-          <div class="legend-dot" style="background: var(--gradient-1)"></div>
-          <span>Market Volume</span>
-        </div>
-      </div>
     </div>
   </div>
 </section>
 
 <section class="contact" id="contact">
   <div class="container">
-    <div class="section-header fade-in">
+    <div class="section-header">
       <span class="section-label">Get in Touch</span>
       <h2 class="section-title">Let's Build Intelligence Together</h2>
       <p class="section-desc">Ready to go one step beyond? Start a conversation.</p>
     </div>
-    <div class="contact-grid fade-in">
+    <div class="contact-grid">
       <div class="contact-info">
         <h3>Start your<br><span class="gradient-text">next project</span></h3>
         <p>Whether you need art market intelligence, a custom data dashboard, or strategic AI guidance — let's talk.</p>
@@ -272,56 +177,21 @@
 </footer>
 
 <script>
-  const observerOptions = { threshold: 0.1, rootMargin: '0px 0px -50px 0px' };
-  const observer = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) entry.target.classList.add('visible');
-    });
-  }, observerOptions);
-  
-  document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
-  
-  document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-    anchor.addEventListener('click', function(e) {
-      e.preventDefault();
-      const target = document.querySelector(this.getAttribute('href'));
-      if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    });
-  });
-  
   const chartData = {
-    all: [{ label: 'Jan', value: 65 }, { label: 'Feb', value: 78 }, { label: 'Mar', value: 72 }, { label: 'Apr', value: 89 }, { label: 'May', value: 95 }, { label: 'Jun', value: 88 }, { label: 'Jul', value: 102 }],
-    paintings: [{ label: 'Jan', value: 55 }, { label: 'Feb', value: 62 }, { label: 'Mar', value: 58 }, { label: 'Apr', value: 71 }, { label: 'May', value: 78 }, { label: 'Jun', value: 74 }, { label: 'Jul', value: 82 }],
-    digital: [{ label: 'Jan', value: 85 }, { label: 'Feb', value: 92 }, { label: 'Mar', value: 88 }, { label: 'Apr', value: 105 }, { label: 'May', value: 118 }, { label: 'Jun', value: 112 }, { label: 'Jul', value: 125 }],
-    sculpture: [{ label: 'Jan', value: 45 }, { label: 'Feb', value: 52 }, { label: 'Mar', value: 48 }, { label: 'Apr', value: 58 }, { label: 'May', value: 62 }, { label: 'Jun', value: 59 }, { label: 'Jul', value: 68 }]
+    all: [{label:'Jan',value:65},{label:'Feb',value:78},{label:'Mar',value:72},{label:'Apr',value:89},{label:'May',value:95},{label:'Jun',value:88},{label:'Jul',value:102}]
   };
-  
-  function renderChart(dataKey) {
+  function renderChart() {
     const container = document.getElementById('chartArea');
-    const data = chartData[dataKey];
+    const data = chartData.all;
     const maxVal = Math.max(...data.map(d => d.value));
-    
-    container.innerHTML = data.map((d, i) => `
+    container.innerHTML = data.map(d => `
       <div class="chart-bar-group">
-        <div class="chart-bar" style="height: 0%;" data-value="${d.value}" data-target="${(d.value / maxVal * 100).toFixed(1)}%"></div>
+        <div class="chart-bar" style="height: ${(d.value / maxVal * 100)}%"></div>
         <span class="chart-label">${d.label}</span>
       </div>
     `).join('');
-    
-    setTimeout(() => {
-      container.querySelectorAll('.chart-bar').forEach((bar, i) => {
-        setTimeout(() => { bar.style.height = bar.dataset.target; }, i * 100);
-      });
-    }, 100);
   }
-  
-  function updateChart(key) {
-    document.querySelectorAll('.viz-filter').forEach(f => f.classList.remove('active'));
-    if (event && event.target) event.target.classList.add('active');
-    renderChart(key);
-  }
-  
-  renderChart('all');
+  renderChart();
 </script>
 </body>
 </html>
