@@ -547,11 +547,6 @@
       border-radius: 50%;
     }
     
-    .legend-dot {
-      width: 8px; height: 8px;
-      border-radius: 50%;
-    }
-    
     .contact { background: var(--bg-secondary); }
     
     .contact-grid {
@@ -625,6 +620,21 @@
     .footer-text {
       color: var(--text-muted);
       font-size: 0.85rem;
+    }
+    
+    .footer-links {
+      margin-top: 0.75rem;
+      font-size: 0.75rem;
+    }
+    
+    .footer-links a {
+      color: var(--text-muted);
+      text-decoration: none;
+      margin: 0 0.5rem;
+    }
+    
+    .footer-links a:hover {
+      color: var(--accent);
     }
     
     .fade-in {
@@ -866,6 +876,10 @@
 <footer class="footer">
   <div class="footer-logo">BJ <span>Beyond</span></div>
   <p class="footer-text">© 2026 BJ Beyond. Intelligence is the standard. We go further. Milano, Italia</p>
+  <div class="footer-links">
+    <a href="privacy-policy.md" target="_blank">Privacy Policy</a>
+    <a href="cookie-policy.md" target="_blank">Cookie Policy</a>
+  </div>
 </footer>
 
 <script>
