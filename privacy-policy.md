@@ -1,35 +1,46 @@
 # Privacy Policy
 
-**Ultimo aggiornamento: 20 Maggio 2026**
+**Ultimo aggiornamento: 21 Luglio 2026**
 
-BJ Beyond si impegna a proteggere la tua privacy. Questa Informativa Privacy descrive come raccogliamo, utilizziamo e proteggiamo i tuoi dati personali in conformità con il **GDPR 2016/679** e il Codice Privacy italiano.
+BJ Beyond (Matteo Zanetti) si impegna a proteggere la tua privacy. Questa Informativa descrive come raccogliamo, utilizziamo e proteggiamo i tuoi dati personali in conformità con il **Regolamento UE 2016/679 (GDPR)**, il D.Lgs. 196/2003 (Codice Privacy) e le Linee Guida EDPD.
 
 ### Titolare del Trattamento
-- **BJ Beyond**  
-- Sede: Milano, Italia  
-- Email: info@bjbeyond.it  
-- X: @Bj_Beyond
+- **Titolare**: Matteo Zanetti – BJ Beyond  
+- **Sede**: Milano, Italia  
+- **Email**: bj_beyond@tutamail.com  
+- **X**: [@BJ_Beyond](https://x.com/BJ_Beyond)
 
 ### Dati raccolti
-- **Dati di navigazione**: IP, browser, dispositivo, pagine visitate (tramite log server o tool come Vercel Analytics).
-- **Dati dal Phoenix Simulator**: Testi dei post inseriti (elaborati in locale o via API, non memorizzati permanentemente).
-- **Dati di contatto**: Nome ed email se ci scrivi o scarichi contenuti.
+- **Dati di navigazione**: Indirizzo IP, tipo di browser, dispositivo, pagine visitate, tempo di permanenza (tramite log di hosting o analytics anonimi).
+- **Dati dal Phoenix Simulator**: I testi dei post che inserisci vengono elaborati in locale o tramite API (Claude/Groq) **senza memorizzazione permanente** sul nostro server.
+- **Dati di contatto**: Nome, email e messaggio se ci scrivi via form o email.
 
-### Base giuridica e finalità
-- Esecuzione di un servizio (art. 6.1.b GDPR)
-- Legittimo interesse (miglioramento del sito e analisi anonima)
-- Consenso (per cookie non tecnici)
+**Non raccogliamo** dati sensibili né vendiamo dati a terzi.
 
-### I tuoi diritti (GDPR)
-Puoi richiedere: accesso, rettifica, cancellazione, limitazione, portabilità, opposizione.  
-Scrivi a info@bjbeyond.it.
-
-### Conservazione dei dati
-I dati vengono conservati solo per il tempo necessario (max 24 mesi per log anonimi).
+### Finalità e base giuridica
+1. Fornire i servizi richiesti (es. simulazione Phoenix) – **art. 6.1.b GDPR**.
+2. Migliorare il sito e analizzare l’uso in modo anonimo – **Legittimo Interesse**.
+3. Rispondere a richieste di contatto – **Consenso** o **legittimo interesse**.
+4. Adempiere obblighi legali.
 
 ### Trasferimenti extra-UE
-Utilizziamo fornitori (Vercel, Anthropic, Groq) con clausole contrattuali standard o adeguatezza.
+Utilizziamo fornitori sicuri (Vercel, Anthropic, Groq) con **Clausole Contrattuali Standard** o adeguatezza.
+
+### I tuoi diritti (GDPR)
+In qualsiasi momento puoi:
+- Accedere, rettificare, cancellare, limitare o opporti al trattamento
+- Chiedere la portabilità dei dati
+- Revocare il consenso
+
+Scrivi a **bj_beyond@tutamail.com**. Rispondo entro 30 giorni.
+
+### Conservazione
+I dati vengono conservati solo per il tempo necessario (log di navigazione max 12-24 mesi, dati di contatto fino a chiusura richiesta).
+
+### Modifiche alla Policy
+Eventuali aggiornamenti saranno pubblicati qui con nuova data.
 
 ---
 
-Per info: contattami su X @Bj_Beyond
+Per qualsiasi dubbio contattami su X [@BJ_Beyond](https://x.com/BJ_Beyond) o via email.  
+*One step beyond AI – con rispetto della tua privacy.*
