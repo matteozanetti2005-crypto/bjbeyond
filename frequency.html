@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#070b18" />
+  <title>Frequency & Binaural Sound Studio</title>
+  <style>
+    :root{
+      --bg:#050816; --panel:rgba(10,15,35,.82); --border:rgba(255,255,255,.12);
+      --text:#f7f8ff; --muted:#aeb6d0; --accent:#8b5cf6; --accent2:#3b82f6;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0; font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+      color:var(--text); background:
+      radial-gradient(circle at 10% 10%,rgba(139,92,246,.30),transparent 25%),
+      radial-gradient(circle at 45% 12%,rgba(59,130,246,.20),transparent 25%),
+      radial-gradient(circle at 75% 12%,rgba(249,115,22,.20),transparent 25%),
+      linear-gradient(180deg,#090d20 0%,#050816 55%,#02040a 100%);
+      min-height:100vh;
+    }
+    .wrap{max-width:1100px;margin:auto;padding:24px}
+    h1{font-size:clamp(2rem,6vw,4rem);margin:.2rem 0;text-align:center}
+    h2{margin:0 0 10px;font-size:1.15rem}
+    p{line-height:1.55}
+    .subtitle{text-align:center;color:var(--muted);max-width:760px;margin:12px auto 28px}
+    .chakra-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:12px;margin:24px 0}
+    .chakra{text-align:center;font-size:.78rem;color:var(--muted)}
+    .orb{width:48px;height:48px;border-radius:50%;margin:0 auto 8px;border:1px solid rgba(255,255,255,.35);box-shadow:0 0 24px currentColor;background:color-mix(in srgb,currentColor 28%,transparent)}
+    .violet{color:#c4b5fd}.indigo{color:#a5b4fc}.blue{color:#7dd3fc}.green{color:#86efac}.yellow{color:#fde68a}.orange{color:#fdba74}.red{color:#fca5a5}
+    .grid{display:grid;gap:18px}
+    .grid-2{grid-template-columns:repeat(2,minmax(0,1fr))}
+    .grid-3{grid-template-columns:repeat(3,minmax(0,1fr))}
+    .panel{
+      background:var(--panel); border:1px solid var(--border); border-radius:22px; padding:20px;
+      backdrop-filter:blur(16px); -webkit-backdrop-filter:blur(16px);
+    }
+    .mode-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    button,select,input{font:inherit}
+    button{
+      border:1px solid var(--border);border-radius:16px;padding:14px 18px;color:var(--text);
+      background:rgba(255,255,255,.06);cursor:pointer
+    }
+    button.primary{background:linear-gradient(135deg,var(--accent2),var(--accent),#db2777);border:none;font-weight:700}
+    button.active{outline:2px solid var(--accent);background:rgba(139,92,246,.18)}
+    button:disabled{opacity:.45;cursor:not-allowed}
+    label{display:block;font-size:.92rem;margin:14px 0 8px}
+    select{
+      width:100%;border-radius:14px;border:1px solid var(--border);padding:13px;background:#11162b;color:white
+    }
+    input[type="range"]{width:100%;accent-color:var(--accent);touch-action:pan-y}
+    .callout{margin-top:14px;padding:16px;border-radius:16px;background:rgba(255,255,255,.05);border:1px solid var(--border)}
+    .muted{color:var(--muted)}
+    .hidden{display:none!important}
+    .metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:18px}
+    .metric{padding:14px;border-radius:16px;background:rgba(255,255,255,.05);border:1px solid var(--border)}
+    .metric small{display:block;color:var(--muted);text-transform:uppercase;letter-spacing:.08em}
+    .metric strong{display:block;margin-top:6px;font-size:1.05rem}
+    .controls{display:grid;grid-template-columns:2fr 1fr 1fr;gap:12px;margin-top:18px}
+    .progress{height:9px;border-radius:999px;background:rgba(255,255,255,.1);overflow:hidden;margin-top:12px}
+    .progress>div{height:100%;width:0;background:linear-gradient(90deg,#3b82f6,#8b5cf6,#db2777)}
+    .ear-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:16px}
+    .ear{padding:14px;border-radius:14px;background:rgba(255,255,255,.05);border:1px solid var(--border)}
+    .safety{font-size:.86rem;color:var(--muted);text-align:center;padding:14px 8px 28px}
+    .guide-button{
+      width:100%;display:block;text-align:left;margin:0 0 9px;padding:12px 14px;
+      border-radius:14px;background:rgba(255,255,255,.045);border:1px solid var(--border)
+    }
+    .guide-button:hover,.guide-button.selected{background:rgba(139,92,246,.18);border-color:rgba(167,139,250,.75)}
+    .guide-button strong{display:block}
+    .custom-controls{display:grid;grid-template-columns:48px minmax(0,1fr) 48px;gap:8px;align-items:center}
+    .custom-controls input[type="number"]{
+      width:100%;min-width:0;border:1px solid var(--border);border-radius:14px;
+      padding:13px;background:#11162b;color:white;text-align:center
+    }
+    .step-button{padding:12px 6px;font-size:1.35rem;line-height:1}
+    .range-labels{display:flex;justify-content:space-between;color:var(--muted);font-size:.78rem}
+    @media(max-width:760px){
+      .wrap{padding:16px}
+      .chakra-grid{grid-template-columns:repeat(4,1fr)}
+      .grid-2,.grid-3,.metrics{grid-template-columns:1fr}
+      .controls{grid-template-columns:1fr}
+      .ear-grid{grid-template-columns:1fr}
+      .mode-row{grid-template-columns:1fr}
+    }
+  </style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>Frequency & Binaural Sound Studio</h1>
+    <p class="subtitle">Generate pure sine tones or binaural beats for meditation, relaxation, focus and personal exploration.</p>
+
+    <div class="chakra-grid">
+      <div class="chakra violet"><div class="orb"></div><strong>Sahasrara</strong><br>963 Hz</div>
+      <div class="chakra indigo"><div class="orb"></div><strong>Ajna</strong><br>852 Hz</div>
+      <div class="chakra blue"><div class="orb"></div><strong>Vishuddha</strong><br>741 Hz</div>
+      <div class="chakra green"><div class="orb"></div><strong>Anahata</strong><br>639 Hz</div>
+      <div class="chakra yellow"><div class="orb"></div><strong>Manipura</strong><br>528 Hz</div>
+      <div class="chakra orange"><div class="orb"></div><strong>Svadhisthana</strong><br>417 Hz</div>
+      <div class="chakra red"><div class="orb"></div><strong>Muladhara</strong><br>396 Hz</div>
+    </div>
+  </header>
+
+  <div class="metrics">
+    <div class="metric"><small>Mode</small><strong id="metricMode">Pure Tone</strong></div>
+    <div class="metric"><small>Frequency</small><strong id="metricFrequency">528 Hz</strong></div>
+    <div class="metric"><small>Timer</small><strong id="metricTimer">Continuous</strong></div>
+    <div class="metric"><small>Status</small><strong id="metricStatus">Ready</strong></div>
+  </div>
+
+  <div class="grid grid-2">
+    <section class="panel">
+      <h2>1. Choose your sound mode</h2>
+      <div class="mode-row">
+        <button id="pureMode" class="active"><strong>Pure Tone</strong><br><span class="muted">One frequency in both ears.</span></button>
+        <button id="binauralMode"><strong>Binaural Beat</strong><br><span class="muted">Different frequencies in each ear.</span></button>
+      </div>
+
+      <div id="purePanel">
+        <label for="frequencyPreset">Frequency preset</label>
+        <select id="frequencyPreset">
+          <option value="111">111 Hz — Deep Rest</option>
+          <option value="174">174 Hz — Grounding</option>
+          <option value="285">285 Hz — Renewal</option>
+          <option value="396">396 Hz — Root Chakra</option>
+          <option value="417">417 Hz — Sacral Chakra</option>
+          <option value="432">432 Hz — Alternative Tuning</option>
+          <option value="440">440 Hz — Standard Concert Pitch</option>
+          <option value="528" selected>528 Hz — Transformation</option>
+          <option value="639">639 Hz — Heart Chakra</option>
+          <option value="741">741 Hz — Throat Chakra</option>
+          <option value="852">852 Hz — Third Eye Chakra</option>
+          <option value="963">963 Hz — Crown Chakra</option>
+          <option value="1000">1000 Hz — Reference Tone</option>
+          <option value="custom">Custom Frequency</option>
+        </select>
+
+        <div id="frequencyDescription" class="callout"></div>
+
+        <div id="customWrap" class="hidden">
+          <label for="customFrequency">Custom frequency: <strong><span id="customFrequencyValue">528</span> Hz</strong></label>
+          <div class="custom-controls">
+            <button id="customMinus" type="button" class="step-button" aria-label="Decrease frequency">−</button>
+            <input id="customFrequencyNumber" type="number" min="20" max="20000" step="1" value="528" inputmode="numeric" aria-label="Custom frequency in hertz">
+            <button id="customPlus" type="button" class="step-button" aria-label="Increase frequency">+</button>
+          </div>
+          <input id="customFrequency" type="range" min="20" max="20000" step="1" value="528">
+          <div class="range-labels"><span>20 Hz</span><span>10,000 Hz</span><span>20,000 Hz</span></div>
+          <p class="muted">Drag the slider, enter a number, or use −/+. Changes are applied immediately while playing.</p>
+        </div>
+      </div>
+
+      <div id="binauralPanel" class="hidden">
+        <label for="beatPreset">Binaural preset</label>
+        <select id="beatPreset">
+          <option value="2">Delta — 2 Hz · Deep Rest</option>
+          <option value="6">Theta — 6 Hz · Meditation</option>
+          <option value="10" selected>Alpha — 10 Hz · Relaxed Focus</option>
+          <option value="18">Beta — 18 Hz · Concentration</option>
+          <option value="40">Gamma — 40 Hz · Intense Focus</option>
+          <option value="custom">Custom Beat Difference</option>
+        </select>
+
+        <div id="beatDescription" class="callout"></div>
+
+        <label for="carrier">Carrier frequency: <strong><span id="carrierValue">200</span> Hz</strong></label>
+        <input id="carrier" type="range" min="80" max="600" step="1" value="200">
+
+        <label for="difference">Beat difference: <strong><span id="differenceValue">10</span> Hz</strong></label>
+        <input id="difference" type="range" min="1" max="50" step="0.5" value="10">
+
+        <div class="ear-grid">
+          <div class="ear"><small class="muted">Left Ear</small><br><strong id="leftEar">200 Hz</strong></div>
+          <div class="ear"><small class="muted">Perceived Beat</small><br><strong id="beatValue">10 Hz</strong></div>
+          <div class="ear"><small class="muted">Right Ear</small><br><strong id="rightEar">210 Hz</strong></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel">
+      <h2>Frequency guide</h2>
+      <div id="guide"></div>
+    </section>
+  </div>
+
+  <section class="panel" style="margin-top:18px">
+    <h2>2. Playback settings</h2>
+    <div class="grid grid-2">
+      <div>
+        <label for="volume">Volume: <strong><span id="volumeValue">20</span>%</strong></label>
+        <input id="volume" type="range" min="0" max="60" step="1" value="20">
+      </div>
+      <div>
+        <label for="timer">Session duration</label>
+        <select id="timer">
+          <option value="0">Continuous</option>
+          <option value="60">1 minute</option>
+          <option value="300">5 minutes</option>
+          <option value="600">10 minutes</option>
+          <option value="900">15 minutes</option>
+          <option value="1800">30 minutes</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="controls">
+      <button id="play" class="primary">Generate & Play</button>
+      <button id="pause" disabled>Pause</button>
+      <button id="stop" disabled>Stop</button>
+    </div>
+
+    <p id="message" class="muted" aria-live="polite">Choose your settings and press Generate & Play.</p>
+    <div class="progress"><div id="progressBar"></div></div>
+    <p id="remaining" class="muted" style="text-align:right;margin:.5rem 0 0"></p>
+  </section>
+
+  <div class="safety">
+    Use headphones for binaural beats. Start at a low volume. Do not use while driving or operating machinery.
+    This tool is for relaxation and personal exploration only and is not a medical device.
+  </div>
+</div>
+
+<script>
+(() => {
+  const $ = id => document.getElementById(id);
+  const fmt = n => Number(n).toFixed(1).replace('.0','');
+
+  const frequencyInfo = {
+    111: ["111 Hz — Deep Rest", "Often chosen for quiet relaxation, slow breathing and a deeply settled listening experience."],
+    174: ["174 Hz — Grounding", "Commonly associated with calm, stability and a sense of physical grounding."],
+    285: ["285 Hz — Renewal", "Often used in reflective wellness practices focused on renewal, balance and restoration."],
+    396: ["396 Hz — Root Chakra", "Traditionally associated with grounding, security and releasing fear or emotional heaviness."],
+    417: ["417 Hz — Sacral Chakra", "Traditionally associated with creativity, emotional flow, change and new beginnings."],
+    432: ["432 Hz — Alternative Tuning", "An alternative musical tuning reference that some listeners describe as softer or warmer than standard tuning."],
+    440: ["440 Hz — Standard Concert Pitch", "The widely used international reference pitch for the musical note A above middle C."],
+    528: ["528 Hz — Transformation", "Commonly associated with positivity, confidence, transformation and reflective meditation."],
+    639: ["639 Hz — Heart Chakra", "Commonly associated with compassion, empathy, relationships and emotional connection."],
+    741: ["741 Hz — Throat Chakra", "Commonly associated with clear expression, communication and focused self-reflection."],
+    852: ["852 Hz — Third Eye Chakra", "Commonly associated with intuition, insight, inner awareness and contemplative practice."],
+    963: ["963 Hz — Crown Chakra", "Commonly associated with stillness, awareness, spiritual reflection and a sense of connection."],
+    1000: ["1000 Hz — Reference Tone", "A clean, neutral reference tone with no specific traditional wellness association."]
+  };
+
+  const beatInfo = {
+    2: ["Delta — 2 Hz", "Commonly associated with deep rest and sleep-oriented listening. Individual responses vary."],
+    6: ["Theta — 6 Hz", "Commonly associated with meditation, imagination, creativity and inward attention."],
+    10: ["Alpha — 10 Hz", "Commonly associated with calm wakefulness, relaxed focus and light concentration."],
+    18: ["Beta — 18 Hz", "Commonly associated with alertness, active thinking and sustained concentration."],
+    40: ["Gamma — 40 Hz", "Sometimes used for intense focus and cognitive experimentation. Evidence for specific benefits is limited."]
+  };
+
+  const guideItems = [
+    ["111 Hz","Deep rest and quiet relaxation."],["174 Hz","Grounding and stability."],
+    ["285 Hz","Renewal and balance."],["396 Hz","Root chakra and security."],
+    ["417 Hz","Sacral chakra and change."],["432 Hz","Alternative musical tuning."],
+    ["440 Hz","Standard concert pitch."],["528 Hz","Transformation and confidence."],
+    ["639 Hz","Heart chakra and connection."],["741 Hz","Throat chakra and expression."],
+    ["852 Hz","Third eye and intuition."],["963 Hz","Crown chakra and awareness."],
+    ["1000 Hz","Neutral reference tone."]
+  ];
+  $("guide").innerHTML = guideItems.map(([f,d]) => {
+    const value = f.replace(" Hz","");
+    return `<button type="button" class="guide-button" data-frequency="${value}">
+      <strong>${f}</strong><span class="muted">${d}</span>
+    </button>`;
+  }).join("");
+
+  let mode = "pure";
+  let ctx = null, master = null, oscillators = [], pureOscillator = null, leftOscillator = null, rightOscillator = null, timerId = null;
+  let duration = 0, startedAt = 0, pausedElapsed = 0, isPaused = false;
+
+  function setMode(next){
+    mode = next;
+    $("purePanel").classList.toggle("hidden", mode !== "pure");
+    $("binauralPanel").classList.toggle("hidden", mode !== "binaural");
+    $("pureMode").classList.toggle("active", mode === "pure");
+    $("binauralMode").classList.toggle("active", mode === "binaural");
+    stopAudio(false);
+    updateUI();
+  }
+
+  function updateDescription(){
+    const f = $("frequencyPreset").value;
+    $("customWrap").classList.toggle("hidden", f !== "custom");
+    if(f === "custom"){
+      $("frequencyDescription").innerHTML = "<strong>Custom Frequency</strong><p class='muted'>Choose any frequency between 20 and 20,000 Hz. Start at a low volume, especially with high-pitched tones.</p>";
+    } else {
+      const item = frequencyInfo[f];
+      $("frequencyDescription").innerHTML = `<strong>${item[0]}</strong><p class="muted">${item[1]}</p>`;
+    }
+
+    const b = $("beatPreset").value;
+    if(b === "custom"){
+      $("beatDescription").innerHTML = "<strong>Custom Beat Difference</strong><p class='muted'>Choose a difference between 1 and 50 Hz. Headphones are required.</p>";
+    } else {
+      const item = beatInfo[b];
+      $("beatDescription").innerHTML = `<strong>${item[0]}</strong><p class="muted">${item[1]}</p>`;
+    }
+  }
+
+  function clampFrequency(value){
+    const parsed = Number(value);
+    if(!Number.isFinite(parsed)) return 528;
+    return Math.min(20000, Math.max(20, Math.round(parsed)));
+  }
+
+  function currentPureFrequency(){
+    return $("frequencyPreset").value === "custom"
+      ? clampFrequency($("customFrequencyNumber").value)
+      : Number($("frequencyPreset").value);
+  }
+
+  function syncCustomFrequency(value, applyToSound = true){
+    const frequency = clampFrequency(value);
+    $("customFrequency").value = frequency;
+    $("customFrequencyNumber").value = frequency;
+    $("customFrequencyValue").textContent = frequency;
+    $("metricFrequency").textContent = `${frequency} Hz`;
+
+    if(applyToSound && pureOscillator && ctx && mode === "pure"){
+      pureOscillator.frequency.cancelScheduledValues(ctx.currentTime);
+      pureOscillator.frequency.setTargetAtTime(frequency, ctx.currentTime, 0.015);
+      $("message").textContent = `Playing a ${frequency} Hz pure sine tone.`;
+    }
+  }
+
+  function applyPresetFrequency(value){
+    const option = Array.from($("frequencyPreset").options).find(o => o.value === String(value));
+    if(option){
+      $("frequencyPreset").value = String(value);
+    } else {
+      $("frequencyPreset").value = "custom";
+      syncCustomFrequency(value, false);
+    }
+    updateDescription();
+    updateUI();
+
+    if(pureOscillator && ctx && mode === "pure"){
+      const frequency = currentPureFrequency();
+      pureOscillator.frequency.cancelScheduledValues(ctx.currentTime);
+      pureOscillator.frequency.setTargetAtTime(frequency, ctx.currentTime, 0.015);
+      $("message").textContent = `Playing a ${frequency} Hz pure sine tone.`;
+    }
+
+    document.querySelectorAll(".guide-button").forEach(button => {
+      button.classList.toggle("selected", Number(button.dataset.frequency) === Number(value));
+    });
+  }
+
+  function updateUI(){
+    const carrier = Number($("carrier").value);
+    const difference = Number($("difference").value);
+    syncCustomFrequency($("customFrequencyNumber").value, false);
+    $("carrierValue").textContent = carrier;
+    $("differenceValue").textContent = fmt(difference);
+    $("leftEar").textContent = `${carrier} Hz`;
+    $("beatValue").textContent = `${fmt(difference)} Hz`;
+    $("rightEar").textContent = `${fmt(carrier + difference)} Hz`;
+    $("volumeValue").textContent = $("volume").value;
+    $("metricMode").textContent = mode === "pure" ? "Pure Tone" : "Binaural Beat";
+    $("metricFrequency").textContent = mode === "pure"
+      ? `${currentPureFrequency()} Hz`
+      : `${fmt(difference)} Hz Beat`;
+    $("metricTimer").textContent = $("timer").options[$("timer").selectedIndex].text;
+    if(master && ctx){
+      master.gain.setTargetAtTime(Number($("volume").value)/100, ctx.currentTime, .03);
+    }
+    if(pureOscillator && ctx && mode === "pure"){
+      pureOscillator.frequency.setTargetAtTime(currentPureFrequency(), ctx.currentTime, .015);
+    }
+    if(leftOscillator && rightOscillator && ctx && mode === "binaural"){
+      leftOscillator.frequency.setTargetAtTime(carrier, ctx.currentTime, .015);
+      rightOscillator.frequency.setTargetAtTime(carrier + difference, ctx.currentTime, .015);
+    }
+  }
+
+  function createOsc(freq, pan){
+    const osc = ctx.createOscillator();
+    osc.type = "sine";
+    osc.frequency.value = freq;
+    if(ctx.createStereoPanner){
+      const panner = ctx.createStereoPanner();
+      panner.pan.value = pan;
+      osc.connect(panner).connect(master);
+    } else {
+      osc.connect(master);
+    }
+    osc.start();
+    oscillators.push(osc);
+    return osc;
+  }
+
+  function startTimer(){
+    clearInterval(timerId);
+    if(!duration){
+      $("remaining").textContent = "Continuous";
+      $("progressBar").style.width = "0%";
+      return;
+    }
+    startedAt = Date.now() - pausedElapsed;
+    timerId = setInterval(() => {
+      if(isPaused) return;
+      const elapsed = Date.now() - startedAt;
+      const remaining = Math.max(0, duration * 1000 - elapsed);
+      const min = Math.floor(remaining / 60000);
+      const sec = Math.floor((remaining % 60000) / 1000);
+      $("remaining").textContent = `${min}:${String(sec).padStart(2,"0")}`;
+      $("progressBar").style.width = `${Math.min(100, elapsed/(duration*1000)*100)}%`;
+      if(remaining <= 0){
+        stopAudio(true);
+        $("message").textContent = "Session complete.";
+      }
+    }, 250);
+  }
+
+  async function playAudio(){
+    if(ctx && isPaused){
+      await ctx.resume();
+      isPaused = false;
+      $("pause").textContent = "Pause";
+      $("metricStatus").textContent = "Playing";
+      startTimer();
+      return;
+    }
+    stopAudio(false);
+    const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+    if(!AudioContextClass){
+      $("message").textContent = "Web Audio is not supported by this browser.";
+      return;
+    }
+    ctx = new AudioContextClass();
+    master = ctx.createGain();
+    master.gain.setValueAtTime(0, ctx.currentTime);
+    master.gain.linearRampToValueAtTime(Number($("volume").value)/100, ctx.currentTime + .7);
+    master.connect(ctx.destination);
+
+    if(mode === "pure"){
+      const f = currentPureFrequency();
+      pureOscillator = createOsc(f, 0);
+      $("message").textContent = `Playing a ${f} Hz pure sine tone.`;
+    } else {
+      const carrier = Number($("carrier").value);
+      const difference = Number($("difference").value);
+      leftOscillator = createOsc(carrier, -1);
+      rightOscillator = createOsc(carrier + difference, 1);
+      $("message").textContent = `Playing ${carrier} Hz in the left ear and ${fmt(carrier+difference)} Hz in the right ear. Use headphones.`;
+    }
+
+    duration = Number($("timer").value);
+    pausedElapsed = 0;
+    isPaused = false;
+    $("play").textContent = "Playing";
+    $("pause").disabled = false;
+    $("stop").disabled = false;
+    $("metricStatus").textContent = "Playing";
+    startTimer();
+  }
+
+  async function togglePause(){
+    if(!ctx) return;
+    if(!isPaused){
+      pausedElapsed = startedAt ? Date.now() - startedAt : 0;
+      await ctx.suspend();
+      isPaused = true;
+      $("pause").textContent = "Resume";
+      $("metricStatus").textContent = "Paused";
+      $("message").textContent = "Playback paused.";
+    } else {
+      await ctx.resume();
+      isPaused = false;
+      $("pause").textContent = "Pause";
+      $("metricStatus").textContent = "Playing";
+      $("message").textContent = "Playback resumed.";
+      startTimer();
+    }
+  }
+
+  function stopAudio(completed){
+    clearInterval(timerId);
+    timerId = null;
+    oscillators.forEach(o => { try { o.stop(); } catch(e){} });
+    oscillators = [];
+    pureOscillator = null;
+    leftOscillator = null;
+    rightOscillator = null;
+    if(ctx){ ctx.close().catch(()=>{}); ctx = null; }
+    master = null;
+    isPaused = false;
+    pausedElapsed = 0;
+    $("play").textContent = "Generate & Play";
+    $("pause").textContent = "Pause";
+    $("pause").disabled = true;
+    $("stop").disabled = true;
+    $("metricStatus").textContent = completed ? "Complete" : "Ready";
+    $("progressBar").style.width = completed ? "100%" : "0%";
+    $("remaining").textContent = "";
+    if(!completed) $("message").textContent = "Choose your settings and press Generate & Play.";
+  }
+
+  $("pureMode").addEventListener("click", () => setMode("pure"));
+  $("binauralMode").addEventListener("click", () => setMode("binaural"));
+  $("frequencyPreset").addEventListener("change", () => {
+    updateDescription();
+    updateUI();
+    if(pureOscillator && ctx && mode === "pure"){
+      pureOscillator.frequency.setTargetAtTime(currentPureFrequency(), ctx.currentTime, .015);
+      $("message").textContent = `Playing a ${currentPureFrequency()} Hz pure sine tone.`;
+    }
+  });
+
+  $("customFrequency").addEventListener("input", event => syncCustomFrequency(event.target.value, true));
+  $("customFrequency").addEventListener("change", event => syncCustomFrequency(event.target.value, true));
+  $("customFrequencyNumber").addEventListener("input", event => syncCustomFrequency(event.target.value, true));
+  $("customFrequencyNumber").addEventListener("change", event => syncCustomFrequency(event.target.value, true));
+  $("customMinus").addEventListener("click", () => syncCustomFrequency(currentPureFrequency() - 1, true));
+  $("customPlus").addEventListener("click", () => syncCustomFrequency(currentPureFrequency() + 1, true));
+
+  document.querySelectorAll(".guide-button").forEach(button => {
+    button.addEventListener("click", () => {
+      setMode("pure");
+      applyPresetFrequency(Number(button.dataset.frequency));
+      $("purePanel").scrollIntoView({behavior:"smooth", block:"center"});
+    });
+  });
+  $("beatPreset").addEventListener("change", () => {
+    if($("beatPreset").value !== "custom") $("difference").value = $("beatPreset").value;
+    updateDescription(); updateUI();
+  });
+  $("carrier").addEventListener("input", updateUI);
+  $("difference").addEventListener("input", () => {
+    $("beatPreset").value = "custom"; updateDescription(); updateUI();
+  });
+  $("volume").addEventListener("input", updateUI);
+  $("timer").addEventListener("change", updateUI);
+  $("play").addEventListener("click", playAudio);
+  $("pause").addEventListener("click", togglePause);
+  $("stop").addEventListener("click", () => stopAudio(false));
+
+  updateDescription();
+  syncCustomFrequency(528, false);
+  updateUI();
+  applyPresetFrequency(528);
+})();
+</script>
+</body>
+</html>
