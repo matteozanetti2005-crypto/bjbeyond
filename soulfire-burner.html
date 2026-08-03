@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Phoenix Soulfire — Burn One Frame</title>
+<meta name="description" content="Burn an AI image. Keep only what is human. #PhoenixSoulfire">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap');
+  
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  
+  body {
+    background: #0a0a0a;
+    color: #f5f5f5;
+    font-family: 'Inter', system-ui, sans-serif;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px 16px 40px;
+    overflow-x: hidden;
+  }
+  
+  .header {
+    text-align: center;
+    margin-bottom: 24px;
+    max-width: 480px;
+  }
+  
+  .header h1 {
+    font-size: 1.6rem;
+    font-weight: 800;
+    letter-spacing: -0.5px;
+    background: linear-gradient(90deg, #ff4d00, #ffb347);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 6px;
+  }
+  
+  .header p {
+    font-size: 0.9rem;
+    color: #aaa;
+    line-height: 1.4;
+  }
+  
+  .stage {
+    position: relative;
+    width: 100%;
+    max-width: 420px;
+    aspect-ratio: 1;
+    background: #111;
+    border: 1px solid #222;
+    border-radius: 12px;
+    overflow: hidden;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  #canvas {
+    max-width: 100%;
+    max-height: 100%;
+    display: block;
+  }
+  
+  .placeholder {
+    color: #444;
+    font-size: 0.95rem;
+    text-align: center;
+    padding: 20px;
+  }
+  
+  .controls {
+    width: 100%;
+    max-width: 420px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+  
+  .modes {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+  }
+  
+  .mode-btn {
+    background: #1a1a1a;
+    border: 1px solid #333;
+    color: #ccc;
+    padding: 10px 4px;
+    border-radius: 8px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  
+  .mode-btn.active {
+    background: #ff4d00;
+    border-color: #ff4d00;
+    color: #000;
+  }
+  
+  .mode-btn:hover:not(.active) {
+    border-color: #555;
+  }
+  
+  .slider-row {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  
+  .slider-row label {
+    font-size: 0.8rem;
+    color: #888;
+  }
+  
+  input[type="range"] {
+    width: 100%;
+    accent-color: #ff4d00;
+  }
+  
+  .actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+  
+  button.main {
+    background: #ff4d00;
+    color: #000;
+    border: none;
+    padding: 14px;
+    border-radius: 10px;
+    font-weight: 700;
+    font-size: 0.95rem;
+    cursor: pointer;
+  }
+  
+  button.main:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+  
+  button.secondary {
+    background: #1a1a1a;
+    color: #eee;
+    border: 1px solid #333;
+    padding: 14px;
+    border-radius: 10px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    cursor: pointer;
+  }
+  
+  .caption-box {
+    margin-top: 8px;
+    background: #151515;
+    border: 1px solid #2a2a2a;
+    border-radius: 10px;
+    padding: 14px;
+    font-size: 0.85rem;
+    line-height: 1.5;
+    color: #ddd;
+    position: relative;
+  }
+  
+  .caption-box button {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: #333;
+    border: none;
+    color: #fff;
+    font-size: 0.7rem;
+    padding: 4px 8px;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  
+  .footer {
+    margin-top: 32px;
+    font-size: 0.75rem;
+    color: #555;
+    text-align: center;
+  }
+  
+  .footer a {
+    color: #ff4d00;
+    text-decoration: none;
+  }
+  
+  #fileInput {
+    display: none;
+  }
+  
+  .upload-btn {
+    width: 100%;
+    max-width: 420px;
+    background: #1a1a1a;
+    border: 1px dashed #444;
+    color: #aaa;
+    padding: 16px;
+    border-radius: 10px;
+    font-weight: 600;
+    cursor: pointer;
+    margin-bottom: 16px;
+    text-align: center;
+  }
+  
+  .upload-btn:hover {
+    border-color: #ff4d00;
+    color: #ff4d00;
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>PHOENIX SOULFIRE</h1>
+  <p>Burn the machine.<br>Keep only what is human.</p>
+</div>
+
+<label class="upload-btn" for="fileInput">
+  Drop or choose an AI image
+</label>
+<input type="file" id="fileInput" accept="image/*">
+
+<div class="stage" id="stage">
+  <div class="placeholder" id="placeholder">Upload an image to begin the burn</div>
+  <canvas id="canvas" style="display:none;"></canvas>
+</div>
+
+<div class="controls">
+  <div class="modes">
+    <button class="mode-btn active" data-mode="fire">Fire</button>
+    <button class="mode-btn" data-mode="glitch">Glitch</button>
+    <button class="mode-btn" data-mode="tear">Tear</button>
+    <button class="mode-btn" data-mode="ash">Ash</button>
+  </div>
+  
+  <div class="slider-row">
+    <label>Intensity — <span id="intensityVal">40</span>%</label>
+    <input type="range" id="intensity" min="10" max="100" value="40">
+  </div>
+  
+  <div class="actions">
+    <button class="main" id="burnBtn" disabled>BURN IT</button>
+    <button class="secondary" id="downloadBtn" disabled>Download</button>
+  </div>
+  
+  <div class="caption-box" id="captionBox" style="display:none;">
+    <button id="copyBtn">Copy</button>
+    <div id="captionText">
+I burned the machine so the human could survive.
+#PhoenixSoulfire
+    </div>
+  </div>
+</div>
+
+<div class="footer">
+  Phoenix Soulfire · <a href="https://bjbeyond.it" target="_blank">bjbeyond.it</a>
+</div>
+
+<script>
+const fileInput = document.getElementById('fileInput');
+const canvas = document.getElementById('canvas');
+const ctx = canvas.getContext('2d');
+const stage = document.getElementById('stage');
+const placeholder = document.getElementById('placeholder');
+const burnBtn = document.getElementById('burnBtn');
+const downloadBtn = document.getElementById('downloadBtn');
+const intensitySlider = document.getElementById('intensity');
+const intensityVal = document.getElementById('intensityVal');
+const captionBox = document.getElementById('captionBox');
+const copyBtn = document.getElementById('copyBtn');
+const modeBtns = document.querySelectorAll('.mode-btn');
+
+let originalImage = null;
+let currentMode = 'fire';
+let isBurned = false;
+
+intensitySlider.addEventListener('input', () => {
+  intensityVal.textContent = intensitySlider.value;
+});
+
+modeBtns.forEach(btn => {
+  btn.addEventListener('click', () => {
+    modeBtns.forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    currentMode = btn.dataset.mode;
+    if (originalImage && !isBurned) {
+      drawOriginal();
+    }
+  });
+});
+
+fileInput.addEventListener('change', (e) => {
+  const file = e.target.files[0];
+  if (!file) return;
+  
+  const reader = new FileReader();
+  reader.onload = (event) => {
+    const img = new Image();
+    img.onload = () => {
+      originalImage = img;
+      isBurned = false;
+      placeholder.style.display = 'none';
+      canvas.style.display = 'block';
+      
+      // Fit to stage
+      const maxSize = 420;
+      let w = img.width;
+      let h = img.height;
+      if (w > h) {
+        if (w > maxSize) { h = h * (maxSize / w); w = maxSize; }
+      } else {
+        if (h > maxSize) { w = w * (maxSize / h); h = maxSize; }
+      }
+      canvas.width = w;
+      canvas.height = h;
+      
+      drawOriginal();
+      burnBtn.disabled = false;
+      downloadBtn.disabled = true;
+      captionBox.style.display = 'none';
+    };
+    img.src = event.target.result;
+  };
+  reader.readAsDataURL(file);
+});
+
+function drawOriginal() {
+  if (!originalImage) return;
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  ctx.drawImage(originalImage, 0, 0, canvas.width, canvas.height);
+}
+
+function applyBurn() {
+  if (!originalImage) return;
+  
+  const intensity = intensitySlider.value / 100;
+  isBurned = true;
+  
+  // Redraw original first
+  drawOriginal();
+  
+  const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+  const data = imageData.data;
+  const w = canvas.width;
+  const h = canvas.height;
+  
+  if (currentMode === 'fire') {
+    // Fire burn from bottom + edges
+    for (let y = 0; y < h; y++) {
+      for (let x = 0; x < w; x++) {
+        const i = (y * w + x) * 4;
+        const distFromBottom = 1 - (y / h);
+        const edge = Math.min(x / w, 1 - x / w, y / h, 1 - y / h);
+        const burnFactor = Math.max(0, intensity * 1.4 - distFromBottom * 0.8 - edge * 0.6 + (Math.random() * 0.25));
+        
+        if (burnFactor > 0.15) {
+          // Char / ash
+          const char = Math.min(1, burnFactor * 1.8);
+          data[i] = data[i] * (1 - char) + 20 * char;     // R
+          data[i+1] = data[i+1] * (1 - char) + 8 * char;   // G
+          data[i+2] = data[i+2] * (1 - char) + 2 * char;   // B
+          
+          // Occasional bright fire pixels
+          if (Math.random() < burnFactor * 0.12) {
+            data[i] = 255;
+            data[i+1] = 120 + Math.random() * 80;
+            data[i+2] = 20;
+          }
+        }
+      }
+    }
+  } else if (currentMode === 'glitch') {
+    // Horizontal glitch slices + color shift
+    const sliceH = Math.max(2, Math.floor(8 * intensity));
+    for (let y = 0; y < h; y += sliceH) {
+      if (Math.random() < intensity * 0.7) {
+        const shift = Math.floor((Math.random() - 0.5) * 40 * intensity);
+        const start = y * w * 4;
+        const end = Math.min((y + sliceH) * w * 4, data.length);
+        // Simple channel shift
+        for (let i = start; i < end; i += 4) {
+          data[i] = data[Math.min(i + shift * 4, data.length - 4)];     // R
+          data[i+2] = data[Math.max(i - shift * 4, 0)];                 // B
+        }
+      }
+    }
+    // Noise
+    for (let i = 0; i < data.length; i += 4) {
+      if (Math.random() < intensity * 0.08) {
+        data[i] = data[i+1] = data[i+2] = Math.random() * 255;
+      }
+    }
+  } else if (currentMode === 'tear') {
+    // Vertical tears / rips
+    const tears = Math.floor(3 + intensity * 8);
+    for (let t = 0; t < tears; t++) {
+      const tx = Math.floor(Math.random() * w);
+      const tw = Math.floor(2 + Math.random() * 6 * intensity);
+      const startY = Math.floor(Math.random() * h * 0.3);
+      const endY = Math.floor(h * (0.6 + Math.random() * 0.4));
+      
+      for (let y = startY; y < endY; y++) {
+        for (let dx = -tw; dx <= tw; dx++) {
+          const x = tx + dx;
+          if (x < 0 || x >= w) continue;
+          const i = (y * w + x) * 4;
+          const fade = 1 - Math.abs(dx) / (tw + 1);
+          data[i] = data[i] * (1 - fade * 0.9);
+          data[i+1] = data[i+1] * (1 - fade * 0.9);
+          data[i+2] = data[i+2] * (1 - fade * 0.9);
+          data[i+3] = data[i+3] * (1 - fade * 0.7);
+        }
+      }
+    }
+  } else if (currentMode === 'ash') {
+    // Progressive desaturation + particle noise + darken
+    for (let i = 0; i < data.length; i += 4) {
+      const gray = data[i] * 0.3 + data[i+1] * 0.59 + data[i+2] * 0.11;
+      const mix = intensity * (0.4 + Math.random() * 0.6);
+      data[i]   = data[i]   * (1 - mix) + gray * mix * 0.7;
+      data[i+1] = data[i+1] * (1 - mix) + gray * mix * 0.65;
+      data[i+2] = data[i+2] * (1 - mix) + gray * mix * 0.55;
+      
+      // Ash speckles
+      if (Math.random() < intensity * 0.15) {
+        const ash = 30 + Math.random() * 40;
+        data[i] = data[i+1] = data[i+2] = ash;
+      }
+    }
+  }
+  
+  ctx.putImageData(imageData, 0, 0);
+  
+  // Add subtle watermark
+  ctx.save();
+  ctx.globalAlpha = 0.35;
+  ctx.fillStyle = '#ff4d00';
+  ctx.font = 'bold 13px Inter, sans-serif';
+  ctx.textAlign = 'right';
+  ctx.fillText('#PhoenixSoulfire', canvas.width - 10, canvas.height - 12);
+  ctx.restore();
+  
+  downloadBtn.disabled = false;
+  captionBox.style.display = 'block';
+}
+
+burnBtn.addEventListener('click', () => {
+  applyBurn();
+});
+
+downloadBtn.addEventListener('click', () => {
+  const link = document.createElement('a');
+  link.download = 'phoenix-soulfire-burn.png';
+  link.href = canvas.toDataURL('image/png');
+  link.click();
+});
+
+copyBtn.addEventListener('click', () => {
+  const text = document.getElementById('captionText').innerText;
+  navigator.clipboard.writeText(text).then(() => {
+    copyBtn.textContent = 'Copied';
+    setTimeout(() => copyBtn.textContent = 'Copy', 1500);
+  });
+});
+
+// Drag & drop
+stage.addEventListener('dragover', (e) => {
+  e.preventDefault();
+  stage.style.borderColor = '#ff4d00';
+});
+stage.addEventListener('dragleave', () => {
+  stage.style.borderColor = '#222';
+});
+stage.addEventListener('drop', (e) => {
+  e.preventDefault();
+  stage.style.borderColor = '#222';
+  const file = e.dataTransfer.files[0];
+  if (file && file.type.startsWith('image/')) {
+    fileInput.files = e.dataTransfer.files;
+    fileInput.dispatchEvent(new Event('change'));
+  }
+});
+</script>
+</body>
+</html>
