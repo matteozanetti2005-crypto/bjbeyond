@@ -5,8 +5,11 @@
   "observability": {
     "enabled": true
   },
+  // Points at the build output, not the repository root: the repo is now
+  // Next.js source, and `out/` is the deployable static site.
+  // Run `npm run build` before `wrangler deploy`.
   "assets": {
-    "directory": "."
+    "directory": "./out"
   },
   "compatibility_flags": [
     "nodejs_compat"

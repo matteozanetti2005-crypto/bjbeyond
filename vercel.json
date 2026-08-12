@@ -1,6 +1,9 @@
 {
+  "$schema": "https://openapi.vercel.sh/vercel.json",
   "rewrites": [
-    { "source": "/Phoenix", "destination": "/Phoenix/Phoenix.html" },
-    { "source": "/phoenix", "destination": "/Phoenix/Phoenix.html" }
+    {
+      "source": "/Phoenix",
+      "destination": "/phoenix/"
+    }
   ]
 }

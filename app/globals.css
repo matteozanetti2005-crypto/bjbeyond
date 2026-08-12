@@ -1,0 +1,329 @@
+@import 'tailwindcss';
+
+/* Design tokens. Components reference these rather than raw hex values. The one
+   exception is components/atmosphere, whose procedural sky gradients mix their
+   own palette — those colours are artwork, not interface. */
+
+@theme {
+  /* Surface. Not #000000 — pure black smears on OLED during scroll. Only
+     ink-950 is in use; the rest are the declared ramp. Tailwind emits CSS only
+     for utilities that appear in the markup, so unused tokens cost nothing. */
+  --color-ink-950: #050505;
+  --color-ink-900: #0a0a0b;
+  --color-ink-850: #0e0e10;
+  --color-ink-800: #131316;
+  --color-ink-700: #1a1a1e;
+  --color-ink-600: #242429;
+
+  /* Foreground. Measured contrast on --color-ink-950:
+       paper      18.37:1  AAA
+       mist-200   12.17:1  AAA
+       mist-300    7.33:1  AAA
+       mist-400    4.82:1  AA  — the floor for text
+       mist-500    3.75:1  NON-TEXT ONLY: rules, inactive marks, glyphs
+       mist-600    1.73:1  structural only — scrollbar thumb, never type */
+  --color-paper: #f4f3f0;
+  --color-mist-200: #c9c8c4;
+  --color-mist-300: #9c9b98;
+  --color-mist-400: #7c7b78;
+  --color-mist-500: #6a6970;
+  --color-mist-600: #38373b;
+
+  /* Accent. amber-400 against ink-950 measures 12.14:1. Contrast is symmetric,
+     so that one figure clears AAA both ways round: amber type on the dark
+     surface, and ink-950 type on a solid amber fill. */
+  --color-amber-300: #f0d878;
+  --color-amber-400: #e8c547;
+  --color-amber-500: #c9a227;
+  --color-amber-600: #8a6e18;
+
+  --color-rule: rgb(255 255 255 / 0.09);
+  --color-rule-strong: rgb(255 255 255 / 0.16);
+  --color-rule-amber: rgb(232 197 71 / 0.32);
+
+  /* Two families only: Inter for voice, mono for data — indices, labels,
+     metadata. */
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, -apple-system, sans-serif;
+  --font-mono: var(--font-mono-jetbrains), ui-monospace, 'SF Mono', monospace;
+
+  /* Every step is clamp()ed, so no type step needs a breakpoint. */
+  --text-display: clamp(2.6rem, 7.2vw, 7rem);
+  --text-display--line-height: 0.94;
+  --text-display--letter-spacing: -0.025em;
+
+  --text-headline: clamp(1.9rem, 4.6vw, 3.9rem);
+  --text-headline--line-height: 1.02;
+  --text-headline--letter-spacing: -0.018em;
+
+  --text-title: clamp(1.4rem, 2.6vw, 2.1rem);
+  --text-title--line-height: 1.1;
+  --text-title--letter-spacing: -0.01em;
+
+  --text-lede: clamp(1rem, 1.35vw, 1.2rem);
+  --text-lede--line-height: 1.62;
+
+  --text-body: 1rem;
+  --text-body--line-height: 1.7;
+
+  --text-meta: 0.8125rem;
+  --text-meta--line-height: 1.55;
+
+  --text-label: 0.6875rem;
+  --text-label--line-height: 1.4;
+  --text-label--letter-spacing: 0.2em;
+
+  --spacing-gutter: clamp(1.25rem, 4vw, 4rem);
+  --spacing-section: clamp(6rem, 14vh, 11rem);
+
+  /* Mirrors lib/motion.ts. A curve changed here must change there too. */
+  --ease-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-expo-in-out: cubic-bezier(0.87, 0, 0.13, 1);
+  --ease-soft: cubic-bezier(0.25, 1, 0.5, 1);
+  --ease-exit: cubic-bezier(0.4, 0, 1, 1);
+
+  /* Layering, FIXED CHROME only. Reference as `z-[var(--z-nav)]`; never a bare
+     number. Stacking inside a section stays on Tailwind's `z-0` / `z-10`. */
+  --z-nav: 60;
+  --z-menu: 70;
+  /* One step above the open menu, so the mark and toggle stay reachable. */
+  --z-menu-control: 71;
+  --z-cursor: 90;
+  --z-preloader: 100;
+  /* Above the opening curtain too — the skip link must always be reachable. */
+  --z-skip: 110;
+}
+
+@layer base {
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
+
+  html {
+    background-color: var(--color-ink-950);
+    /* Anchor targets land clear of the fixed nav instead of behind it. */
+    scroll-padding-top: 6rem;
+    -webkit-text-size-adjust: 100%;
+
+    /*
+      The single guard against horizontal scroll — parallax layers, scaled
+      plates and drifting fog all exceed the viewport by design.
+
+      Must stay on `html` and must stay `clip`. On `body` it does nothing:
+      `html` is the scroll container and keeps its own scrollable width. Worse,
+      any overflow value on `body` flips the other axis to `auto`, making body a
+      scroll container and breaking every `position: sticky` here (the Work
+      stack, the portrait, the Labs rail). `hidden` creates a scroll container
+      too; `clip` clips without establishing a scrollport.
+    */
+    overflow-x: clip;
+  }
+
+  body {
+    margin: 0;
+    /*
+      NO background-color here — it stays on `html` alone. Root painting order
+      is canvas, then negative z-index descendants, then in-flow block
+      backgrounds; an opaque `body` background lands in that third step and
+      covers every full-bleed image layer sitting at `-z-10`. `html`'s
+      background propagates to the canvas, so the page is still ink-950.
+    */
+    color: var(--color-paper);
+    font-family: var(--font-sans);
+    font-size: var(--text-body);
+    line-height: 1.7;
+    /* No overflow here either — see the note on `html`. */
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+    font-synthesis-weight: none;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-weight: 300;
+    text-wrap: balance;
+    margin: 0;
+  }
+
+  p {
+    margin: 0;
+    text-wrap: pretty;
+  }
+
+  /* Numerals that must not shift width as their values change. */
+  .tabular {
+    font-variant-numeric: tabular-nums;
+  }
+
+  ::selection {
+    background-color: var(--color-amber-400);
+    color: var(--color-ink-950);
+  }
+
+  /* Focus is restyled, never removed. */
+  :focus-visible {
+    outline: 2px solid var(--color-amber-400);
+    outline-offset: 3px;
+    border-radius: 1px;
+  }
+  :focus:not(:focus-visible) {
+    outline: none;
+  }
+
+  button,
+  [role='button'],
+  a {
+    cursor: pointer;
+    /* Removes the 300ms tap delay without disabling pinch-zoom. */
+    touch-action: manipulation;
+  }
+
+  button {
+    font: inherit;
+    color: inherit;
+    background: none;
+    border: none;
+    padding: 0;
+  }
+
+  img,
+  video,
+  svg {
+    display: block;
+    max-width: 100%;
+  }
+
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-mist-600) transparent;
+  }
+  ::-webkit-scrollbar {
+    width: 7px;
+    height: 7px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: var(--color-mist-600);
+    border-radius: 999px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--color-mist-500);
+  }
+}
+
+@layer utilities {
+  .u-gutter {
+    padding-inline: var(--spacing-gutter);
+  }
+
+  /* The eyebrow / metadata treatment used throughout. */
+  .u-label {
+    font-family: var(--font-mono);
+    font-size: var(--text-label);
+    line-height: var(--text-label--line-height);
+    letter-spacing: var(--text-label--letter-spacing);
+    text-transform: uppercase;
+    font-weight: 500;
+  }
+
+  .u-rule-t {
+    border-top: 1px solid var(--color-rule);
+  }
+  .u-rule-b {
+    border-bottom: 1px solid var(--color-rule);
+  }
+
+  /* Only for layers that genuinely animate — never "just in case", which
+     costs memory and can degrade quality. */
+  .u-gpu {
+    will-change: transform;
+    backface-visibility: hidden;
+  }
+
+  /* Film grain. One SVG turbulence, rasterised once and then composited — no
+     per-frame cost. */
+  .u-grain::after {
+    content: '';
+    position: absolute;
+    inset: -50%;
+    pointer-events: none;
+    opacity: 0.05;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.82' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    animation: grain-drift 7s steps(6) infinite;
+  }
+
+  .u-hide-scrollbar {
+    scrollbar-width: none;
+  }
+  .u-hide-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+/* Keyframes. Transform and opacity only — nothing here triggers layout. */
+
+@keyframes grain-drift {
+  0%   { transform: translate3d(0, 0, 0); }
+  17%  { transform: translate3d(-2%, -3%, 0); }
+  33%  { transform: translate3d(3%, -2%, 0); }
+  50%  { transform: translate3d(-1%, 2%, 0); }
+  67%  { transform: translate3d(2%, 3%, 0); }
+  83%  { transform: translate3d(-3%, 1%, 0); }
+  100% { transform: translate3d(0, 0, 0); }
+}
+
+/* Two fog layers at different scales and speeds — the offset is what produces
+   parallax depth from a single static texture. */
+@keyframes fog-drift-a {
+  0%   { transform: translate3d(-8%, 0, 0) scale(1.4); }
+  50%  { transform: translate3d(6%, -2%, 0) scale(1.55); }
+  100% { transform: translate3d(-8%, 0, 0) scale(1.4); }
+}
+
+@keyframes fog-drift-b {
+  0%   { transform: translate3d(5%, 1%, 0) scale(1.7); }
+  50%  { transform: translate3d(-7%, -1%, 0) scale(1.5); }
+  100% { transform: translate3d(5%, 1%, 0) scale(1.7); }
+}
+
+@keyframes light-breathe {
+  0%, 100% { opacity: 0.72; transform: scale(1); }
+  50%      { opacity: 1;    transform: scale(1.06); }
+}
+
+@keyframes cue-travel {
+  0%       { transform: translateY(-70%); opacity: 0; }
+  35%      { opacity: 1; }
+  100%     { transform: translateY(70%); opacity: 0; }
+}
+
+@keyframes ticker-scroll {
+  from { transform: translate3d(0, 0, 0); }
+  to   { transform: translate3d(-50%, 0, 0); }
+}
+
+/* Reduced motion. Movement is removed, not shortened — anything that carried
+   meaning through motion resolves to its final, legible state. */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  html {
+    scroll-behavior: auto;
+  }
+
+  /* The drift is decorative; the grain itself is not. Texture stays. */
+  .u-grain::after {
+    animation: none;
+  }
+}
