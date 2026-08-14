@@ -132,7 +132,12 @@ async function buildPortrait() {
     .png()
     .toBuffer();
 
-  for (const w of [540, 810, 1080, 1440]) {
+  /* Ceiling is 1080, not 1440. The envelope scales its 6144x4096 bitmap by
+     0.807 into an 810x1440 viewBox, so the visible figure carries ~1003x1784
+     real pixels. A 1440-wide variant would be a 1.44x upsample declared in the
+     `srcset` as genuine detail — the browser would pick the heaviest file to
+     get nothing, which is what made the portrait look soft before. */
+  for (const w of [540, 810, 1080]) {
     const file = join(OUT, `portrait-${w}.webp`);
     await sharp(full)
       .resize({ width: w, withoutEnlargement: true })

@@ -73,11 +73,18 @@ export const MEDIA = {
     warmth: 0.85,
   }),
 
-  /** Transparent background — composites over the backdrop. */
+  /**
+   * Transparent background — composites over the backdrop.
+   *
+   * Widths stop at 1080 because that is where the source stops: the envelope
+   * carries ~1003x1784 real pixels behind the figure. Declaring a 1440 variant
+   * told the browser there was detail there and made it fetch the heaviest file
+   * to render an upsample — see the note in scripts/build-media.mjs.
+   */
   portrait: slot({
     id: 'portrait',
     src: '/media/portrait',
-    widths: [540, 810, 1080, 1440],
+    widths: [540, 810, 1080],
     alt: 'BJ Beyond',
     focal: '50% 20%',
     width: 1080,

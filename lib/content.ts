@@ -77,6 +77,9 @@ export const METHOD = {
   description:
     'The five-pillar methodology for evaluating creative potential in the AI era.',
   cta: 'DISCOVER THE FRAMEWORK',
+  /* The method has a working implementation of its own, on a subdomain. Same
+     shape as AUTHENTIA.primary because it is the same treatment. */
+  primary: { label: 'TRY NOW', href: 'https://phoenixsoulfire.bjbeyond.it' },
   scrollCue: ['SCROLL TO', 'EXPLORE'],
   pillars: [
     {

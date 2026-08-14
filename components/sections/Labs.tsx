@@ -1,5 +1,3 @@
-'use client';
-
 import { Atmosphere } from '@/components/atmosphere/Atmosphere';
 import { Reveal } from '@/components/primitives/Reveal';
 import { SectionHead } from '@/components/primitives/SectionHead';
@@ -100,8 +98,21 @@ export function Labs() {
                               ))}
                             </ul>
 
-                            {/* Reserved space, so revealing it never reflows. */}
-                            <span className="u-label mt-4 flex h-4 items-center gap-2 text-amber-400 opacity-0 transition-opacity duration-300 group-hover:opacity-100 group-focus-visible:opacity-100">
+                            {/*
+                              Always visible, never revealed on hover.
+
+                              This used to fade in on `group-hover`, which meant
+                              that on touch — where there is no hover — it never
+                              appeared at all: the row was a link that never said
+                              so, and nothing on the card read as pressable.
+
+                              Drawn as a field rather than bare text so it reads
+                              as the thing you press, but it stays a <span>: the
+                              whole row is already the anchor, and nesting an
+                              interactive element inside one is invalid. The
+                              press target is the row, exactly as before.
+                            */}
+                            <span className="u-label mt-5 inline-flex min-h-11 items-center gap-2.5 border border-rule-strong px-5 text-amber-400 transition-colors duration-300 group-hover:border-amber-400 group-hover:bg-amber-400 group-hover:text-ink-950 group-focus-visible:border-amber-400 group-focus-visible:bg-amber-400 group-focus-visible:text-ink-950">
                               {project.action}
                               <svg
                                 width="18"
@@ -109,6 +120,7 @@ export function Labs() {
                                 viewBox="0 0 18 7"
                                 fill="none"
                                 aria-hidden="true"
+                                className="transition-transform duration-300 ease-[var(--ease-expo)] motion-safe:group-hover:translate-x-1 motion-safe:group-focus-visible:translate-x-1"
                               >
                                 <path
                                   d="M0 3.5h16M13 1l3 2.5L13 6"

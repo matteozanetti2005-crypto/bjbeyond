@@ -13,8 +13,8 @@ Live: [bjbeyond.it](https://bjbeyond.it)
 | Framework | Next.js 16 (App Router), static export |
 | Language | TypeScript, strict |
 | Styling | Tailwind CSS v4 (CSS-first `@theme` tokens) |
-| Motion | Framer Motion (component states) · GSAP + ScrollTrigger (scroll choreography) |
-| Deploy | GitHub Pages **and** Vercel from the same build output |
+| Motion | CSS transitions on one shared IntersectionObserver · GSAP + ScrollTrigger for desktop scroll choreography, loaded on demand |
+| Deploy | GitHub Pages, from `.github/workflows/deploy.yml` |
 
 ---
 
@@ -37,6 +37,17 @@ Then open <http://localhost:3000>.
 | `npm run typecheck` | `tsc --noEmit` |
 | `npm run media` | Regenerates `public/media/` from `media-src/` |
 
+> **There is no `lint` script, on purpose.** There used to be one calling
+> `next lint`, which Next 16 removed, against an ESLint configuration that did
+> not exist — so every `eslint-disable` comment in the tree was suppressing a
+> rule nothing was running. Its replacement, `eslint-config-next`'s flat config,
+> cannot run here either: it loads `typescript-eslint`, which refuses to start
+> against the TypeScript 7 this project builds with
+> ([typescript-eslint#10940](https://github.com/typescript-eslint/typescript-eslint/issues/10940)).
+> Rather than leave 300 packages installed that error on launch, the script is
+> gone until that lands. `npm run typecheck` is the gate in the meantime, and
+> with `noUnusedLocals` and `noUnusedParameters` it is a strict one.
+
 > **On `/phoenix` and `/frequency`:** these are directories in `public/` containing `index.html`. Static hosts resolve a directory to its index automatically, so both work in production. `next dev` does not, so `next.config.mjs` carries dev-only rewrites to match. The build prints a warning that rewrites are ignored when exporting — that is expected and correct; they exist purely for development parity.
 
 ---
@@ -54,7 +65,9 @@ lib/
   content.ts    ALL copy — single source of truth
   media.ts      image manifest — the only place photography enters
   motion.ts     easing + duration tokens
-  gsap.ts       plugin registration
+  reveal.ts     the shared IntersectionObserver behind every entrance
+  gsap.ts       the desktop gate, and the dynamic import behind it
+  gsap-runtime.ts  the library itself — never imported statically
 public/         legacy apps and assets, copied verbatim into the build
 _legacy/        the pre-rebuild index.html, kept for reference only (not built)
 ```
@@ -100,7 +113,12 @@ These URLs predate the rebuild and still resolve exactly as before:
 - `/phoenix` — Phoenix Simulator
 - `/frequency` — Frequency Studio
 - `/pages/privacy-policy.html`, `/pages/cookie-policy.html`
-- `/assets/*`, `/docs/*`, `/schema.json`, `/CNAME`
+- `/docs/*`, `/schema.json`, `/CNAME`
+
+`/assets/*` was on this list and is gone. It held four files — a 14.7MB MP4 and
+three images — that nothing in the site referenced: not the sections, not the
+standalone apps, not a stylesheet. They were 85% of every deploy. Git history
+still has them if one is ever wanted back.
 
 They are served verbatim from `public/` and are **not** managed by the router.
 Link to them with a plain `<a>`, never `next/link` — they are not App Router
@@ -130,16 +148,21 @@ routes.
 
 ## Deployment
 
-Both targets consume the same `out/` directory.
+**GitHub Pages**, and only GitHub Pages. `.github/workflows/deploy.yml`
+installs, builds, and uploads `out/`.
 
-**GitHub Pages** — `.github/workflows/deploy.yml` installs, builds, and uploads
-`out/`. `public/.nojekyll` is required: without it Jekyll strips `_next/`, which
-removes every stylesheet and script.
+Two things that have each broken the live site once:
 
-**Vercel** — auto-detects Next.js. `vercel.json` keeps the legacy capitalised
-`/Phoenix` URL working.
+- **Pages' source must stay on GitHub Actions**, not "Deploy from a branch".
+  On a branch source, Jekyll rebuilds from the repository root, finds no
+  `index.html`, and renders the README as the homepage.
+- **`public/.nojekyll` is required.** Without it Jekyll strips `_next/`, which
+  removes every stylesheet and script.
 
-**Cloudflare** — `wrangler.jsonc` serves `./out`. Run `npm run build` first.
+`vercel.json` and `wrangler.jsonc` used to sit alongside this for platforms
+nobody deploys to — the Cloudflare one registered under a different project's
+name. They were removed rather than maintained; both were three lines, and git
+still has them if a second target is ever wanted.
 
 ---
 

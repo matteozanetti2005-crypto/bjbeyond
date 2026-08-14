@@ -236,23 +236,231 @@
     border-bottom: 1px solid var(--color-rule);
   }
 
-  /* Only for layers that genuinely animate — never "just in case", which
-     costs memory and can degrade quality. */
-  .u-gpu {
-    will-change: transform;
-    backface-visibility: hidden;
+  /*
+    The three moving layers of the atmospheric grade — two fog banks and the
+    warm source. Declared here rather than as inline utility classes because
+    the resting state and the animated state have to be defined together.
+
+    The home page renders SIXTEEN Atmosphere instances. At three promoted,
+    permanently-animating layers each that was 48 compositor layers, every one
+    holding a full-bleed texture (~12MB at phone resolution) and none of them
+    stopping when scrolled out of view — CSS animations do not pause off-screen.
+    Past the GPU's texture budget the browser starts evicting and re-rasterising
+    mid-scroll, which is the stutter this fixes.
+
+    So: below 1024px the gradients still paint — they ARE the look — but they
+    hold still, unpromoted. Nothing is lost. At 54s and 78s per cycle the fog
+    crosses a handful of pixels per second; on a 6" screen that was never
+    visible, it was only ever expensive.
+  */
+  .u-fog-a {
+    transform: translate3d(-8%, 0, 0) scale(1.4);
+  }
+  .u-fog-b {
+    transform: translate3d(5%, 1%, 0) scale(1.7);
+  }
+  /* Mid-point of the breathe range, so the still frame is not its dimmest. */
+  .u-breathe {
+    opacity: 0.86;
+  }
+
+  @media (min-width: 1024px) and (prefers-reduced-motion: no-preference) {
+    /*
+      No `will-change` here, deliberately.
+
+      All three animate `transform`, which the compositor can run on its own, and
+      a browser promotes an element for the duration of such an animation without
+      being asked. What `will-change` added on top was promotion that begins
+      before the animation does and never ends — across sixteen Atmosphere
+      instances, forty-eight layers held permanently, including every one of them
+      scrolled far off screen. The hint was buying nothing the animation had not
+      already bought, and paying for it in texture memory.
+
+      `backface-visibility` stays: it is not a promotion hint, and it is cheap
+      insurance against the seam some GPUs show on a scaled composited layer.
+    */
+    .u-fog-a,
+    .u-fog-b,
+    .u-breathe {
+      backface-visibility: hidden;
+    }
+
+    .u-fog-a {
+      animation: fog-drift-a 54s ease-in-out infinite;
+    }
+    .u-fog-b {
+      animation: fog-drift-b 78s ease-in-out infinite;
+    }
+    .u-breathe {
+      animation: light-breathe 13s ease-in-out infinite;
+    }
+  }
+
+  /*
+    Scroll reveals, and the hero's entrance, as CSS.
+
+    These were seventy Framer Motion components. Every one of them subscribed
+    to the library's animation loop and carried its own hydration cost, to
+    interpolate two properties a browser can transition on its own. What is
+    left in JavaScript is one shared IntersectionObserver adding a class — see
+    lib/reveal.ts.
+
+    The hidden state is scoped to `.js`, which an inline script in layout.tsx
+    stamps on <html> before first paint. Without JavaScript the rule never
+    matches and the content is simply visible: the `<noscript>` patch that used
+    to paper over this is gone, because there is nothing left to patch.
+  */
+  .u-reveal,
+  .u-mask-line {
+    transition-property: opacity, transform;
+    transition-duration: var(--reveal-duration, 720ms);
+    transition-timing-function: var(--ease-expo);
+    transition-delay: var(--reveal-delay, 0ms);
+  }
+
+  .js .u-reveal:not(.is-in) {
+    opacity: 0;
+    transform: translateY(var(--reveal-distance, 26px));
+  }
+
+  /* Rises out of its own clipping box, so it needs travel but never opacity. */
+  .js .u-mask-line:not(.is-in) {
+    transform: translateY(105%);
+  }
+
+  /*
+    The market chart's entrance: the curve wipes in from the left, once, on
+    arrival. It was a GSAP tween, and the last thing on the page still asking for
+    the library below the desktop breakpoint.
+
+    A wipe, and not the obvious `stroke-dasharray` draw, because the curve
+    carries `vector-effect: non-scaling-stroke` — which it needs, or its
+    1.25 stroke renders at 0.42px on a phone. That effect also moves the dash
+    pattern into screen space while the path's geometry stays in user space, and
+    the two no longer agree: measured in this engine, a path normalised with
+    `pathLength="1"` renders identically at every dash offset from 0 to 0.99 and
+    then vanishes at 1. Nothing draws — it snaps. `getTotalLength()` does not
+    rescue it either, since it reports user units for a pattern being applied in
+    screen pixels; that is the same mismatch, and the GSAP version had it too.
+
+    `clip-path` sidesteps the units question entirely: it is a percentage of the
+    path's own box, so it holds at any viewport width with nothing to measure and
+    nothing to recompute on resize. The insets are negative on three sides so the
+    finished state never shaves the round caps or the half stroke-width that sits
+    outside the fill box.
+
+    Reference box: `fill-box` is the default for a basic shape on an SVG element,
+    which is what makes the percentages track the curve rather than the viewport.
+
+    Scoped to the wrapping `<svg>` rather than the path itself: an element with a
+    replaced layout box is the reliable IntersectionObserver target.
+  */
+  .u-draw [data-draw] {
+    clip-path: inset(-30% -3% -30% -3%);
+    transition: clip-path var(--reveal-duration, 2000ms) var(--ease-expo)
+      var(--reveal-delay, 0ms);
+  }
+  .js .u-draw:not(.is-in) [data-draw] {
+    clip-path: inset(-30% 100% -30% -3%);
+  }
+
+  /*
+    The hero's opening beats and the opening curtain. Same mechanism, keyed to
+    the curtain lifting rather than to scroll position — which is why they are
+    separate classes and not `.u-reveal`: their resting states differ (a plate
+    scales, a rule grows from its left edge) and their durations are far longer.
+  */
+  .u-hero-plate,
+  .u-hero-lift,
+  .u-hero-rule,
+  .u-curtain-mark,
+  .u-curtain-rule {
+    transition-property: opacity, transform;
+    transition-duration: var(--reveal-duration, 900ms);
+    transition-timing-function: var(--ease-expo);
+    transition-delay: var(--reveal-delay, 0ms);
+  }
+
+  .js .u-hero-plate:not(.is-in) {
+    opacity: 0;
+    transform: scale(1.09);
+  }
+  .js .u-hero-lift:not(.is-in) {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+  .js .u-hero-rule:not(.is-in) {
+    transform: scaleX(0);
+  }
+
+  /* The curtain's own contents animate in on mount, so they start hidden and
+     are shown a frame later — no `.js` guard needed, since the curtain only
+     exists when JavaScript is running in the first place. */
+  .u-curtain-mark:not(.is-in) {
+    opacity: 0;
+    transform: scale(0.94);
+  }
+  .u-curtain-rule:not(.is-in) {
+    transform: scaleX(0);
+  }
+
+  /* The lift. Never a fade — a fade would reveal a hero that had already
+     finished arriving. */
+  .u-curtain {
+    transition: transform 1000ms var(--ease-expo-in-out) 50ms;
+  }
+  .u-curtain.is-lifting {
+    transform: translateY(-100%);
+  }
+
+  /* The header drops in with the hero rather than on a schedule of its own. */
+  .u-nav-enter {
+    transition: opacity var(--reveal-duration, 720ms) var(--ease-expo) var(--reveal-delay, 0ms),
+      transform var(--reveal-duration, 720ms) var(--ease-expo) var(--reveal-delay, 0ms);
+  }
+  .js .u-nav-enter:not(.is-in) {
+    opacity: 0;
+    transform: translateY(-24px);
+  }
+
+  /* The full-screen menu. Mounted before it is shown and unmounted after it is
+     hidden, so both directions get a transition without a presence library. */
+  .u-menu {
+    transition: opacity 500ms var(--ease-expo);
+  }
+  .u-menu:not(.is-in) {
+    opacity: 0;
+    transition: opacity var(--duration-exit, 420ms) var(--ease-exit);
+  }
+  .u-menu-row {
+    transition: opacity 500ms var(--ease-expo) var(--reveal-delay, 0ms);
+  }
+  .u-menu:not(.is-in) .u-menu-row {
+    opacity: 0;
   }
 
   /* Film grain. One SVG turbulence, rasterised once and then composited — no
-     per-frame cost. */
+     per-frame cost.
+
+     `inset` is the drift's margin, nothing more: the animation travels at most
+     3% of this element's own size, so 6% of slack is already double what it
+     needs. At -50% each of the sixteen grain layers covered FOUR TIMES its
+     container, which is four times the texture and four times the fill. */
   .u-grain::after {
     content: '';
     position: absolute;
-    inset: -50%;
+    inset: -6%;
     pointer-events: none;
     opacity: 0.05;
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.82' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-    animation: grain-drift 7s steps(6) infinite;
+  }
+
+  /* The drift, like the fog above, is desktop-only. The grain itself is not —
+     the texture stays at every size. */
+  @media (min-width: 1024px) and (prefers-reduced-motion: no-preference) {
+    .u-grain::after {
+      animation: grain-drift 7s steps(6) infinite;
+    }
   }
 
   .u-hide-scrollbar {
@@ -322,8 +530,8 @@
     scroll-behavior: auto;
   }
 
-  /* The drift is decorative; the grain itself is not. Texture stays. */
-  .u-grain::after {
-    animation: none;
-  }
+  /* The grade's drift and the grain's are not listed here: both are declared
+     inside `(prefers-reduced-motion: no-preference)` above, so under `reduce`
+     they are never applied in the first place. The texture itself stays — it
+     is not motion. */
 }

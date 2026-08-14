@@ -27,6 +27,15 @@ interface AtmosphereProps {
   scrim?: 'none' | 'soft' | 'strong';
   /** Responsive sizing hint. Must reflect the real rendered width. */
   sizes?: string;
+  /**
+   * Announces the photograph with the slot's `alt` instead of hiding the layer
+   * outright. Decorative is the right default — these are plates sitting
+   * behind type, and a screen reader narrating five crops of the same valley
+   * is noise. The portrait is the exception: it is a photograph of a person,
+   * and the only image here carrying something the surrounding copy does not
+   * already say.
+   */
+  informative?: boolean;
 }
 
 const VIEWBOX = { w: 1200, h: 675 } as const;
@@ -110,6 +119,7 @@ export function Atmosphere({
   priority = false,
   scrim = 'soft',
   sizes = '100vw',
+  informative = false,
 }: AtmosphereProps) {
   const preset = PRESETS[media.atmosphere];
   const layers: RidgeLayer[] =
@@ -130,17 +140,21 @@ export function Atmosphere({
      rectangle. */
   const isCutout = media.cutout === true;
 
+  /* Only a real photograph can be announced — there is nothing to describe in
+     a procedural plate, whatever the caller asks for. */
+  const announce = informative && Boolean(media.src);
+
   return (
     <div
       className={`${isCutout ? '' : 'u-grain'} pointer-events-none absolute inset-0 overflow-hidden ${className}`}
-      aria-hidden="true"
+      aria-hidden={announce ? undefined : 'true'}
     >
       {media.src ? (
         <img
           src={largest(media.src, media.widths)}
           srcSet={srcSet(media.src, media.widths)}
           sizes={sizes}
-          alt=""
+          alt={announce ? media.alt : ''}
           width={media.width}
           height={media.height}
           loading={priority ? 'eager' : 'lazy'}
@@ -202,25 +216,47 @@ export function Atmosphere({
           and a procedural plate looking like the same camera. */}
       {!isCutout && (
         <>
-          {/* Two fog banks: same texture, different scale and phase. */}
+          {/* Two fog banks: same texture, different scale and phase. The
+              motion, and the compositor layer it needs, live in the utility
+              classes — see the note in globals.css for why they stop at the
+              `lg` breakpoint. */}
           <div
-            className="u-gpu absolute inset-0 motion-safe:animate-[fog-drift-a_54s_ease-in-out_infinite]"
+            className="u-fog-a absolute inset-0"
             style={{
               background:
                 'radial-gradient(58% 34% at 42% 66%, rgb(190 200 220 / 0.1) 0%, transparent 68%)',
             }}
           />
           <div
-            className="u-gpu absolute inset-0 motion-safe:animate-[fog-drift-b_78s_ease-in-out_infinite]"
+            className="u-fog-b absolute inset-0"
             style={{
               background:
                 'radial-gradient(66% 28% at 60% 78%, rgb(170 185 210 / 0.08) 0%, transparent 72%)',
             }}
           />
 
-          {/* The warm source. */}
+          {/*
+            The warm source. Composited normally — the screen blend mode this
+            layer used to carry is gone.
+
+            (Its class name is deliberately not written out anywhere here:
+            Tailwind scans these files as plain text, so naming a utility even
+            inside a comment is enough to emit its rule into the stylesheet.)
+
+            A blended element cannot be composited on its own: the GPU has to
+            read back everything painted beneath it and re-blend whenever
+            either side changes. Sixteen of them, each breathing on a 13s loop,
+            meant that read-back never stopped anywhere on the page.
+
+            Over this palette the two are near-identical. Screen resolves to
+            `B + a·C·(1-B)` and normal to `B + a·(C-B)`; against ink-950
+            (B ≈ 0.02) the difference is under half a percent. It only parts
+            company over highlights, where screen leaves them and normal pulls
+            them a shade warmer — on warm interior light, which is what this
+            layer depicts, that reads as the same lamp.
+          */}
           <div
-            className="u-gpu absolute inset-0 mix-blend-screen motion-safe:animate-[light-breathe_13s_ease-in-out_infinite]"
+            className="u-breathe absolute inset-0"
             style={{
               background: `radial-gradient(${preset.light.spread}% ${preset.light.spread * 0.62}% at ${preset.light.x}% ${preset.light.y}%, rgb(232 197 71 / ${(0.13 * warm).toFixed(3)}) 0%, rgb(201 138 39 / ${(0.07 * warm).toFixed(3)}) 34%, transparent 72%)`,
             }}

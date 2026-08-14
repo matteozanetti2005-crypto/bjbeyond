@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect } from 'react';
-import { ScrollTrigger } from '@/lib/gsap';
+import { whenGsapReady } from '@/lib/gsap';
 import { useIntro } from './Intro';
 
 /**
@@ -16,6 +16,11 @@ import { useIntro } from './Intro';
  * Two refreshes, for the two things that move the layout: the curtain lifting,
  * and webfonts swapping in. Resize is deliberately not handled here —
  * ScrollTrigger already debounces that itself.
+ *
+ * `whenGsapReady`, never `loadGsap`: on a phone nothing has asked for the
+ * library and this must not become the thing that does. It resolves to null
+ * there, and refreshing triggers that were never created is exactly the right
+ * amount of work.
  */
 export function ScrollSync() {
   const { ready } = useIntro();
@@ -23,11 +28,23 @@ export function ScrollSync() {
   useEffect(() => {
     if (!ready) return;
 
-    /* A frame, so the curtain's exit has released the scroll lock and the
-       browser has committed the resulting layout. */
-    const raf = requestAnimationFrame(() => ScrollTrigger.refresh());
+    let cancelled = false;
+    let raf = 0;
 
-    return () => cancelAnimationFrame(raf);
+    whenGsapReady().then((runtime) => {
+      if (!runtime || cancelled) return;
+
+      /* A frame, so the curtain's exit has released the scroll lock and the
+         browser has committed the resulting layout. It also lands after the
+         sections' own setup callbacks: they are queued on the same import
+         promise as this one, and a frame is later than any microtask. */
+      raf = requestAnimationFrame(() => runtime.ScrollTrigger.refresh());
+    });
+
+    return () => {
+      cancelled = true;
+      cancelAnimationFrame(raf);
+    };
   }, [ready]);
 
   useEffect(() => {
@@ -36,9 +53,12 @@ export function ScrollSync() {
     if (!('fonts' in document)) return;
 
     let cancelled = false;
-    document.fonts.ready.then(() => {
-      if (!cancelled) ScrollTrigger.refresh();
-    });
+
+    document.fonts.ready
+      .then(() => whenGsapReady())
+      .then((runtime) => {
+        if (runtime && !cancelled) runtime.ScrollTrigger.refresh();
+      });
 
     return () => {
       cancelled = true;

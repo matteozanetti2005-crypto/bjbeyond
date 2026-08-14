@@ -1,17 +1,29 @@
 'use client';
 
-import { motion, type Variants } from 'framer-motion';
-import type { ReactNode } from 'react';
-import { DUR, EASE, STAGGER } from '@/lib/motion';
+import type { CSSProperties, ReactNode } from 'react';
+import { DUR, STAGGER } from '@/lib/motion';
+import { ms, useRevealRef } from '@/lib/reveal';
 
 /**
  * The standard entrance, used for every "content arrives as you reach it"
- * moment. Transform and opacity only. `once: true` settles each element
- * permanently — re-triggering reads as a glitch on the way back up.
+ * moment. Transform and opacity only, one way only — re-triggering on the way
+ * back up reads as a glitch.
  *
- * Under `prefers-reduced-motion`, Framer Motion's `MotionConfig` is not enough
- * on its own; the global CSS rule collapses the duration instead.
+ * No animation library. The curves and durations are in globals.css, driven by
+ * the three custom properties below; lib/reveal.ts adds `is-in` when the
+ * element comes into view. Under `prefers-reduced-motion` the global rule
+ * collapses the transition, so the element still arrives — instantly, and
+ * legible.
  */
+
+/** The three knobs the CSS reads. Kept in one place so every variant agrees. */
+function vars(delay: number, duration?: number, distance?: number): CSSProperties {
+  return {
+    '--reveal-delay': ms(delay),
+    ...(duration ? { '--reveal-duration': ms(duration) } : null),
+    ...(distance !== undefined ? { '--reveal-distance': `${distance}px` } : null),
+  } as CSSProperties;
+}
 
 interface RevealProps {
   children: ReactNode;
@@ -28,26 +40,23 @@ export function Reveal({
   delay = 0,
   distance = 26,
   className = '',
-  as = 'div',
+  as: Tag = 'div',
 }: RevealProps) {
-  const MotionTag = motion[as];
-
   return (
-    <MotionTag
-      className={className}
-      initial={{ opacity: 0, y: distance }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: '0px 0px -12% 0px' }}
-      transition={{ duration: DUR.base, ease: EASE.expo, delay }}
-    >
+    <Tag ref={useRevealRef()} className={`u-reveal ${className}`} style={vars(delay, DUR.base, distance)}>
       {children}
-    </MotionTag>
+    </Tag>
   );
 }
 
 /**
  * Reveals children in sequence. Wrap `RevealItem`s in this; the step comes from
  * STAGGER in lib/motion.ts, which documents why the range is bounded.
+ *
+ * The group is what gets observed — the items are revealed together with it,
+ * each offset by its position. That is deliberate: observing every item
+ * separately made the last one in a row wait for its own intersection and the
+ * sequence read as ragged rather than staggered.
  */
 export function RevealGroup({
   children,
@@ -60,39 +69,22 @@ export function RevealGroup({
   stagger?: number;
   delay?: number;
 }) {
-  const container: Variants = {
-    hidden: {},
-    visible: {
-      transition: { staggerChildren: stagger, delayChildren: delay },
-    },
-  };
-
   return (
-    <motion.div
+    <div
+      ref={useRevealRef()}
       className={className}
-      variants={container}
-      initial="hidden"
-      whileInView="visible"
-      viewport={{ once: true, margin: '0px 0px -12% 0px' }}
+      data-stagger={Math.round(stagger * 1000)}
+      data-stagger-delay={Math.round(delay * 1000)}
     >
       {children}
-    </motion.div>
+    </div>
   );
 }
-
-const itemVariants: Variants = {
-  hidden: { opacity: 0, y: 22 },
-  visible: {
-    opacity: 1,
-    y: 0,
-    transition: { duration: DUR.base, ease: EASE.expo },
-  },
-};
 
 export function RevealItem({
   children,
   className = '',
-  as = 'div',
+  as: Tag = 'div',
 }: {
   children: ReactNode;
   className?: string;
@@ -100,12 +92,11 @@ export function RevealItem({
    *  and breaks how screen readers announce the list. */
   as?: 'div' | 'li' | 'article' | 'span';
 }) {
-  const MotionTag = motion[as];
-
+  /* No ref: the group observes, and hands each item its delay on arrival. */
   return (
-    <MotionTag className={className} variants={itemVariants}>
+    <Tag className={`u-reveal ${className}`} data-reveal-item style={vars(0, DUR.base, 22)}>
       {children}
-    </MotionTag>
+    </Tag>
   );
 }
 
@@ -139,23 +130,17 @@ export function MaskLines({
   id?: string;
 }) {
   return (
-    <Tag className={className} id={id}>
-      {lines.map((line, i) => (
+    <Tag ref={useRevealRef()} className={className} id={id} data-stagger={Math.round(stagger * 1000)} data-stagger-delay={Math.round(delay * 1000)}>
+      {lines.map((line) => (
         // `pb` stops the clipping box shaving descenders off.
-        <span key={i} className="block overflow-hidden pb-[0.12em]">
-          <motion.span
-            className={`block ${lineClassName}`}
-            initial={{ y: '105%' }}
-            whileInView={{ y: '0%' }}
-            viewport={{ once: true, margin: '0px 0px -10% 0px' }}
-            transition={{
-              duration,
-              ease: EASE.expo,
-              delay: delay + i * stagger,
-            }}
+        <span key={line} className="block overflow-hidden pb-[0.12em]">
+          <span
+            className={`u-mask-line block ${lineClassName}`}
+            data-reveal-item
+            style={vars(0, duration)}
           >
             {line}
-          </motion.span>
+          </span>
         </span>
       ))}
     </Tag>

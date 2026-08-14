@@ -1,8 +1,6 @@
-'use client';
-
 import { Atmosphere } from '@/components/atmosphere/Atmosphere';
 import { Reveal, RevealGroup, RevealItem } from '@/components/primitives/Reveal';
-import { Magnetic } from '@/components/primitives/Magnetic';
+import { ButtonLink } from '@/components/primitives/ButtonLink';
 import { AUTHENTIA } from '@/lib/content';
 import { AUTHENTIA_LOCKUP, MEDIA, largest, srcSet } from '@/lib/media';
 import {
@@ -18,6 +16,11 @@ import {
  *
  * Both links leave the site, so both carry `rel="noopener noreferrer"` and an
  * explicit external marker rather than relying on the arrow alone.
+ *
+ * A server component: nothing here holds state or touches the browser. It
+ * renders client components — Reveal, ButtonLink — but rendering one has never
+ * required becoming one, and the directive only put this file's markup and copy
+ * into the JavaScript bundle for nothing.
  */
 export function Authentia() {
   return (
@@ -28,13 +31,19 @@ export function Authentia() {
     >
       <div className="u-gutter">
         <div className="relative overflow-hidden border border-rule-strong">
-          <div className="absolute inset-0 z-0 opacity-60">
+          <div className="absolute inset-0 z-0">
             <Atmosphere
               media={MEDIA.labs.authentia}
               scrim="strong"
               sizes="100vw"
               className="h-full w-full"
             />
+
+            {/* A flat overlay, not opacity on the wrapper: any value below 1
+                makes this a transparency group, so the browser re-renders the
+                whole subtree off-screen whenever an animated child moves.
+                Same correction as Contact. */}
+            <div aria-hidden="true" className="absolute inset-0 bg-ink-950/40" />
           </div>
 
           <div className="relative z-10 grid gap-10 p-7 sm:p-10 lg:grid-cols-12 lg:gap-8 lg:p-14">
@@ -95,17 +104,9 @@ export function Authentia() {
               </RevealGroup>
 
               <Reveal delay={0.3} className="mt-9 flex flex-col gap-4">
-                <Magnetic strength={7}>
-                  <a
-                    href={AUTHENTIA.primary.href}
-                    {...EXTERNAL}
-                    className="group inline-flex min-h-11 items-center gap-3 bg-amber-400 px-6 py-3.5 text-ink-950 transition-colors duration-200 hover:bg-amber-300"
-                  >
-                    <span className="u-label">{AUTHENTIA.primary.label}</span>
-                    <ArrowOutward className="transition-transform duration-300 ease-[var(--ease-expo)] motion-safe:group-hover:translate-x-1 motion-safe:group-hover:-translate-y-1" />
-                    <NewTabHint />
-                  </a>
-                </Magnetic>
+                <ButtonLink href={AUTHENTIA.primary.href} external>
+                  {AUTHENTIA.primary.label}
+                </ButtonLink>
 
                 <a
                   href={AUTHENTIA.secondary.href}

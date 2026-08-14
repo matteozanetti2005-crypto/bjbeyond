@@ -1,5 +1,3 @@
-'use client';
-
 import { Reveal, RevealGroup, RevealItem } from '@/components/primitives/Reveal';
 import { SectionHead } from '@/components/primitives/SectionHead';
 import { WORK } from '@/lib/content';
@@ -10,8 +8,11 @@ import { WORK } from '@/lib/content';
  * Each panel sticks to the top while the next rises over it. The stack is pure
  * CSS — `position: sticky`, an ascending z-index and an opaque panel
  * background. No scroll listener and no pinning, so it cannot desynchronise and
- * it survives reduced-motion untouched. (The section is still a client
- * component; that is `Reveal`, not the stacking.)
+ * it survives reduced-motion untouched.
+ *
+ * A server component. It renders `Reveal`, which is a client component, but
+ * that has never made this one client too — the earlier `'use client'` here
+ * only shipped this file to the browser for no return.
  */
 export function Work() {
   return (

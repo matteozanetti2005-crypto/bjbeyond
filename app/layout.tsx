@@ -7,19 +7,26 @@ import './globals.css';
 /**
  * Self-hosted by next/font at build time: no request to a third-party origin,
  * no layout shift from a late swap, files fingerprinted and immutably cached.
+ *
+ * Only the weights the stylesheet actually applies. Inter runs at 200
+ * (`font-extralight`), 300 (`font-light`, and the base weight for h1–h6) and
+ * 400 (body default) — `font-medium` and `font-semibold` appear nowhere in the
+ * markup. The mono is applied in exactly one rule, `.u-label`, which sets 500,
+ * so its 400 was never requested either. Each weight dropped is a woff2 the
+ * build stops emitting.
  */
 const inter = Inter({
   subsets: ['latin'],
   variable: '--font-inter',
   display: 'swap',
-  weight: ['200', '300', '400', '500', '600'],
+  weight: ['200', '300', '400'],
 });
 
 const jetbrainsMono = JetBrains_Mono({
   subsets: ['latin'],
   variable: '--font-mono-jetbrains',
   display: 'swap',
-  weight: ['400', '500'],
+  weight: ['500'],
 });
 
 export const metadata: Metadata = {
@@ -70,17 +77,35 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={`${inter.variable} ${jetbrainsMono.variable}`}>
+    <html
+      lang="en"
+      className={`${inter.variable} ${jetbrainsMono.variable}`}
+      /* The script below adds `js` to this element before React hydrates, so
+         the client's class list is deliberately one entry longer than the
+         server's. Without this, React reports it as a mismatch it "won't patch
+         up" — which is true and intended: the class must land before paint,
+         which is earlier than React can run. */
+      suppressHydrationWarning
+    >
       <head>
         {/*
-          Scroll reveals render their hidden state as an inline style during
-          static export, so without JavaScript they stay invisible forever. The
-          `!important` is load-bearing — an important stylesheet declaration
-          outranks a plain inline style, which is the only way to reach them.
+          Stamps `js` on <html> before the first paint.
+
+          Every hidden-until-revealed rule in globals.css is scoped to `.js`, so
+          this one line is what decides whether the page has entrances or simply
+          shows its content. Without JavaScript the class never lands, the rules
+          never match, and everything is visible — which is the correct fallback
+          and needs no `<noscript>` patch to reach it.
+
+          It has to be here, inline and blocking, rather than in a component: a
+          class added after hydration would let the browser paint the revealed
+          state first and then hide it, which is a visible flash.
         */}
-        <noscript>
-          <style>{`.js-reveal{opacity:1!important;transform:none!important;visibility:visible!important}`}</style>
-        </noscript>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `document.documentElement.classList.add('js')`,
+          }}
+        />
       </head>
       <body>
         {/* First stop for keyboard users, before the navigation. */}

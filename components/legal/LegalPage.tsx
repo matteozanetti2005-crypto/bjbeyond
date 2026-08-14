@@ -145,13 +145,17 @@ export function LegalPage({ doc }: { doc: LegalDocument }) {
 
       <main id="main" className="relative">
         <section className="relative overflow-hidden pb-16 pt-36 sm:pt-44">
-          <div className="absolute inset-0 z-0 opacity-55">
+          <div className="absolute inset-0 z-0">
             <Atmosphere
               media={MEDIA.contact}
               scrim="strong"
               sizes="100vw"
               className="h-full w-full"
             />
+
+            {/* Flat overlay rather than opacity on the wrapper — see Contact
+                and Authentia for why the two are not equivalent. */}
+            <div aria-hidden="true" className="absolute inset-0 bg-ink-950/45" />
           </div>
 
           <div className="u-gutter relative z-10">

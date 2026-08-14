@@ -1,11 +1,9 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   /**
-   * Keeps both deployment targets alive: GitHub Pages (the live host for
-   * bjbeyond.it) serves `out/` as-is, and Vercel serves the same output with no
-   * extra configuration. It also copies the standalone apps in `public/`
-   * (/phoenix, /frequency) and the legacy /pages/*.html verbatim, so every
-   * pre-existing URL keeps resolving.
+   * GitHub Pages, the live host for bjbeyond.it, serves `out/` as-is. The export
+   * also copies the standalone apps in `public/` (/phoenix, /frequency) and the
+   * legacy /pages/*.html verbatim, so every pre-existing URL keeps resolving.
    */
   output: 'export',
 

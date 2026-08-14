@@ -4,11 +4,18 @@ import { useEffect, useRef, useState } from 'react';
 import { Reveal } from '@/components/primitives/Reveal';
 import { SectionHead } from '@/components/primitives/SectionHead';
 import { INTELLIGENCE, type IntelligenceFilterId } from '@/lib/content';
-import { gsap, useGSAP } from '@/lib/gsap';
-import { GSAP_EASE, prefersReducedMotion } from '@/lib/motion';
+import { prefersReducedMotion } from '@/lib/motion';
+import { useRevealRef } from '@/lib/reveal';
 
 /**
  * INTELLIGENCE — Art Market Pulse
+ *
+ * No animation library. This section was the last consumer of GSAP that ran
+ * below the desktop breakpoint, so the two things it animated were moved to the
+ * platform: the entrance is a CSS transition on `stroke-dashoffset` (see
+ * `.u-draw` in globals.css) and the filter change is the interpolation below,
+ * which is the only part CSS genuinely cannot do — the path data has to be
+ * recomputed per frame, not interpolated between two declared states.
  *
  * The filter tween writes straight into the SVG through refs, never React
  * state, so a switch costs zero re-renders — setState in the update callback
@@ -66,11 +73,36 @@ function area(points: [number, number][]): string {
   return `${curve(points)} L ${points[points.length - 1][0].toFixed(2)} ${base} L ${points[0][0].toFixed(2)} ${base} Z`;
 }
 
+/**
+ * The unfiltered series, resolved at module scope so the chart can be rendered
+ * into the markup instead of being drawn in after hydration.
+ *
+ * These strings are constant, which is what lets React and the per-frame
+ * `setAttribute` calls share the same elements: React only touches an attribute
+ * when the value it rendered last differs from the one it is rendering now, so a
+ * prop that never changes is written once and then left alone.
+ */
+const BASE_VALUES = INTELLIGENCE.series.all.map((point) => point.value);
+const BASE_POINTS = toPoints(BASE_VALUES);
+const BASE_LINE = curve(BASE_POINTS);
+const BASE_AREA = area(BASE_POINTS);
+
+/** Duration of a filter change, in milliseconds. */
+const SWITCH_MS = 850;
+
+/** `expo.out`, the house curve, as the plain function GSAP was wrapping. */
+function easeOutExpo(t: number): number {
+  return t >= 1 ? 1 : 1 - Math.pow(2, -10 * t);
+}
+
 export function Intelligence() {
-  const sectionRef = useRef<HTMLElement>(null);
   const lineRef = useRef<SVGPathElement>(null);
   const areaRef = useRef<SVGPathElement>(null);
   const nodeRefs = useRef<(SVGGElement | null)[]>([]);
+
+  /* Observed for the drawing entrance — the same shared observer every other
+     reveal on the page uses. */
+  const plotRef = useRevealRef();
 
   const [filter, setFilter] = useState<IntelligenceFilterId>('all');
   const [hovered, setHovered] = useState<number | null>(null);
@@ -78,13 +110,9 @@ export function Intelligence() {
   const series = INTELLIGENCE.series[filter];
   const labels = INTELLIGENCE.series.all.map((point) => point.label);
 
-  /* The live values the tween mutates. Never React state — see the note above. */
-  const values = useRef<number[]>(INTELLIGENCE.series.all.map((p) => p.value));
-
-  /* One persistent object for GSAP to tween, interpolated by hand against it:
-     `gsap.to(someArray, …)` treats the array as a *list of targets* — seven
-     primitive numbers, none animatable — and silently does nothing. */
-  const progress = useRef({ t: 1 });
+  /* The live values the interpolation mutates. Never React state — see the note
+     above. Copied, because it is written in place. */
+  const values = useRef<number[]>([...BASE_VALUES]);
 
   const paint = () => {
     const points = toPoints(values.current);
@@ -96,44 +124,19 @@ export function Intelligence() {
     });
   };
 
-  /* Entrance: the curve draws itself once, on first view. */
-  useGSAP(
-    () => {
-      const line = lineRef.current;
-      if (!line) return;
-
-      paint();
-
-      if (prefersReducedMotion()) return;
-
-      const length = line.getTotalLength();
-      gsap.fromTo(
-        line,
-        { strokeDasharray: length, strokeDashoffset: length },
-        {
-          strokeDashoffset: 0,
-          duration: 2,
-          ease: GSAP_EASE.expo,
-          scrollTrigger: { trigger: sectionRef.current, start: 'top 72%' },
-          /* Clearing the dash array keeps the stroke crisp afterwards. */
-          onComplete: () => {
-            line.style.strokeDasharray = '';
-          },
-        },
-      );
-    },
-    { scope: sectionRef },
-  );
-
   /*
-   * Filter change. A plain `useEffect`, not `useGSAP`: this targets a ref with
-   * no selector strings, so the scoping buys nothing, and `useGSAP`'s
-   * dependency handling did not re-run on `filter` — the curve stayed frozen on
-   * the first series while the rest of the section updated.
+   * Filter change: the one thing here that has to run per frame, because each
+   * frame is a different path string rather than a different value of one
+   * property. Seven interpolations and two `setAttribute` calls — GSAP was
+   * being loaded on every phone to schedule this.
    */
   useEffect(
     () => {
       const to = INTELLIGENCE.series[filter].map((p) => p.value);
+
+      /* Nothing to travel: the first run, where the markup already holds this
+         exact geometry, and any switch back to a series already on screen. */
+      if (to.every((value, i) => value === values.current[i])) return;
 
       if (prefersReducedMotion()) {
         values.current = to;
@@ -143,27 +146,27 @@ export function Intelligence() {
 
       /* Where the curve is now — possibly mid-flight from a previous switch. */
       const from = [...values.current];
+      const start = performance.now();
+      let frame = 0;
 
-      progress.current.t = 0;
-      const tween = gsap.to(progress.current, {
-        t: 1,
-        duration: 0.85,
-        ease: GSAP_EASE.expo,
-        /* Kills any in-flight tween on this object, so rapid switching resolves
-           to the last filter chosen instead of two tweens fighting. */
-        overwrite: true,
-        onUpdate: () => {
-          const t = progress.current.t;
-          for (let i = 0; i < to.length; i += 1) {
-            values.current[i] = from[i] + (to[i] - from[i]) * t;
-          }
-          paint();
-        },
-      });
+      const step = (now: number) => {
+        const elapsed = Math.min(1, (now - start) / SWITCH_MS);
+        const t = easeOutExpo(elapsed);
 
-      return () => {
-        tween.kill();
+        for (let i = 0; i < to.length; i += 1) {
+          values.current[i] = from[i] + (to[i] - from[i]) * t;
+        }
+        paint();
+
+        if (elapsed < 1) frame = requestAnimationFrame(step);
       };
+
+      frame = requestAnimationFrame(step);
+
+      /* Cancelling on cleanup is what makes rapid switching resolve to the last
+         filter chosen: the next run reads `values.current` wherever this one
+         stopped and travels from there. It is what `overwrite: true` bought. */
+      return () => cancelAnimationFrame(frame);
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [filter],
@@ -171,7 +174,6 @@ export function Intelligence() {
 
   return (
     <section
-      ref={sectionRef}
       id="intelligence"
       aria-labelledby="intelligence-heading"
       className="relative bg-ink-950 py-[var(--spacing-section)]"
@@ -242,8 +244,10 @@ export function Intelligence() {
                     — curve, nodes and wash all draw with `currentColor`, so the
                     gold lives only in the token. */}
                 <svg
+                  ref={plotRef}
                   viewBox={`0 0 ${VIEW.w} ${VIEW.h}`}
-                  className="w-full overflow-visible text-amber-400"
+                  className="u-draw w-full overflow-visible text-amber-400"
+                  style={{ '--reveal-duration': '2000ms' } as React.CSSProperties}
                   role="img"
                   aria-label={`${INTELLIGENCE.subtitle}, ${INTELLIGENCE.period}. Illustrative index values from ${series[0].value} in ${series[0].label} to ${series[series.length - 1].value} in ${series[series.length - 1].label}. Full values are available in the table below.`}
                 >
@@ -253,15 +257,27 @@ export function Intelligence() {
                       <stop offset="60%" stopColor="currentColor" stopOpacity="0.04" />
                       <stop offset="100%" stopColor="currentColor" stopOpacity="0" />
                     </linearGradient>
-                    {/* Nodes only, never the whole chart — a blurred stroke
-                        would soften the data itself. */}
-                    <filter id="pulse-glow" x="-120%" y="-120%" width="340%" height="340%">
-                      <feGaussianBlur stdDeviation="5" result="blur" />
-                      <feMerge>
-                        <feMergeNode in="blur" />
-                        <feMergeNode in="SourceGraphic" />
-                      </feMerge>
-                    </filter>
+                    {/*
+                      The node halo, as a gradient rather than a filter.
+
+                      This was an `feGaussianBlur` applied per node. An SVG
+                      filter is re-rasterised whenever anything inside its
+                      source changes — and switching filters rewrites every
+                      node's transform on each of the 0.85s tween's frames, so
+                      seven gaussian blurs were being recomputed per frame for
+                      the whole transition. A radial gradient is painted once
+                      and then simply moves with its group.
+
+                      Stops chosen to match what the blur produced: bright at
+                      the core, gone by the rim. Still `currentColor`, so the
+                      gold continues to live only in the token.
+                    */}
+                    <radialGradient id="pulse-node-halo">
+                      <stop offset="0%" stopColor="currentColor" stopOpacity="0.5" />
+                      <stop offset="35%" stopColor="currentColor" stopOpacity="0.22" />
+                      <stop offset="70%" stopColor="currentColor" stopOpacity="0.06" />
+                      <stop offset="100%" stopColor="currentColor" stopOpacity="0" />
+                    </radialGradient>
                   </defs>
 
                   {[0, 0.5, 1].map((ratio) => {
@@ -279,9 +295,19 @@ export function Intelligence() {
                     );
                   })}
 
-                  <path ref={areaRef} fill="url(#pulse-wash)" stroke="none" />
+                  {/* Both paths carry the unfiltered geometry from the start,
+                      so the chart is in the exported HTML rather than being
+                      drawn in on hydration. `paint()` overwrites `d` in place
+                      afterwards; React leaves it alone because the value it
+                      rendered never changes. */}
+                  <path ref={areaRef} d={BASE_AREA} fill="url(#pulse-wash)" stroke="none" />
+                  {/* `data-draw` is the hook for the wipe-in entrance. It is a
+                      clip and not a dash draw, for a reason worth reading before
+                      changing it — see `.u-draw` in globals.css. */}
                   <path
                     ref={lineRef}
+                    d={BASE_LINE}
+                    data-draw
                     fill="none"
                     stroke="currentColor"
                     strokeWidth="1.25"
@@ -289,19 +315,22 @@ export function Intelligence() {
                     vectorEffect="non-scaling-stroke"
                   />
 
-                  {/* Each node is a group translated into place, so the tween
-                      moves one transform instead of two coordinates. */}
+                  {/* Each node is a group translated into place, so a switch
+                      moves one transform instead of two coordinates. The initial
+                      translate is rendered for the same reason the paths carry
+                      their `d`: constant per index, so React writes it once. */}
                   {series.map((point, i) => (
                     <g
                       key={point.label}
                       ref={(el) => {
                         nodeRefs.current[i] = el;
                       }}
+                      transform={`translate(${BASE_POINTS[i][0]} ${BASE_POINTS[i][1]})`}
                     >
+                      <circle r="13" fill="url(#pulse-node-halo)" />
                       <circle
                         r="3"
                         fill="currentColor"
-                        filter="url(#pulse-glow)"
                         opacity={hovered === i ? 1 : 0.85}
                       />
                       {/* Invisible hit area, sized in viewBox units, so it has

@@ -6,8 +6,8 @@ import { Reveal, RevealGroup, RevealItem, MaskLines } from '@/components/primiti
 import { SectionHead } from '@/components/primitives/SectionHead';
 import { BEYOND } from '@/lib/content';
 import { MEDIA } from '@/lib/media';
-import { gsap, useGSAP } from '@/lib/gsap';
-import { GSAP_EASE, prefersReducedMotion } from '@/lib/motion';
+import { useDesktopGsap } from '@/lib/gsap';
+import { GSAP_EASE } from '@/lib/motion';
 
 /**
  * 01 — WHO IS BJ BEYOND
@@ -20,35 +20,34 @@ export function About() {
   const sectionRef = useRef<HTMLElement>(null);
   const backdropRef = useRef<HTMLDivElement>(null);
 
-  useGSAP(
-    () => {
-      if (prefersReducedMotion()) return;
-      const section = sectionRef.current;
-      const backdrop = backdropRef.current;
-      if (!section || !backdrop) return;
+  /* Desktop only, for the reason set out in Hero: a scrubbed parallax on touch
+     trails the finger by a frame or two and reads as tearing. The hook is the
+     gate — it is also what keeps the library off the phone entirely. */
+  useDesktopGsap(({ gsap }) => {
+    const section = sectionRef.current;
+    const backdrop = backdropRef.current;
+    if (!section || !backdrop) return;
 
-      /* The only thing moving, and on `yPercent` so it stays on the compositor.
-         The overscan is declared in the tween, not as a `scale-110` class: with
-         the class GSAP absorbs the scale into the transform it writes, leaving
-         one value owned in two places — the split that broke the hero. */
-      gsap.fromTo(
-        backdrop,
-        { yPercent: -8, scale: 1.1 },
-        {
-          yPercent: 8,
-          scale: 1.1,
-          ease: GSAP_EASE.none,
-          scrollTrigger: {
-            trigger: section,
-            start: 'top bottom',
-            end: 'bottom top',
-            scrub: 0.8,
-          },
+    /* The only thing moving, and on `yPercent` so it stays on the compositor.
+       The overscan is declared in the tween, not as a `scale-110` class: with
+       the class GSAP absorbs the scale into the transform it writes, leaving one
+       value owned in two places — the split that broke the hero. */
+    gsap.fromTo(
+      backdrop,
+      { yPercent: -8, scale: 1.1 },
+      {
+        yPercent: 8,
+        scale: 1.1,
+        ease: GSAP_EASE.none,
+        scrollTrigger: {
+          trigger: section,
+          start: 'top bottom',
+          end: 'bottom top',
+          scrub: 0.8,
         },
-      );
-    },
-    { scope: sectionRef },
-  );
+      },
+    );
+  }, sectionRef);
 
   return (
     <section
@@ -101,12 +100,31 @@ export function About() {
             <div className="lg:sticky lg:top-0 lg:flex lg:h-screen lg:items-end">
               <Reveal distance={34} className="w-full">
                 {/* 9:16 matches the cut-out source, so `object-contain`
-                    letterboxes with transparency instead of cropping. */}
-                <div className="relative aspect-9/16 w-full lg:aspect-auto lg:h-[88vh]">
+                    letterboxes with transparency instead of cropping.
+
+                    72% rather than full width on phones: at 100vw a 9:16 block
+                    is most of the screen's height, which made a supporting
+                    portrait read as the subject of the section. The desktop
+                    composition, where the column already constrains it, is
+                    unchanged.
+
+                    The `38vh` is the second half of that rule, and it only
+                    bites between phone and desktop. 72% of a 700px-wide column
+                    is a 9:16 box over 900px tall — taller than the window it
+                    sits in. Since height is width x 16/9, capping the width at
+                    38vh caps the height at ~68vh, so the portrait can never
+                    outgrow the screen at any width. */}
+                <div className="relative mx-auto aspect-9/16 w-[min(72%,38vh)] lg:mx-0 lg:aspect-auto lg:h-[88vh] lg:w-full">
                   <Atmosphere
                     media={MEDIA.portrait}
                     scrim="none"
-                    sizes="(max-width: 1024px) 100vw, 42vw"
+                    informative
+                    /* 66vw, not 72vw: the 72% is of the gutter-inset column,
+                       not the viewport. Measured at 375px the slot is 241px —
+                       64.3vw — and the gutter's clamp keeps it near 66vw up to
+                       the breakpoint. Declaring 72 made the browser budget for
+                       270px and step up to the 810w variant to cover it. */
+                    sizes="(max-width: 1024px) 66vw, 42vw"
                     className="h-full w-full"
                   />
 

@@ -25,6 +25,12 @@ export function Logo({ className = '', title = LOGO.alt }: LogoProps) {
       /* Decorative when unnamed, or a screen reader announces the mark twice
          next to the wordmark already beside it. */
       aria-hidden={title ? undefined : true}
+      /* Eager, so the mark is there on first paint — but explicitly low
+         priority. React emits a preload for any eager image with a srcset, and
+         this one was competing with the hero plate for the first bytes on the
+         wire. The hero is the LCP element; a 4KB monogram can wait its turn
+         without ever being late. */
+      fetchPriority="low"
       decoding="async"
       className={`h-auto ${className}`}
     />

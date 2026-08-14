@@ -1,5 +1,3 @@
-'use client';
-
 import { Atmosphere } from '@/components/atmosphere/Atmosphere';
 import { Reveal, MaskLines } from '@/components/primitives/Reveal';
 import { SectionHead } from '@/components/primitives/SectionHead';
@@ -20,13 +18,22 @@ export function Contact() {
       aria-labelledby="contact-heading"
       className="relative overflow-hidden bg-ink-950 py-[var(--spacing-section)]"
     >
-      <div className="absolute inset-0 z-0 opacity-80">
+      <div className="absolute inset-0 z-0">
         <Atmosphere
           media={MEDIA.contact}
           scrim="strong"
           sizes="100vw"
           className="h-full w-full"
         />
+
+        {/* The wrapper above used to carry a partial opacity. Any value below 1
+            makes the element a transparency group: the browser renders the
+            whole subtree — plate, two fog banks, warm source — into an
+            off-screen buffer and composites that, redoing it whenever any
+            child changes. A flat overlay is the same picture for one static
+            paint. Over ink-950 the two agree to well under a percent: fading
+            to 80% gives 0.8·image + 0.2·0.02, darkening gives 0.8·image. */}
+        <div aria-hidden="true" className="absolute inset-0 bg-ink-950/20" />
       </div>
 
       <div className="u-gutter relative z-10">

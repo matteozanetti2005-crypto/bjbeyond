@@ -1,8 +1,8 @@
 'use client';
 
 import { useRef, useState } from 'react';
-import { gsap, useGSAP } from '@/lib/gsap';
-import { GSAP_EASE, hasFinePointer, prefersReducedMotion } from '@/lib/motion';
+import { useDesktopGsap } from '@/lib/gsap';
+import { GSAP_EASE, hasFinePointer } from '@/lib/motion';
 
 /**
  * Custom cursor — desktop only.
@@ -10,19 +10,23 @@ import { GSAP_EASE, hasFinePointer, prefersReducedMotion } from '@/lib/motion';
  * `gsap.quickTo` reuses four tweens for the whole session rather than creating
  * new ones on every mousemove. The native cursor is only hidden once this
  * component has confirmed it is running, so a failure here can never leave a
- * user with no pointer at all. Requires a fine pointer, and does not run at all
- * under reduced-motion.
+ * user with no pointer at all.
+ *
+ * The width and reduced-motion tests now live in `useDesktopGsap`, which is
+ * also the only correct place for them: the markup below is already
+ * `lg:block`-only, so under the breakpoint this used to run four tweens a frame
+ * against two elements nobody could see.
  */
 export function Cursor() {
   const dotRef = useRef<HTMLDivElement>(null);
   const ringRef = useRef<HTMLDivElement>(null);
   const [enabled, setEnabled] = useState(false);
 
-  useGSAP((_context, contextSafe) => {
-    if (!hasFinePointer() || prefersReducedMotion()) return;
+  useDesktopGsap(({ gsap, contextSafe }) => {
+    if (!hasFinePointer()) return;
     const dot = dotRef.current;
     const ring = ringRef.current;
-    if (!dot || !ring || !contextSafe) return;
+    if (!dot || !ring) return;
 
     setEnabled(true);
 
@@ -72,14 +76,20 @@ export function Cursor() {
       document.removeEventListener('mouseleave', onLeave);
       document.removeEventListener('mouseenter', onEnter);
     };
-  }, []);
+  });
 
   return (
     <>
-      {/* Only hides the system cursor once the custom one is confirmed live. */}
+      {/* Only hides the system cursor once the custom one is confirmed live —
+          and only where the replacement is actually painted. The width was
+          missing here while the two elements below are `lg:block`, so a desktop
+          window under the breakpoint hid the native pointer and displayed
+          nothing in its place. Dragging a wide window narrow still reaches that
+          state, because `enabled` does not fall back to false; the query is what
+          makes it harmless. */}
       {enabled && (
         <style>{`
-          @media (hover: hover) and (pointer: fine) {
+          @media (min-width: 1024px) and (hover: hover) and (pointer: fine) {
             body, a, button, [role="button"] { cursor: none; }
           }
         `}</style>
