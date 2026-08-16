@@ -59,8 +59,9 @@ app/            layout, page, global tokens
 components/
   atmosphere/   procedural photography substitute (see below)
   chrome/       nav, intro sequence, cursor, scroll sync, logo
-  primitives/   reveal, magnetic, arrow link
-  sections/     hero, jbond, method, labs, work, intelligence, contact, footer
+  primitives/   reveal, magnetic, arrow link, rail
+  sections/     hero, about, dispatch, method, authentia, in-motion,
+                labs, work, intelligence, contact, footer
 lib/
   content.ts    ALL copy — single source of truth
   media.ts      image manifest — the only place photography enters

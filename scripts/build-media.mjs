@@ -14,7 +14,7 @@
  */
 
 import sharp from 'sharp';
-import { mkdirSync, existsSync, statSync, readFileSync } from 'node:fs';
+import { mkdirSync, existsSync, statSync, readFileSync, readdirSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
 
@@ -213,6 +213,115 @@ async function buildAuthentiaMark(sourceName, outName, widths) {
   }
 }
 
+/**
+ * Reel covers for IN MOTION.
+ *
+ * Unlike everything above, these are not crops of a known sheet — they are
+ * ordinary stills dropped into a folder — so the loop is driven by what is on
+ * disk rather than by a table: every image in `media-src/reels/` becomes
+ * `public/media/reels/<name>-{540,810}.webp`. Name each file after its key in
+ * `MEDIA.reels` (`reel-01.jpg`) and the manifest needs no edit beyond turning
+ * `src` on.
+ *
+ * A silent no-op when the folder is absent: the section renders procedural
+ * plates until real covers land, so it is complete either way.
+ *
+ * NEVER CROPPED — the one decision worth defending here. These covers are
+ * designed compositions: the artist's name, the pull-quote and the Authentia
+ * mark all sit close to an edge. The three supplied arrive at three different
+ * ratios (0.666, 0.563, 0.461), so a crop to a common frame is not a trim, it is
+ * an amputation — a centre crop takes 15% off each side of the 2:3 poster, which
+ * is exactly where the quotation mark and the first letter of every line live,
+ * and 7.5% off the bottom of the tallest, where "Arte®" sits.
+ *
+ * So each cover is fitted WHOLE inside the frame. What fills the rest is not
+ * flat ink: it is the same image, cropped to fill, blurred and pushed back, with
+ * the intact cover composited on top. The treatment every video app uses for a
+ * clip that does not match the screen, and for the same reason — a flat pad
+ * measured 70% / 85% / 100% of the frame across these three, which side by side
+ * reads as one phone being broken rather than as three covers being different
+ * shapes. A blurred ground makes all three read full-bleed while nothing is cut.
+ *
+ * It costs nothing at runtime: this is one file, baked here, and a cover already
+ * shot at 9:19.5 covers its own ground completely so the blur never shows.
+ *
+ * 9:19.5 and not 9:16, because the frame these fill is a phone body, not a video
+ * — matching it here means the component crops nothing a second time.
+ */
+const REEL = { widths: [540, 810], ratio: 9 / 19.5 };
+
+async function buildReels() {
+  const dir = join(SRC, 'reels');
+  if (!existsSync(dir)) {
+    console.warn('skip reels — media-src/reels/ not found (covers stay procedural)');
+    return;
+  }
+
+  const files = readdirSync(dir).filter((name) => /\.(jpe?g|png|webp)$/i.test(name));
+  if (files.length === 0) {
+    console.warn('skip reels — media-src/reels/ is empty');
+    return;
+  }
+
+  const out = join(OUT, 'reels');
+  mkdirSync(out, { recursive: true });
+
+  const widest = REEL.widths[REEL.widths.length - 1];
+
+  for (const file of files) {
+    const name = file.replace(/\.[^.]+$/, '');
+    const source = join(dir, file);
+
+    /* No `withoutEnlargement` below, deliberately: with `fit: 'contain'` that
+       flag shrinks the CANVAS rather than the image, and a cover that came out
+       at some other ratio would letterbox a second time in the frame. The
+       canvas has to stay exact, so an undersized source is upscaled — and said
+       out loud here, since soft type on a cover is worth a re-export. */
+    const { width = 0, height = 0 } = await sharp(source).metadata();
+    if (width < widest) {
+      console.warn(
+        `  ! ${file} is ${width}px wide — upscaled to ${widest}px. Re-export larger if it looks soft.`,
+      );
+    }
+    console.log(
+      `  ${file} ${width}x${height} (ratio ${(width / height).toFixed(3)}, frame ${REEL.ratio.toFixed(3)})`,
+    );
+
+    for (const w of REEL.widths) {
+      const h = Math.round(w / REEL.ratio);
+
+      /* The ground: the same cover, cropped to fill, blurred and dimmed. Sigma
+         scales with the output or the 540 variant would read sharper than the
+         810 one at the same displayed size. */
+      const ground = await sharp(source)
+        .resize({ width: w, height: h, fit: 'cover', position: 'centre' })
+        .blur(w / 45)
+        .modulate({ brightness: 0.5, saturation: 0.65 })
+        .toBuffer();
+
+      /* The cover itself, whole, on a transparent field. PNG is not incidental:
+         `toBuffer` keeps the input's format, and a JPEG source would drop the
+         alpha and composite its bands as solid black. */
+      const plate = await sharp(source)
+        .resize({
+          width: w,
+          height: h,
+          fit: 'contain',
+          background: { r: 0, g: 0, b: 0, alpha: 0 },
+        })
+        .png()
+        .toBuffer();
+
+      const dest = join(out, `${name}-${w}.webp`);
+      await sharp(ground)
+        .composite([{ input: plate }])
+        .webp({ quality: Q.scene, effort: 6 })
+        .toFile(dest);
+      report(dest);
+    }
+  }
+}
+
 /* Emitted into `app/`, where Next's metadata file conventions pick them up.
    The mark is white with transparency, so it is composited onto the site's
    near-black: left transparent it vanishes against light browser chrome. */
@@ -353,6 +462,7 @@ await buildPortrait();
 await buildLogo();
 await buildAuthentiaMark('authentia.svg', 'authentia', [256, 512]);
 await buildAuthentiaMark('authentia-lockup.png', 'authentia-lockup', [320, 640, 960]);
+await buildReels();
 await buildFavicons();
 await buildSocialCard();
 console.log('done');

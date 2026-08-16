@@ -202,6 +202,57 @@ export const MEDIA = {
     }),
   },
 
+  /**
+   * Reel covers for IN MOTION — the plates that fill the drawn phone screens.
+   * Keys match `IN_MOTION.reels[].mediaKey` in lib/content.ts.
+   *
+   * 9:19.5, matching the phone frame rather than a video's 9:16, so the
+   * component never crops these a second time. The sources arrive at three
+   * different ratios and `scripts/build-media.mjs` pads rather than crops them
+   * to that frame — see the note there for why cropping a designed cover is not
+   * an option.
+   *
+   * To add a fourth: drop the still into `media-src/reels/` named after its key
+   * (`reel-04.png`), run `npm run media`, and copy one of these entries.
+   * `src: null` is still valid and falls back to a procedural plate, so a reel
+   * can go live before its cover exists.
+   */
+  reels: {
+    'reel-01': slot({
+      id: 'reel-01',
+      src: '/media/reels/reel-01',
+      widths: [540, 810],
+      alt: 'Bruno Donzelli before a large painted canvas — “la mia Pittura Ironica”',
+      focal: '50% 50%',
+      width: 1080,
+      height: 2340,
+      atmosphere: 'portrait',
+      warmth: 0.75,
+    }),
+    'reel-02': slot({
+      id: 'reel-02',
+      src: '/media/reels/reel-02',
+      widths: [540, 810],
+      alt: 'Fabio Campagna at his studio bench — “il mio processo creativo”',
+      focal: '50% 50%',
+      width: 1080,
+      height: 2340,
+      atmosphere: 'texture',
+      warmth: 0.85,
+    }),
+    'reel-03': slot({
+      id: 'reel-03',
+      src: '/media/reels/reel-03',
+      widths: [540, 810],
+      alt: 'Federico Ciacci in his studio — “il labirinto”',
+      focal: '50% 50%',
+      width: 1080,
+      height: 2340,
+      atmosphere: 'portrait',
+      warmth: 0.5,
+    }),
+  },
+
   /** Bottom-right panel. */
   contact: slot({
     id: 'contact',

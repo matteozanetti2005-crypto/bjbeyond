@@ -4,7 +4,7 @@ Documento di passaggio. Se stai aprendo una nuova sessione su questo repository,
 leggi questo file per primo: contiene ciò che è stato fatto, ciò che resta e le
 trappole già scoperte, così da non doverle ritrovare.
 
-Ultimo aggiornamento: 14 agosto 2026.
+Ultimo aggiornamento: 16 agosto 2026 (§7 — DISPATCH e IN MOTION).
 
 ---
 
@@ -282,14 +282,27 @@ fondo scuro funziona, ma il bordo si percepisce. Il proprietario ha deciso di
 
 ## 5. Stato del repository
 
-**Nulla è committato.** Circa trenta file modificati nell'albero di lavoro, più
-`components/primitives/ButtonLink.tsx`, `lib/reveal.ts`, `lib/gsap-runtime.ts` e
-questo file come nuovi; `vercel.json` e `wrangler.jsonc` cancellati.
+Il lavoro delle fasi 1–4 è committato. DISPATCH e IN MOTION (§7) sono state
+committate il 16 agosto 2026.
 
-Un push su `main` pubblica in produzione: va fatto solo su richiesta esplicita.
+**Un push su `main` pubblica in produzione**: `.github/workflows/deploy.yml`
+builda e pubblica `out/` su GitHub Pages a ogni push sul ramo. Va fatto solo su
+richiesta esplicita.
 
-Prima di committare conviene far girare `npm run typecheck` e `npm run build`,
-che al momento passano entrambi puliti.
+Prima di committare vanno fatti girare `npm run typecheck` e `npm run build`.
+Non c'è `npm run lint`, ed è una scelta: vedi fase 4.
+
+**Il dominio è dietro Cloudflare, e il repository non lo controlla.** Verificato
+il 16 agosto 2026: `server: cloudflare`, `cf-ray: …-MXP`, con origine GitHub
+Pages (`x-github-request-id`, `via: 1.1 varnish`). La catena è
+visitatore → Cloudflare → Pages.
+
+Il deploy non ne è toccato — Actions pubblica su Pages senza passare dall'edge —
+ma **ciò che si vede in produzione sì**. In particolare, se qualcuno attiva
+"Cache Everything" su Cloudflare, l'HTML viene servito dalla cache e i deploy
+sembrano non arrivare mai. Al controllo l'HTML NON era in cache
+(`cf-cache-status: DYNAMIC`); se un giorno un deploy riuscito non si vede online,
+guardare lì prima di cercare il guasto nel codice.
 
 ---
 
@@ -329,3 +342,243 @@ grafico.
 Il browser di sistema (Edge, Chrome) tramite computer-use è concesso **solo in
 lettura**: si vede lo schermo, non si può scorrere né cliccare. Serve per
 confermare a occhio, non per pilotare.
+
+---
+
+## 7. DISPATCH e IN MOTION — le due sezioni da aggiornare a mano
+
+Aggiunte il 16 agosto 2026. Sono **volutamente statiche**: nessuna delle due
+chiama una API, monta un widget di terze parti o carica qualcosa a runtime.
+Aggiornarle significa modificare `lib/content.ts` e nient'altro.
+
+### Perché nessun embed ufficiale
+
+Vale per entrambe, ed è la ragione per cui non vanno "migliorate" con lo script
+di X o l'iframe di Instagram:
+
+- sono script di terze parti che rientrerebbero dal percorso critico appena
+  liberato nella fase 4;
+- riscrivono il layout **dopo** il paint, quindi ogni card salta;
+- ignorano la palette e la tipografia del sito;
+- **scrivono cookie di terze parti**, che la cookie policy dovrebbe allora
+  dichiarare — oggi non lo fa, e non ce n'è bisogno;
+- non mostrano nulla quando un post viene cancellato o l'account passa a privato.
+
+### DISPATCH — la card è ricostruita, non incorporata
+
+La card riproduce l'anatomia del post di X — avatar, nome sopra handle, il
+marchio in alto a destra, il testo, la data, la riga azioni sotto un filo — ma è
+codice del sito. Il widget ufficiale darebbe la stessa card gratis e
+riporterebbe sul percorso critico ~200 KB di JavaScript di terze parti, un
+iframe per post, cookie che la cookie policy dovrebbe dichiarare, un tema che
+atterra su `#000` invece che sul `#050505` della pagina, e un'altezza che si
+assesta dopo il paint. **Verificato: nessun riferimento a `platform.twitter.com`,
+`widgets.js` o `twitter-tweet` in tutta la build.**
+
+Dove si discosta da X, di proposito:
+
+- **le icone azione non portano numeri.** X li mostra; inventare metriche di
+  engagement significa fabbricare un dato pubblico, e quelli veri richiedono
+  l'API. Icone senza cifre è uno stato che X stessa rende, quindi la firma
+  visiva regge;
+- **gli accenti sono ambra, non il `#1d9bf0` di X.** Il blu su questa palette
+  leggerebbe come un widget incollato, cioè l'unica cosa che ricostruire la card
+  serviva a evitare;
+- **il nome non è in grassetto.** Girano solo Inter 200/300/400 e
+  `font-synthesis-weight: none` è attivo, quindi chiedere il 700 renderebbe
+  comunque 400. La gerarchia nome/handle la porta il colore — paper su mist-400.
+
+### DISPATCH — aggiungere o sostituire un post
+
+In `lib/content.ts`, dentro `DISPATCH.posts`:
+
+```ts
+post({
+  id: '1955512345678901234',  // ultimo segmento dell'URL del post
+  text: 'Il post, testuale.\n\nGli a capo si vedono.',
+  createdAt: '2026-08-12',    // ISO
+  lang: 'it',                 // SOLO se il post non è in inglese
+}),
+```
+
+**La forma è quella dell'API di X, campo per campo** — `id`, `text`,
+`created_at`, più un autore con `name` / `username` / `verified`. Oggi la lista è
+scritta a mano e nessuno chiama quell'API, ma modellarla così non costa nulla e
+rende la versione automatica *uno script e zero modifiche ai componenti*.
+
+Il permalink **non si scrive**: lo deriva `postUrl()` da `id`. Con `id: ''` la
+card punta al profilo, così un segnaposto non può dare 404. Verificato in
+entrambi i rami.
+
+La data non passa da `toLocaleDateString`: `postDate()` ha la sua tabella dei
+mesi, perché il formato locale verrebbe risolto contro la macchina che **builda**
+— un runner europeo e uno americano spedirebbero date diverse da sorgenti
+identiche.
+
+**I cinque post in file sono reali e verbatim**, dal profilo del proprietario.
+
+**Le date vanno lette sul post, mai dedotte dal timestamp relativo.** X mostra
+"17h" invece della data assoluta entro le 24 ore, e dedurne il giorno è ambiguo
+a cavallo della mezzanotte: sul primo post la deduzione era sbagliata di un
+giorno (15 invece di 16 agosto). Aprire il post e leggere la riga "1:05 · 16 ago
+2026" costa dieci secondi.
+
+**Il testo si prende dalla pagina, non dall'API.** `x.com` risponde 402 a
+WebFetch e i proxy di lettura 403, ma il browser in-app apre il post da
+sloggato: `navigate` sul permalink e `get_page_text` restituiscono il post
+integrale più data e ora. È così che sono stati trascritti tre dei cinque.
+
+**Il troncamento è misurato, non stimato a occhio.** Righe reali contro rese:
+23→10, 57→10, 31→10, 18→10, 10→10. `isClamped()` in `Dispatch.tsx` è
+un'euristica di caratteri per riga, e su tutti e cinque i post coincide con il
+troncamento vero, incluso il quinto che riempie esattamente dieci righe e
+correttamente NON mostra "Show more".
+
+Hashtag, menzioni e link nel testo vengono resi in ambra, come X li rende in
+blu. Sono `<span>`, mai `<a>`: la card è già un'ancora, e un'ancora dentro
+un'ancora è markup non valido che i browser risolvono chiudendo quella esterna.
+
+`lang: 'it'` non è cosmetico: il documento è `lang="en"`, e senza quell'attributo
+uno screen reader legge l'italiano con i fonemi inglesi.
+
+`DISPATCH_AUTHOR.verified` è `true`, ma solo perché la spunta sull'account è
+stata **confermata**. È rimasto `false` finché non lo era: disegnare un badge non
+concesso significa asserire una credenziale della piattaforma che non è stata
+data — esattamente ciò contro cui questo sito argomenta. Il nome sulla card è
+`Bj™`, cioè quello dell'account su X, non il wordmark del sito.
+
+Il rail non ha un numero massimo di card, ma sotto le tre la barra di scorrimento
+sparisce e i due pulsanti desktop si nascondono da soli (`overflows` in
+`components/primitives/Rail.tsx`).
+
+### Se un giorno si vuole DISPATCH automatico
+
+Valutato ad agosto 2026, **non implementato**. Il muro storico dei 200 $/mese non
+c'è più: da febbraio 2026 X ha chiuso Basic e Pro alle nuove iscrizioni e il
+default è pay-per-use, circa **0,005 $ per post letto senza minimo mensile** —
+dieci post a build sono 5 centesimi, un rebuild al giorno circa 1,50 $/mese.
+(Prezzi da fonti secondarie: il portale developer risponde 402, vanno confermati
+lì prima di attivare qualsiasi cosa.)
+
+Il vincolo vero non è il prezzo, è l'architettura. **Export statico, nessun
+server**, quindi la chiamata può stare solo dentro GitHub Actions a build time —
+mai nel browser, dove il token finirebbe in chiaro nel bundle pubblico e dove
+l'API di X non ammette comunque richieste cross-origin da pagina. "Automatico"
+qui significa *fresco quanto l'ultimo build*, non live.
+
+Serve: account developer, bearer token come secret del repo, un `schedule:` nel
+workflow, uno script che scriva `DISPATCH.posts` su disco, e **un fallback
+all'ultimo JSON buono** — senza, una chiamata fallita pubblica una sezione
+vuota. Nota anche che GitHub disattiva i workflow schedulati sui repo fermi da
+60 giorni.
+
+### IN MOTION — aggiungere un reel
+
+Due passaggi, uno per il link e uno per la copertina.
+
+**1. Il link.** In `IN_MOTION.reels`:
+
+```ts
+{ id: '04', title: 'Nome artista', mediaKey: 'reel-04',
+  href: 'https://www.instagram.com/reel/XXXXXXXX/' },
+```
+
+Togliere sempre la query di tracciamento (`?utm_source=…&igsh=…`) dal permalink
+copiato da Instagram.
+
+Da tre a cinque frame è l'intervallo di lavoro: meno sembrano un incidente, di
+più escono dalla fila e la sezione diventa un carosello.
+
+**2. La copertina.** Le tre attuali sono già installate. Per una quarta: il file
+va in `media-src/reels/` nominato come la chiave (`reel-04.png`), poi
+
+```bash
+npm run media
+```
+
+e in `lib/media.ts` si copia una delle voci esistenti cambiando `id`, `src`
+e `alt`. Con `src: null` la voce disegna invece una lastra procedurale, quindi
+un reel può andare online prima della sua copertina.
+
+**Le copertine non vengono mai ritagliate, ed è deliberato.** Le tre fornite
+arrivano a tre proporzioni diverse — 0,666 (poster 2:3), 0,563 (9:16 esatto),
+0,461 (9:19,5 esatto) — e sono composizioni grafiche: nome dell'artista,
+citazione e marchio Authentia stanno tutti a ridosso di un bordo. Un crop
+centrato al frame comune toglierebbe il 15% per lato al poster, cioè esattamente
+dove stanno le virgolette e la prima lettera di ogni riga, e il 7,5% dal fondo
+del più alto, dove sta "Arte®".
+
+Quindi ogni copertina viene inserita **intera** nel frame, e ciò che riempie il
+resto non è inchiostro piatto: è la stessa immagine ritagliata a riempire,
+sfocata e spenta, con sopra la copertina intatta. È il trattamento di qualsiasi
+app video per una clip che non combacia con lo schermo, e per lo stesso motivo:
+misurato, un riempimento piatto dava 70% / 85% / 100% di frame occupato sui tre,
+che affiancati leggono come un telefono rotto, non come tre copertine di forma
+diversa.
+
+Il frame di uscita è **9:19,5**, cioè il corpo del telefono e non il 9:16 di un
+video: così il componente non ritaglia una seconda volta. Verificato — schermo
+0,4616, file 0,4615.
+
+### I permalink dei reel, e perché non vanno indovinati
+
+Chiusi: i tre `href` sono quelli forniti dal proprietario, accoppiati a mano alla
+loro copertina. Vale però la pena registrare come ci si è arrivati, perché la
+trappola si ripresenterà alla prossima aggiunta.
+
+authentia.it linka tre reel — `DaILV0GMGaP`, `DYwpJTiMVmV` e `DX4ONpcM5Fv` — e
+prenderli da lì sembrava ovvio. Le loro didascalie però ("La memoria prende
+vita", "L'idea, non una foto", "Pronto per il feed") non corrispondono a nessuna
+delle tre copertine, e **Bruno Donzelli non ha alcun reel linkato su quella
+pagina**: erano reel diversi. Solo uno dei tre, `DX4ONpcM5Fv`, era davvero quello
+giusto.
+
+Collegare la copertina di Donzelli al video di Campagna è l'unico errore che
+questo sito non può permettersi. **Un permalink si chiede, non si deduce.**
+
+Gli URL sono salvati privi della coda `?utm_source=ig_web_copy_link&igsh=…` che
+Instagram aggiunge alla copia: è telemetria di attribuzione che identifica la
+sessione da cui hai copiato, e non serve a raggiungere il reel. Toglierla da
+qualsiasi URL aggiunto qui.
+
+Stessa regola per il profilo del canale: `@Authentia_Arte` è arrivato dal
+proprietario, non è stato dedotto. Non è linkato da nessuna parte su
+authentia.it, e un handle Instagram sbagliato — vengono occupati di continuo —
+avrebbe mandato i lettori da uno sconosciuto sotto il nome di Authentia. L'URL è
+minuscolo perché Instagram risolve entrambi i casi; `handle` conserva le
+maiuscole con cui l'account è scritto davvero.
+
+### Ciò che resta aperto
+
+Niente. Entrambe le sezioni sono complete: cinque post reali con permalink
+verificati, tre reel con copertine e permalink accoppiati a mano, entrambi i
+profili collegati.
+
+### Cosa è stato verificato
+
+Sulla build di produzione, e a DOM sul dev server:
+
+| | Esito |
+|---|---|
+| Ordine e rinumerazione | 01 about · 02 dispatch · 03 method · authentia · in-motion · 04 labs · 05 work · 06 intelligence · 07 contact |
+| Nav | 6 voci, nell'ordine di scorrimento |
+| Chunk GSAP nell'HTML iniziale | **no** — i 111 KB restano non referenziati |
+| JS iniziale | 598 KB → **605 KB** (+7 KB: due sezioni e il rail) |
+| `will-change` nel CSS compilato | 0 |
+| Card DISPATCH | 5 reali, permalink `status/…` corretti, **0 tracce dei segnaposto** nella build |
+| Troncamento | 23→10, 57→10, 31→10, 18→10, 10→10 righe; `Show more` su quattro, correttamente assente sul quinto |
+| Altezza card | 409px identici su tutte e cinque (senza clamp il post da 57 righe le portava tutte a ~1200px) |
+| Script widget X nella build | **nessuno** — né `platform.twitter.com`, né `widgets.js`, né `twitter-tweet` |
+| Rail a 1280px | 5 card, scorrimento laterale, snap `x mandatory` |
+| Rail a 375px | card da 293px, 63px della successiva a vista, **nessuno scorrimento orizzontale di pagina** |
+| Frame iPhone | 184×399 = 0,4616 — esattamente 9/19,5 |
+| Copertine | tutte e sei le varianti servite 200, decodificate 540×1170 e 810×1755, ratio 0,4615: **nessun secondo ritaglio** |
+| Fasce delle copertine | 0 righe di nero piatto su tutte e tre — luminanza media 6–12 nelle fasce contro 36–51 al centro |
+| Peso per il visitatore | 102 KB per i tre telefoni (varianti 540, lazy, sotto la piega) |
+| Stagger attraverso il Rail | 5 item a 70ms, 3 a 80ms: l'observer raggiunge i figli dentro il rail |
+| Stato finale dei reveal | `opacity: 1`, `transform: none` su tutte e otto le schede |
+
+**Non verificato a schermo.** Il pannello Browser non era visualizzato durante la
+sessione, quindi niente frame e nessuno screenshot possibile — vedi §6. Le misure
+qui sopra sono di layout e di build, che non dipendono dal rendering; il
+controllo a occhio di grade, hover e proporzioni dei telefoni resta da fare.
