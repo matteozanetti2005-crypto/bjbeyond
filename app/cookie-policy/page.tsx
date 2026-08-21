@@ -5,7 +5,7 @@ import { COOKIES } from '@/lib/legal';
 export const metadata: Metadata = {
   title: 'Cookie Policy',
   description: 'Come BJ Beyond utilizza i cookie sul sito bjbeyond.it.',
-  alternates: { canonical: '/cookie-policy' },
+  alternates: { canonical: '/cookie-policy/' },
 };
 
 export default function CookiePolicyPage() {

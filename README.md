@@ -55,15 +55,24 @@ Then open <http://localhost:3000>.
 ## Project structure
 
 ```
-app/            layout, page, global tokens
+app/            layout, homepage, the inner pages, global tokens
+  art/ books/ method/ services/        the pages the menu leads to
+  labs/ contact/
+  privacy-policy/ cookie-policy/       legal, own shell
+  sitemap.ts robots.ts                 generated from lib/routes.ts
+  schema.json/                         generated from lib/schema.ts
 components/
   atmosphere/   procedural photography substitute (see below)
-  chrome/       nav, intro sequence, cursor, scroll sync, logo
+  chrome/       nav, intro, cursor, scroll sync, logo, page shell,
+                consent banner, analytics
   primitives/   reveal, magnetic, arrow link, rail
   sections/     hero, about, dispatch, method, authentia, in-motion,
                 labs, work, intelligence, contact, footer
 lib/
   content.ts    ALL copy — single source of truth
+  routes.ts     ALL urls — single source of truth
+  schema.ts     JSON-LD, derived from content.ts
+  analytics.ts  measurement ids, and the consent rule over them
   media.ts      image manifest — the only place photography enters
   motion.ts     easing + duration tokens
   reveal.ts     the shared IntersectionObserver behind every entrance
@@ -72,6 +81,121 @@ lib/
 public/         legacy apps and assets, copied verbatim into the build
 _legacy/        the pre-rebuild index.html, kept for reference only (not built)
 ```
+
+---
+
+## Pages
+
+The site was one document with an anchor menu. It is now a homepage plus a set
+of real URLs, because an anchor cannot be indexed, cannot carry its own title or
+link preview, and cannot be the destination of an ad.
+
+**[`lib/routes.ts`](lib/routes.ts) is the single source of truth for URLs.** The
+sitemap, the navigation, `ArrowLink`'s decision between `next/link` and `<a>`,
+and every page's metadata all read it. Adding a page means adding an entry there
+and creating `app/<name>/page.tsx` with:
+
+```ts
+export const metadata: Metadata = metadataFor('/name/');
+```
+
+That one call produces the title, description, canonical, Open Graph card and
+Twitter card together — they have to agree, and doing them by hand per page is a
+fresh chance to get one wrong per page.
+
+Two rules that are easy to break:
+
+- **Trailing slashes are part of the path.** `trailingSlash: true` means the
+  served URL is `/method/`. A manifest entry or canonical without the slash
+  names a URL that redirects.
+- **`draft: true` keeps a page out of the menu and out of the sitemap, and
+  marks it `noindex`.** `/books/` and `/dispatch/` carry it today — `/books/`
+  because its three entries are placeholders the owner asked for, `/dispatch/`
+  because the page is not built. Announcing a URL that 404s, or letting Google
+  index invented book titles under a real author's name, are the two things
+  this flag prevents.
+
+The homepage keeps the full scroll narrative — it is the brand experience and
+the landing for cold traffic. The inner pages are flatter on purpose: someone
+arriving from an ad wants the answer, not the entrance, which is also why
+`PageShell` mounts `IntroProvider` with `curtain={false}`.
+
+**Links between pages are plain `<a>`, never `next/link`.** That is a
+measurement decision, not a routing one, and it is load-bearing — see below.
+
+---
+
+## Structured data
+
+Every page carries one `<script type="application/ld+json">` describing an
+`Organization` and a `WebSite`, built by [`lib/schema.ts`](lib/schema.ts) from
+`SITE`, `SOCIAL` and `CONTACT`. This is the vocabulary Google reads to treat
+**BJ Beyond** as an entity rather than a phrase, and `sameAs` is what attaches
+the X, TikTok, Threads, Reddit and Beacons accounts to that same entity.
+
+There used to be a `public/schema.json` doing none of this. Nothing referenced
+it — no script tag, no link — so no crawler could find it, and it had drifted
+into naming a social account the owner had replaced, an image that does not
+exist, and a `contact` property that is not in the schema.org vocabulary at all
+(the spelling is `contactPoint`; an unknown term is ignored, not reported).
+
+It is now **derived, not written**, which is the point: structured data is a
+second copy of facts the site already states, and a second copy that is
+maintained by hand is the kind that goes quietly wrong. Change a social link in
+`lib/content.ts` and the JSON-LD changes with it.
+
+The `/schema.json` URL still resolves — [`app/schema.json/route.ts`](app/schema.json/route.ts)
+serialises the same object — so any old link keeps working without there being
+two definitions of these facts.
+
+**Not included, deliberately:** the owner's legal name as `founder`. It appears
+in the privacy policy because a data controller must be named there; publishing
+it as machine-readable metadata on every page is a different act, and the
+owner's call. It is one property when they want it.
+
+---
+
+## Consent and measurement
+
+**Nothing measurable loads before consent.** Not GA4, not the Meta pixel — no
+request is made to Google or Meta until the visitor accepts.
+
+GA4 previously ran on every visit with no banner and nothing to refuse it. That
+was a gap on its own; adding an advertising pixel to it would have made the
+cookie policy's own statement — that the site uses no advertising profiling
+cookies — untrue.
+
+| Piece | Where |
+|---|---|
+| Measurement IDs, consent signals | [`lib/analytics.ts`](lib/analytics.ts) |
+| Banner, stored choice, withdrawal | [`components/chrome/Consent.tsx`](components/chrome/Consent.tsx) |
+| The tags, and per-route page views | [`components/chrome/Analytics.tsx`](components/chrome/Analytics.tsx) |
+| Consent Mode v2 defaults (denied) | inline in `<head>`, [`app/layout.tsx`](app/layout.tsx) |
+
+- **The Meta pixel is live.** Setting `META_PIXEL_ID` also publishes the cookie
+  policy's marketing rows and its extra-EU transfer notice, which are derived
+  from that same constant in [`lib/legal.ts`](lib/legal.ts). The document cannot
+  describe a pixel the site does not run, or stay silent about one it does.
+  Setting it back to `null` withdraws both together.
+- **No page-view code exists, on purpose.** Every internal link is a plain
+  `<a>`, so each page is a fresh document load and both tags do their own
+  counting — which is what they are built for.
+
+  This replaced three failed attempts at driving them by hand under
+  `next/link`, each of which failed silently: manual sending **doubled** every
+  navigation (GA4's Enhanced Measurement was already tracking History API
+  changes), `send_page_view: false` removed the landing page instead of the
+  duplicate, and leaving GA to Enhanced Measurement alone **lost a third of the
+  navigations**. Measured by intercepting `sendBeacon`/`fetch`/`XHR` — resource
+  timing undercounts, because GA4 batches events into one request.
+
+  If client-side navigation is ever wanted back, the manual sending has to be
+  rebuilt **and re-measured on the live domain**. Not on localhost: the Meta
+  pixel reports the origin rather than the page path there, so it cannot be
+  verified. The full reasoning is in `Analytics.tsx`.
+- **Expect lower numbers than before.** Visitors who ignore the banner are now
+  invisible. The old figures were not more accurate — they were collected
+  without asking.
 
 ---
 
@@ -114,7 +238,8 @@ These URLs predate the rebuild and still resolve exactly as before:
 - `/phoenix` — Phoenix Simulator
 - `/frequency` — Frequency Studio
 - `/pages/privacy-policy.html`, `/pages/cookie-policy.html`
-- `/docs/*`, `/schema.json`, `/CNAME`
+- `/docs/*`, `/CNAME`
+- `/schema.json` — same URL, no longer a static file; see **Structured data**
 
 `/assets/*` was on this list and is gone. It held four files — a 14.7MB MP4 and
 three images — that nothing in the site referenced: not the sections, not the

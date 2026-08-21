@@ -88,12 +88,15 @@ export function ArrowLink({
   }
 
   /*
-    A plain anchor, deliberately. The only router route is `/`; the destinations
-    that look internal — /phoenix, /frequency, /pages/*.html — are standalone
-    documents served from `public/`. `next/link` would resolve them against a
-    route manifest that has never heard of them and prefetch a payload that does
-    not exist. Same-page anchors stay native so CSS smooth scrolling handles
-    them rather than a router push.
+    A plain anchor for everything, and that is a measurement decision rather
+    than a routing one — see the note in components/chrome/Analytics.tsx.
+
+    This briefly used `next/link` for paths declared in lib/routes.ts. The
+    navigation was smoother and the analytics were wrong: a client-side
+    navigation leaves the document in place, and GA4 recorded four page views
+    across a six-page walk. A full document load per page is how both tags are
+    designed to be used, and it costs a repaint of a static file already on a
+    CDN.
   */
   return (
     <a href={href} onClick={onClick} className={anchorClass}>

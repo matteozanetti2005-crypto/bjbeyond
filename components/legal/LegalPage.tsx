@@ -1,4 +1,3 @@
-import Link from 'next/link';
 import { Logo } from '@/components/chrome/Logo';
 import { Footer } from '@/components/sections/Footer';
 import { Atmosphere } from '@/components/atmosphere/Atmosphere';
@@ -116,15 +115,16 @@ export function LegalPage({ doc }: { doc: LegalDocument }) {
           detour is the way back. */}
       <header className="fixed inset-x-0 top-0 z-[var(--z-nav)] border-b border-rule bg-ink-950/80 backdrop-blur-md">
         <div className="u-gutter flex items-center justify-between py-4">
-          <Link
+          <a
             href="/"
             aria-label="BJ Beyond — home"
             className="inline-flex min-h-11 items-center text-paper transition-opacity duration-200 hover:opacity-70"
           >
             <Logo className="w-8" title={null} />
-          </Link>
+          </a>
 
-          <Link
+          {/* Plain anchors here too — see components/chrome/Analytics.tsx. */}
+          <a
             href="/"
             className="group inline-flex min-h-11 items-center gap-3 text-mist-300 transition-colors duration-200 hover:text-paper"
           >
@@ -139,7 +139,7 @@ export function LegalPage({ doc }: { doc: LegalDocument }) {
               <path d="M0 4h20M17 1l3.5 3L17 7" stroke="currentColor" strokeWidth="1" />
             </svg>
             <span className="u-label">BACK TO SITE</span>
-          </Link>
+          </a>
         </div>
       </header>
 

@@ -49,7 +49,25 @@ const SEQUENCE_MS = 2150;
  *  `.u-curtain` transition in globals.css — the curtain is unmounted on this. */
 const LIFT_MS = 1050;
 
-export function IntroProvider({ children }: { children: ReactNode }) {
+/**
+ * `curtain` is the front door, and a site has one of those, not eight.
+ *
+ * The homepage plays it. The inner pages do not, and that is a decision about
+ * paid traffic rather than about taste: a visitor arriving on `/books/` from an
+ * ad has already chosen: they clicked something specific and landed on the
+ * thing they clicked. Making them watch a 3.2-second entrance first is the
+ * cheapest way to lose someone who was already interested.
+ *
+ * They still mount this provider, because `ready` is what tells the navigation
+ * it may appear. With the curtain off, `ready` is simply true from the start.
+ */
+export function IntroProvider({
+  children,
+  curtain = true,
+}: {
+  children: ReactNode;
+  curtain?: boolean;
+}) {
   /* 'pending' so the server render commits to neither path; the client
      resolves it on the first effect. */
   const [phase, setPhase] = useState<Phase>('pending');
@@ -63,7 +81,7 @@ export function IntroProvider({ children }: { children: ReactNode }) {
 
     /* Once per session, so returning from /phoenix or /frequency does not
        replay it. */
-    if (alreadyPlayed || prefersReducedMotion()) {
+    if (!curtain || alreadyPlayed || prefersReducedMotion()) {
       setPhase('done');
       return;
     }
@@ -88,7 +106,7 @@ export function IntroProvider({ children }: { children: ReactNode }) {
       window.clearTimeout(lift);
       window.clearTimeout(unmount);
     };
-  }, []);
+  }, [curtain]);
 
   /* The page behind the curtain is inert. */
   useEffect(() => {

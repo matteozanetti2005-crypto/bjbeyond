@@ -90,7 +90,7 @@ export function Method() {
                 {METHOD.primary.label}
               </ButtonLink>
 
-              <ArrowLink href="#work">{METHOD.cta}</ArrowLink>
+              <ArrowLink href="/method/">{METHOD.cta}</ArrowLink>
             </Reveal>
 
             {/* Progress through the five beats. */}

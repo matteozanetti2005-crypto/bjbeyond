@@ -1,9 +1,11 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
+import { usePathname } from 'next/navigation';
 import { Logo } from './Logo';
 import { useIntro } from './Intro';
-import { NAV, SITE, SOCIAL } from '@/lib/content';
+import { SITE, SOCIAL } from '@/lib/content';
+import { NAV_ROUTES, withSlash } from '@/lib/routes';
 import { DUR } from '@/lib/motion';
 import { ms } from '@/lib/reveal';
 import { EXTERNAL } from '@/components/primitives/External';
@@ -11,8 +13,17 @@ import { EXTERNAL } from '@/components/primitives/External';
 export function Navigation() {
   const [compact, setCompact] = useState(false);
   const [open, setOpen] = useState(false);
-  const [active, setActive] = useState<string>('');
   const progressRef = useRef<HTMLDivElement>(null);
+
+  /*
+    Which entry is current, read off the URL instead of off the scroll position.
+
+    `usePathname` is not consistent about the trailing slash that
+    `trailingSlash: true` puts on every served URL, so both sides are normalised
+    before they are compared rather than trusting either one.
+  */
+  const pathname = usePathname();
+  const here = withSlash(pathname);
 
   /* Arrives with the hero, not on a delay of its own — see Intro.tsx. */
   const { ready } = useIntro();
@@ -86,31 +97,23 @@ export function Navigation() {
     return () => window.clearTimeout(timer);
   }, [open]);
 
-  /* IntersectionObserver rather than scroll math: the browser does the work off
-     the main thread and it costs nothing during scroll. */
+  /*
+    The menu closes itself when the URL changes.
+
+    Clicking an entry already closes it, but that is not the only way the URL
+    moves: the browser's back button, and any link inside the menu that another
+    component adds later, both change the route without passing through that
+    handler. Keying the close to the destination rather than to the click covers
+    every route change with one rule.
+
+    There used to be an IntersectionObserver here, watching the homepage's
+    sections to decide which entry was current. It has no work left: the entries
+    are separate documents now, so "which one am I on" is a question the URL
+    answers exactly, without observing anything.
+  */
   useEffect(() => {
-    const ids = NAV.map((item) => item.href.replace('#', ''));
-    const sections = ids
-      .map((id) => document.getElementById(id))
-      .filter((el): el is HTMLElement => el !== null);
-
-    if (sections.length === 0) return;
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        const visible = entries
-          .filter((entry) => entry.isIntersecting)
-          .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
-        if (visible) setActive(`#${visible.target.id}`);
-      },
-      // A band across the middle: a section is "current" when it occupies the
-      // reading position, not when it first appears.
-      { rootMargin: '-45% 0px -45% 0px', threshold: 0 },
-    );
-
-    sections.forEach((section) => observer.observe(section));
-    return () => observer.disconnect();
-  }, []);
+    setOpen(false);
+  }, [pathname]);
 
   /* Restores the previous value rather than hardcoding it back, so this
      composes with anything else that locks scrolling. */
@@ -177,8 +180,8 @@ export function Navigation() {
             }`}
           >
             <a
-              href="#top"
-              aria-label={`${SITE.name} — back to top`}
+              href="/"
+              aria-label={`${SITE.name} — home`}
               /* inline-flex + min-h-11 for the 44px target: the mark is ~21px
                  tall at the smallest breakpoint, and a bare inline anchor is
                  measured as its line box. */
@@ -197,15 +200,21 @@ export function Navigation() {
               </span>
             </a>
 
+            {/* `gap-9` fitted six entries. The list is longer now, so the gap
+                opens up only once there is room for it. */}
             <nav aria-label="Primary" className="hidden lg:block">
-              <ul className="flex items-center gap-9">
-                {NAV.map((item) => {
-                  const isActive = active === item.href;
+              <ul className="flex items-center gap-6 xl:gap-9">
+                {NAV_ROUTES.map((item) => {
+                  const isActive = here === item.path;
                   return (
-                    <li key={item.href}>
+                    <li key={item.path}>
                       <a
-                        href={item.href}
-                        aria-current={isActive ? 'true' : undefined}
+                        href={item.path}
+                        /* `page`, not `true`. `aria-current="page"` is the
+                           value that names WHY this entry is current, and it is
+                           the one screen readers announce as "current page" —
+                           which is now literally what it is. */
+                        aria-current={isActive ? 'page' : undefined}
                         className={`u-label group relative block py-1.5 transition-colors duration-200 ${
                           isActive ? 'text-paper' : 'text-mist-300 hover:text-paper'
                         }`}
@@ -277,7 +286,7 @@ export function Navigation() {
         {menuMounted && (
           <div
             id="site-menu"
-            className={`u-menu fixed inset-0 z-[var(--z-menu)] flex flex-col justify-center bg-ink-950 ${
+            className={`u-menu fixed inset-0 z-[var(--z-menu)] flex flex-col justify-center overflow-y-auto overscroll-contain bg-ink-950 py-24 ${
               menuIn ? 'is-in' : ''
             }`}
             style={{ '--duration-exit': ms(DUR.exit) } as React.CSSProperties}
@@ -293,11 +302,12 @@ export function Navigation() {
 
             <nav aria-label="Menu" className="u-gutter relative">
               <ul>
-                {NAV.map((item, index) => (
-                  <li key={item.href} className="u-rule-b overflow-hidden">
+                {NAV_ROUTES.map((item, index) => (
+                  <li key={item.path} className="u-rule-b overflow-hidden">
                     <a
-                      href={item.href}
+                      href={item.path}
                       onClick={() => setOpen(false)}
+                      aria-current={here === item.path ? 'page' : undefined}
                       /* Rises out of the row's clipping box, same primitive the
                          headlines use — the delay is its position in the list. */
                       /* No `transition-colors` on this element: that utility
@@ -317,7 +327,11 @@ export function Navigation() {
                       <span className="u-label tabular text-amber-400/70">
                         {String(index + 1).padStart(2, '0')}
                       </span>
-                      <span className="text-[clamp(2rem,8vw,4.25rem)] font-extralight leading-none tracking-[-0.02em] transition-colors duration-200">
+                      <span
+                        className={`text-[clamp(2rem,8vw,4.25rem)] font-extralight leading-none tracking-[-0.02em] transition-colors duration-200 ${
+                          here === item.path ? 'text-paper' : ''
+                        }`}
+                      >
                         {item.label}
                       </span>
                       <span

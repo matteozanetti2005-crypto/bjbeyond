@@ -1,6 +1,7 @@
 import { Logo } from '@/components/chrome/Logo';
 import { ArrowOutward, EXTERNAL, NewTabHint } from '@/components/primitives/External';
 import { AUTHENTIA_LOGO, largest, srcSet } from '@/lib/media';
+import { ConsentToggle } from '@/components/chrome/Consent';
 import { FOOTER, SITE, SOCIAL } from '@/lib/content';
 
 /** A server component: nothing here moves, so nothing here needs JavaScript. */
@@ -33,6 +34,11 @@ export function Footer() {
                   </a>
                 </li>
               ))}
+              {/* Sits with the policies because that is where someone looks for
+                  it. The banner promises this link by name. */}
+              <li>
+                <ConsentToggle className="u-label inline-flex min-h-11 items-center text-mist-300 transition-colors duration-200 hover:text-amber-400" />
+              </li>
             </ul>
           </nav>
 

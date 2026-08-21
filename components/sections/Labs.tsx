@@ -39,7 +39,7 @@ export function Labs() {
               </Reveal>
 
               <Reveal delay={0.2} className="mt-10">
-                <ArrowLink href="#contact">{LABS.cta}</ArrowLink>
+                <ArrowLink href="/labs/">{LABS.cta}</ArrowLink>
               </Reveal>
             </div>
           </div>

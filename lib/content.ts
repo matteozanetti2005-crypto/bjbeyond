@@ -25,17 +25,31 @@ export const SITE = {
   locale: 'Milano, Italia',
   description:
     'Art Market Intelligence. We go further. At the intersection of data, AI, and human intuition.',
+  /**
+   * Alt text for the shared social card.
+   *
+   * The homepage gets this from `app/opengraph-image.alt.txt`, which is a file
+   * convention Next reads for the image sitting beside it and nothing else —
+   * there is no way to import it. Inner pages build their card in
+   * `lib/routes.ts`, so they need the sentence as a value. Keep the two
+   * identical: they describe the same picture.
+   */
+  ogAlt:
+    'BJ Beyond — Intelligence is the standard. Art market intelligence at the intersection of data, AI, and human intuition.',
 } as const;
 
-/** Order mirrors scroll order, so the active item never jumps backwards. */
-export const NAV = [
-  { label: 'DISPATCH', href: '#dispatch' },
-  { label: 'METHOD', href: '#method' },
-  { label: 'LABS', href: '#labs' },
-  { label: 'WORK', href: '#work' },
-  { label: 'INTELLIGENCE', href: '#intelligence' },
-  { label: 'CONTACT', href: '#contact' },
-] as const;
+/**
+ * NAV used to live here as a list of anchors into this same document. It has
+ * moved to `lib/routes.ts` and become a list of real URLs.
+ *
+ * The move is the point, not a tidy-up. An anchor is a scroll position: it
+ * cannot be indexed on its own, cannot carry its own title or link preview, and
+ * cannot be the destination of an ad. A menu of anchors was a menu of one page.
+ * Menu entries are now addresses, so they belong with the other addresses.
+ *
+ * Copy still lives in this file. `lib/routes.ts` imports the titles and
+ * descriptions from here rather than restating them.
+ */
 
 export const HERO = {
   eyebrow: ['ONE STEP', 'BEYOND AI'],
@@ -509,6 +523,113 @@ export const INTELLIGENCE = {
 
 export type IntelligenceFilterId = keyof typeof INTELLIGENCE.series;
 
+/**
+ * ART — the reading room.
+ *
+ * A page about art rather than about the practice: the certification platform,
+ * the artists talking about their own work, and — when they are written —
+ * pieces on artists worth knowing. It is the one part of the site that is not
+ * selling a service, which is exactly why it is the part likely to be read.
+ *
+ * It has no index number. The 01–07 sequence belongs to the chapters of the
+ * homepage narrative, and quietly renumbering seven sections to insert an
+ * eighth would break every heading a visitor has already seen. Same reasoning
+ * that keeps Authentia and In Motion outside the sequence.
+ *
+ * AUTHENTIA AND IN MOTION APPEAR HERE, and still appear on the homepage. They
+ * are the same two blocks in both places on purpose: on the homepage they are a
+ * beat in a narrative, here they are the subject. Moving them off the homepage
+ * is a design decision about that narrative, not a consequence of building this
+ * page, so it has not been made unasked.
+ */
+export const ART = {
+  label: ['ON', 'ART'],
+  title: ['ART', 'NOTES'],
+  standfirst:
+    'Writing on art, the people making it, and what makes a work verifiable.',
+  /**
+   * Written pieces. Empty, and rendered only when it is not — a blog announcing
+   * that it has no posts yet is worse than a page that simply does not have
+   * that section.
+   *
+   * The shape is deliberately minimal, because the right shape depends on what
+   * an article turns out to be: a long essay and an illustrated artist profile
+   * want different templates, and each article also wants a URL of its own
+   * (`/art/<slug>/`) once there is one to give. Add the first real piece and
+   * that template can be built around it rather than guessed at.
+   */
+  articles: [] as readonly {
+    slug: string;
+    title: string;
+    standfirst: string;
+    published: string;
+  }[],
+} as const;
+
+/**
+ * BOOKS — placeholders, and they must not be mistaken for anything else.
+ *
+ * The owner asked for three examples to see the page working before writing the
+ * real entries. Everything below is invented: the titles, the years, the
+ * descriptions. No book named here exists.
+ *
+ * That is a departure from this file's rule that nothing is invented, made on
+ * an explicit request, and it comes with three guardrails that stay until real
+ * titles replace these:
+ *
+ *  1. `disclaimer` is printed on the page, following the same convention
+ *     INTELLIGENCE uses for its illustrative dataset.
+ *  2. `/books/` carries `draft: true` in lib/routes.ts, so it is `noindex`,
+ *     absent from the sitemap and absent from the menu. Invented books indexed
+ *     under a real author's name is the specific harm being avoided.
+ *  3. The covers are procedural plates rather than jacket photographs — see
+ *     lib/media.ts.
+ *
+ * REPLACING THEM: overwrite `items`, delete `disclaimer`, and drop `draft` from
+ * the route. All three, together — the guardrails are only correct while the
+ * data is fake, and leaving one behind is as wrong as leaving none.
+ */
+export const BOOKS = {
+  label: ['IN', 'PRINT'],
+  title: ['THE', 'BOOKS'],
+  standfirst: 'Long-form work on the art market, data, and the space between.',
+  disclaimer:
+    'Placeholder entries. These demonstrate the page, not the catalogue — no book listed here has been published.',
+  /** `href` is null while there is nowhere real to send anyone. */
+  items: [
+    {
+      number: '01',
+      title: ['THE', 'HUMAN EDGE'],
+      year: '2026',
+      description:
+        'Why taste, judgment and rigour became scarcer — and more valuable — the moment generation became free.',
+      format: 'Essay — 240 pages',
+      mediaKey: 'book-01',
+      href: null,
+    },
+    {
+      number: '02',
+      title: ['READING THE', 'MARKET'],
+      year: '2025',
+      description:
+        'A field guide to valuing contemporary work: what the auction record tells you, and the four things it never will.',
+      format: 'Handbook — 180 pages',
+      mediaKey: 'book-02',
+      href: null,
+    },
+    {
+      number: '03',
+      title: ['PHOENIX', 'SOULFIRE'],
+      year: '2025',
+      description:
+        'The five pillars in full: the framework for evaluating creative potential, with the scorecards and the workings.',
+      format: 'Framework — 160 pages',
+      mediaKey: 'book-03',
+      href: null,
+    },
+  ],
+} as const;
+
 export const CONTACT = {
   index: '07',
   label: ['GET IN', 'TOUCH'],
@@ -533,7 +654,7 @@ export const SOCIAL = [
   { label: 'TIKTOK', href: 'https://www.tiktok.com/@bj_beyond' },
   { label: 'THREADS', href: 'https://www.threads.net/@bj_beyond' },
   { label: 'REDDIT', href: 'https://www.reddit.com/user/Bj_Beyond' },
-  { label: 'LINKTREE', href: 'https://linktr.ee/Bj_Beyond' },
+  { label: 'BEACONS', href: 'https://beacons.ai/bj_beyond' },
 ] as const;
 
 export const FOOTER = {

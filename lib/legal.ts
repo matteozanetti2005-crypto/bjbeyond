@@ -1,10 +1,25 @@
 /**
- * Privacy and Cookie policy content, transcribed verbatim from the documents in
- * `public/docs/`. Nothing here is reworded, softened or extended — these are
- * legal statements, and the rebuild changes their presentation only.
+ * Privacy and Cookie policy content, transcribed from the documents in
+ * `public/docs/`. These are legal statements: nothing is reworded or softened
+ * for tone, and the rebuild changed their presentation only.
  *
  * They stay in Italian because they describe an Italian data controller's
  * obligations; the rendered page marks the switch with `lang="it"`.
+ *
+ * WHERE THE COOKIE POLICY NOW DIVERGES FROM THE 2026 TRANSCRIPTION, and why a
+ * document that is not to be reworded was nonetheless edited: it had stopped
+ * describing the site. It named "Vercel Analytics o simili" while Google
+ * Analytics 4 was what was actually running; it referred to a consent banner
+ * "se presente" when there was none; and it stated in as many words that the
+ * site used no advertising profiling cookies and shared no data with
+ * advertisers — a sentence that a Meta pixel makes false the moment it is
+ * switched on.
+ *
+ * A privacy policy that misdescribes the processing is not a lesser problem
+ * than having no policy. So the cookie sections below are now derived from
+ * `lib/analytics.ts` rather than written down beside it: the marketing rows
+ * appear if and only if `META_PIXEL_ID` is set. The document cannot drift from
+ * the site, because the same constant decides both.
  */
 
 export type LegalBlock =
@@ -33,6 +48,8 @@ export interface LegalDocument {
   /** Path the previous site served this document from. Kept working. */
   legacyPath: string;
 }
+
+import { META_PIXEL_ID } from './analytics';
 
 const EMAIL = 'bj_beyond@tutamail.com';
 const X_HANDLE = '@BJ_Beyond';
@@ -114,8 +131,9 @@ export const PRIVACY: LegalDocument = {
       blocks: [
         {
           kind: 'text',
-          value:
-            'Utilizziamo fornitori sicuri (Vercel, Anthropic, Groq) con Clausole Contrattuali Standard o adeguatezza.',
+          value: META_PIXEL_ID
+            ? 'Utilizziamo fornitori sicuri (Vercel, Anthropic, Groq, Google Ireland Ltd., Meta Platforms Ireland Ltd.) con Clausole Contrattuali Standard o adeguatezza. Google e Meta possono trasferire dati negli Stati Uniti sulla base del EU-US Data Privacy Framework.'
+            : 'Utilizziamo fornitori sicuri (Vercel, Anthropic, Groq, Google Ireland Ltd.) con Clausole Contrattuali Standard o adeguatezza. Google può trasferire dati negli Stati Uniti sulla base del EU-US Data Privacy Framework.',
         },
       ],
     },
@@ -201,17 +219,28 @@ export const COOKIES: LegalDocument = {
             ['Preferenze', 'Ricordano scelte (es. tema dark)', '6 mesi', 'Puoi gestirli'],
             [
               'Analitici',
-              'Statistiche anonime di visita (Vercel Analytics o simili)',
-              '12 mesi',
+              'Google Analytics 4 (Google Ireland Ltd.): statistiche di visita, pagine viste, provenienza del traffico. Attivati solo dopo il tuo consenso.',
+              '13 mesi',
               'Puoi rifiutare',
             ],
+            ...(META_PIXEL_ID
+              ? [
+                  [
+                    'Marketing',
+                    'Meta Pixel (Meta Platforms Ireland Ltd.): misurazione delle campagne pubblicitarie su Facebook e Instagram e creazione di pubblici personalizzati. Attivato solo dopo il tuo consenso.',
+                    '3 mesi',
+                    'Puoi rifiutare',
+                  ],
+                ]
+              : []),
             ['Funzionali', 'Per tool come Phoenix Simulator', 'Sessione', 'Necessari'],
           ],
         },
         {
           kind: 'callout',
-          value:
-            'Non usiamo cookie di profilazione pubblicitaria né condividiamo dati con advertiser.',
+          value: META_PIXEL_ID
+            ? 'Nessun cookie di analisi o di marketing viene installato prima del tuo consenso. Se rifiuti, o se ignori il banner, gli script di Google e Meta non vengono nemmeno caricati.'
+            : 'Nessun cookie di analisi viene installato prima del tuo consenso. Se rifiuti, o se ignori il banner, gli script di Google non vengono nemmeno caricati. Questo sito non usa attualmente cookie di profilazione pubblicitaria.',
         },
       ],
     },
@@ -222,7 +251,8 @@ export const COOKIES: LegalDocument = {
         {
           kind: 'list',
           items: [
-            'Puoi accettare/rifiutare i cookie non tecnici dal banner all’ingresso (se presente).',
+            'Alla prima visita un banner ti chiede se accettare i cookie non tecnici. Finché non scegli, nessuno di essi viene installato.',
+            'Puoi cambiare la tua scelta in qualsiasi momento dal link “COOKIE PREFERENCES” in fondo a ogni pagina.',
             'Puoi cancellarli o bloccarli dalle impostazioni del tuo browser (Chrome, Firefox, Safari, ecc.).',
             'Per istruzioni dettagliate: aboutcookies.org',
           ],

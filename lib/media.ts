@@ -253,6 +253,55 @@ export const MEDIA = {
     }),
   },
 
+  /**
+   * Book covers.
+   *
+   * Procedural, and for a stronger reason than the Labs plates: there is no
+   * photograph missing here, because there is no book. The three entries in
+   * `BOOKS` are placeholders the owner asked for to see the page working, so a
+   * plate that is visibly a generated texture is the honest picture — a stock
+   * photograph dressed as a jacket would make invented titles look published.
+   *
+   * 2:3, the ordinary trade paperback proportion, so real jackets drop in
+   * without the grid moving. To give one a real cover: add the variants to
+   * `public/media/`, set `src` + `widths` here, and change nothing else.
+   */
+  books: {
+    'book-01': slot({
+      id: 'book-01',
+      src: null,
+      widths: [],
+      alt: '',
+      focal: '50% 50%',
+      width: 800,
+      height: 1200,
+      atmosphere: 'texture',
+      warmth: 0.8,
+    }),
+    'book-02': slot({
+      id: 'book-02',
+      src: null,
+      widths: [],
+      alt: '',
+      focal: '50% 50%',
+      width: 800,
+      height: 1200,
+      atmosphere: 'ridge',
+      warmth: 0.35,
+    }),
+    'book-03': slot({
+      id: 'book-03',
+      src: null,
+      widths: [],
+      alt: '',
+      focal: '50% 50%',
+      width: 800,
+      height: 1200,
+      atmosphere: 'signal',
+      warmth: 0.6,
+    }),
+  },
+
   /** Bottom-right panel. */
   contact: slot({
     id: 'contact',
