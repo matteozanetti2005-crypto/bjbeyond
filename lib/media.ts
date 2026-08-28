@@ -162,30 +162,51 @@ export const MEDIA = {
   ],
 
   /**
-   * Procedural on purpose: the subjects are simulation, sound and
-   * authentication, which the architecture photography does not depict.
-   * Replace if purpose-shot art becomes available.
+   * Phoenix and Frequency now carry their own art; Authentia does not yet.
+   *
+   * The two supplied are 16:9 atmospheres with no type on them, which is why
+   * they are baked whole and framed by the caller's `object-cover` rather than
+   * padded onto a ground the way the reel covers are — see buildPlates() in
+   * scripts/build-media.mjs. `focal` is the only control over that crop, and it
+   * has to satisfy TWO frames that crop on different axes:
+   *
+   *   homepage card   2.286 wide against a 1.778 source — cuts the HEIGHT, so
+   *                   the Y half of `focal` decides which fifth survives.
+   *   /labs/ card     1.500 wide — cuts the WIDTH instead, ~8% off each side,
+   *                   so X stays at 50% and the phoenix keeps both wingtips.
+   *
+   * Which is why X is centred and only Y is tuned below. The same second
+   * consumer is why the widths run to 1920: /labs/ draws these at 45vw.
+   *
+   * Authentia stays procedural: authentication is not a thing the architecture
+   * photography depicts, and there is no purpose-shot plate for it yet. Give it
+   * one by dropping `authentia.png` into `media-src/labs/` and turning `src` on
+   * — nothing else changes.
    */
   labs: {
     phoenix: slot({
       id: 'lab-phoenix',
-      src: null,
-      widths: [],
-      alt: 'Field of illuminated particles forming a wave',
-      focal: '50% 50%',
-      width: 1200,
-      height: 800,
+      src: '/media/labs/phoenix',
+      widths: [512, 768, 1280, 1920],
+      alt: 'A phoenix in flight, wings spread and lit along their edges by fire',
+      /* Above centre: the head and the span of the wings are the subject, and
+         the tail is what the card can afford to lose. */
+      focal: '50% 44%',
+      width: 1920,
+      height: 1080,
       atmosphere: 'signal',
       warmth: 0.7,
     }),
     frequency: slot({
       id: 'lab-frequency',
-      src: null,
-      widths: [],
-      alt: 'Audio waveform against darkness',
-      focal: '50% 50%',
-      width: 1200,
-      height: 800,
+      src: '/media/labs/frequency',
+      widths: [512, 768, 1280, 1920],
+      alt: 'An audio waveform in blue and amber light, mirrored on a dark surface',
+      /* The waveform sits just above the midline and its reflection below it;
+         holding 46% keeps the peak and a little of the mirror. */
+      focal: '50% 46%',
+      width: 1920,
+      height: 1080,
       atmosphere: 'signal',
       warmth: 0.2,
     }),
@@ -253,6 +274,31 @@ export const MEDIA = {
     }),
   },
 
+  /**
+   * Event posters for RECOMMENDED — supplied artwork, used unmodified.
+   *
+   * Rendered WHOLE and never cropped, which is why there is no `focal` worth
+   * tuning here and why the component draws it at its own 0.708 ratio rather
+   * than inside a fixed frame: this is someone else's finished design, with the
+   * title, the dates and eleven institutional marks all sitting hard against an
+   * edge. A crop of it is not a trim, it is a misquotation — and unlike the
+   * Labs plates, the words on it are the point.
+   *
+   * 400 and 800 are 1x and 2x of the ~272px the poster draws at its widest.
+   */
+  events: {
+    domeniconi: slot({
+      id: 'event-domeniconi',
+      src: '/media/events/domeniconi',
+      widths: [400, 800],
+      alt: 'Poster for Simone Domeniconi’s solo exhibition Chess Cyborg Movie at Palazzo Guinigi, Lucca',
+      focal: '50% 50%',
+      width: 1132,
+      height: 1600,
+      atmosphere: 'texture',
+      warmth: 0.6,
+    }),
+  },
   /**
    * Book covers.
    *

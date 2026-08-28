@@ -322,6 +322,70 @@ async function buildReels() {
   }
 }
 
+/**
+ * Folder-driven plates: the Labs covers and the event posters.
+ *
+ * Every image in `media-src/<folder>/` becomes
+ * `public/media/<folder>/<name>-<width>.webp`, named after its key in the
+ * matching object in lib/media.ts. Two callers today, and the loop is the same
+ * for both, so it is one function taking the folder and the widths rather than
+ * a third near-copy of the reels loop below.
+ *
+ * NOT fitted onto a blurred ground, and that is the one difference from the
+ * reels worth stating. Those are designed covers — type and a mark sitting near
+ * the edges — so a crop amputates them. Everything routed through here is
+ * either a plate with no type on it at all (the two Labs covers, subject dead
+ * centre) or is drawn whole and uncropped by its component (the poster), so the
+ * framing is left to CSS: `focal` in lib/media.ts is what steers it.
+ *
+ * Baked at the source ratio rather than pre-cropped to a card, because a card
+ * is rarely one ratio — the Labs frame is 1.833 wide at `sm` and 2.286 at `lg`,
+ * so pre-cropping to either would simply be cropped again at the other.
+ *
+ * A silent no-op when the folder is absent: the sections fall back to
+ * procedural plates, so the site is complete either way.
+ */
+async function buildPlates(folder, widths) {
+  const dir = join(SRC, folder);
+  if (!existsSync(dir)) {
+    console.warn(`skip ${folder} — media-src/${folder}/ not found (plates stay procedural)`);
+    return;
+  }
+
+  const files = readdirSync(dir).filter((name) => /.(jpe?g|png|webp)$/i.test(name));
+  if (files.length === 0) {
+    console.warn(`skip ${folder} — media-src/${folder}/ is empty`);
+    return;
+  }
+
+  const out = join(OUT, folder);
+  mkdirSync(out, { recursive: true });
+
+  const widest = widths[widths.length - 1];
+
+  for (const file of files) {
+    const name = file.replace(/.[^.]+$/, '');
+    const source = join(dir, file);
+
+    const { width = 0, height = 0 } = await sharp(source).metadata();
+    console.log(`  ${file} ${width}x${height} (ratio ${(width / height).toFixed(3)})`);
+    if (width < widest) {
+      console.warn(
+        `  ! ${file} is ${width}px wide — the ${widest}px variant is an upscale. Re-export larger if it looks soft.`,
+      );
+    }
+
+    for (const w of widths) {
+      const dest = join(out, `${name}-${w}.webp`);
+      await sharp(source)
+        .resize({ width: w, withoutEnlargement: true })
+        .webp({ quality: Q.scene, effort: 6 })
+        .toFile(dest);
+      report(dest);
+    }
+  }
+}
+
 /* Emitted into `app/`, where Next's metadata file conventions pick them up.
    The mark is white with transparency, so it is composited onto the site's
    near-black: left transparent it vanishes against light browser chrome. */
@@ -463,6 +527,12 @@ await buildLogo();
 await buildAuthentiaMark('authentia.svg', 'authentia', [256, 512]);
 await buildAuthentiaMark('authentia-lockup.png', 'authentia-lockup', [320, 640, 960]);
 await buildReels();
+/* The Labs plates have two consumers at very different sizes: the homepage
+   card draws 256px, but /labs/ draws them at 45vw — 864px on a 1440 screen,
+   and twice that on a retina one. Stopping at 768 made the larger of the two
+   an upscale. 1920 is the source's own width, so it is the last useful step. */
+await buildPlates('labs', [512, 768, 1280, 1920]);
+await buildPlates('events', [400, 800]);
 await buildFavicons();
 await buildSocialCard();
 console.log('done');
