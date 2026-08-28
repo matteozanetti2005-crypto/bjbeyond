@@ -304,6 +304,57 @@ export const METHOD = {
  * recommendation, not one of BJ Beyond's own chapters. Every factual claim
  * below comes from verify.authentia.it — do not embellish.
  */
+/**
+ * RECOMMENDED — artists and events worth the journey.
+ *
+ * Outside the 01–07 numbering for the same reason Authentia and In Motion are:
+ * those numbers are the owner's own chapters, and this recommends someone
+ * else's work.
+ *
+ * NOTHING HERE IS PARAPHRASED. Every field is either printed on the show's own
+ * poster — supplied by the owner, and rendered whole beside this copy — or is
+ * the artist's own sentence, quoted entire. This file's rule that nothing is
+ * invented binds hardest on a third party's exhibition: a wrong date or a
+ * misattributed curator sends a reader to a closed door under BJ Beyond's name,
+ * and the mistake is the recommender's, not the gallery's.
+ *
+ * The weekday was checked against the calendar rather than copied on trust —
+ * 11 September 2026 is a Friday, as the poster says.
+ *
+ * A list rather than a single entry, because the section is artists AND events
+ * and a second one will land. One reads correctly on its own.
+ */
+export const RECOMMENDED = {
+  eyebrow: 'RECOMMENDED ARTIST',
+  title: ['ON', 'SHOW'],
+  standfirst: 'Exhibitions worth the journey, one at a time.',
+  events: [
+    {
+      id: '01',
+      artist: 'SIMONE DOMENICONI',
+      kind: 'SOLO EXHIBITION',
+      title: ['CHESS', 'CYBORG', 'MOVIE'],
+      /*
+        The artist's own words on the show, supplied by the owner and left in
+        Italian on an English page — so whatever renders it carries `lang="it"`,
+        the same treatment the reel pull-quotes get in IN_MOTION. Translating a
+        quotation would make it no longer a quotation.
+      */
+      quote:
+        "Sempre più vicini alla mia personale museale che racconterà la storia dell’arte, scacchi, cyborg e nuove tecnologie, e cinema.",
+      attribution: 'Simone Domeniconi',
+      /** Each label is drawn as written; order is the order they read on the poster. */
+      details: [
+        { label: 'CURATED BY', value: 'Riccardo Ferrucci' },
+        { label: 'VENUE', value: 'Palazzo Guinigi, Via Guinigi 29 — Lucca' },
+        { label: 'DATES', value: '11 September — 4 October 2026' },
+        { label: 'OPENING', value: 'Friday 11 September, 18.00' },
+      ],
+      /** Key in `MEDIA.events`. */
+      mediaKey: 'domeniconi',
+    },
+  ],
+} as const;
 export const AUTHENTIA = {
   eyebrow: 'RECOMMENDED PROJECT',
   title: ['AUTHENTIA', 'ARTE'],
