@@ -286,7 +286,7 @@ export function Navigation() {
         {menuMounted && (
           <div
             id="site-menu"
-            className={`u-menu fixed inset-0 z-[var(--z-menu)] flex flex-col justify-center overflow-y-auto overscroll-contain bg-ink-950 py-24 ${
+            className={`u-menu fixed inset-0 z-[var(--z-menu)] flex flex-col justify-center overflow-y-auto overscroll-contain bg-ink-950 py-[clamp(3rem,8vh,6rem)] ${
               menuIn ? 'is-in' : ''
             }`}
             style={{ '--duration-exit': ms(DUR.exit) } as React.CSSProperties}
@@ -314,7 +314,7 @@ export function Navigation() {
                          rewrites `transition-property` and would cancel the
                          mask-line transition. The colour fade lives on the
                          label below, which inherits it. */
-                      className={`u-mask-line group flex items-baseline gap-6 py-5 text-mist-200 hover:text-paper sm:gap-10 sm:py-7 ${
+                      className={`u-mask-line group flex items-baseline gap-6 py-5 text-mist-200 hover:text-paper sm:gap-10 sm:py-[clamp(1rem,2.6vh,1.75rem)] ${
                         menuIn ? 'is-in' : ''
                       }`}
                       style={
@@ -327,8 +327,24 @@ export function Navigation() {
                       <span className="u-label tabular text-amber-400/70">
                         {String(index + 1).padStart(2, '0')}
                       </span>
+                      {/*
+                        Sized against the SHORTER axis, not the wider one.
+                      
+                        This was `clamp(2rem, 8vw, 4.25rem)`. On a full-screen overlay the
+                        constraint is height, and 8vw reaches the 4.25rem ceiling at 850px
+                        wide — so every desktop from a 1366 laptop to a 1920 monitor got the
+                        same 68px type that was drawn for a phone, and six entries at 125px
+                        a row overflowed all of them. The menu scrolled on the one surface
+                        with the most room to spare, which is what made it read as a mobile
+                        menu shown on a desktop.
+                      
+                        `min(8vw, 6vh)` keeps the width rule that governs phones — where
+                        8vw is the smaller of the two and still clamps to the 2rem floor, so
+                        mobile is untouched — and lets height take over once there is width
+                        to spare. The paddings above and below follow the same rule.
+                      */}
                       <span
-                        className={`text-[clamp(2rem,8vw,4.25rem)] font-extralight leading-none tracking-[-0.02em] transition-colors duration-200 ${
+                        className={`text-[clamp(2rem,min(8vw,6vh),4.25rem)] font-extralight leading-none tracking-[-0.02em] transition-colors duration-200 ${
                           here === item.path ? 'text-paper' : ''
                         }`}
                       >
@@ -352,7 +368,7 @@ export function Navigation() {
               </ul>
 
               <div
-                className="u-menu-row mt-12 flex flex-wrap items-center gap-x-7 gap-y-3"
+                className="u-menu-row mt-[clamp(1.5rem,4vh,3rem)] flex flex-wrap items-center gap-x-7 gap-y-3"
                 style={{ '--reveal-delay': ms(0.45) } as React.CSSProperties}
               >
                 {SOCIAL.map((social) => (
