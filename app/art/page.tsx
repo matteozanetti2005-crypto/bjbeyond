@@ -1,7 +1,6 @@
 import type { Metadata } from 'next';
 import { PageShell } from '@/components/chrome/PageShell';
 import { Authentia } from '@/components/sections/Authentia';
-import { Recommended } from '@/components/sections/Recommended';
 import { InMotion } from '@/components/sections/InMotion';
 import { Reveal, RevealGroup, RevealItem } from '@/components/primitives/Reveal';
 import { ArrowLink } from '@/components/primitives/ArrowLink';
@@ -14,17 +13,12 @@ export const metadata: Metadata = metadataFor('/art/');
 /**
  * ART — the page about art rather than about the practice.
  *
- * Recommended is this page's own: an artist and a show the owner is pointing
- * readers at, which has no place on the homepage. It sits FIRST because it is
- * the timely one — an exhibition has dates and stops being useful after them,
- * while Authentia and In Motion are standing entries.
- *
- * The two sections after it are the homepage components, rendered unchanged. That
- * is the whole implementation and it is deliberate: Authentia and In Motion are
- * already the site's art content, they are already built, and a second copy
- * styled slightly differently would be two owners for one design. They keep
- * their own `h2`s, which sit correctly under this page's `h1` — they are its
- * subjects, not repetitions of it.
+ * Authentia and In Motion are the homepage components, rendered unchanged. That
+ * is the whole implementation and it is deliberate: they are already the site's
+ * art content, they are already built, and a second copy styled slightly
+ * differently would be two owners for one design. They keep their own `h2`s,
+ * which sit correctly under this page's `h1` — they are its subjects, not
+ * repetitions of it.
  *
  * The articles list renders only when there are articles. See the note on
  * ART.articles for why the per-article template is not being guessed at now.
@@ -61,7 +55,6 @@ export default function ArtPage() {
         </section>
       ) : null}
 
-      <Recommended />
       <Authentia />
       <InMotion />
 

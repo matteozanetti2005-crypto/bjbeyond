@@ -532,7 +532,6 @@ await buildReels();
    and twice that on a retina one. Stopping at 768 made the larger of the two
    an upscale. 1920 is the source's own width, so it is the last useful step. */
 await buildPlates('labs', [512, 768, 1280, 1920]);
-await buildPlates('events', [400, 800]);
 await buildFavicons();
 await buildSocialCard();
 console.log('done');

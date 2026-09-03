@@ -253,6 +253,77 @@ export const DISPATCH = {
   ],
 } as const;
 
+/**
+ * THE LONG READ — writing published elsewhere, under the owner's own byline.
+ *
+ * Sits directly after DISPATCH and is its counterweight: the shelf above is the
+ * voice in 280 characters, this is the same voice given the room to finish the
+ * argument. Reading order is the reason it is here rather than on /art/ — the
+ * pieces are about AI and the platforms, not about art.
+ *
+ * OUTSIDE THE 01–07 NUMBERING, like Authentia and In Motion. Not for their
+ * reason — this writing IS the owner's own — but for the other one stated on
+ * ART: the numbers are the chapters of the homepage narrative, and inserting an
+ * eighth would renumber five headings a visitor has already seen.
+ *
+ * NOTHING HERE IS PARAPHRASED. `title` is the headline as published,
+ * `standfirst` is HackerNoon's own TLDR for the piece, `pull` is the story's
+ * closing line, and `published` is the date on the story. Each was read off the
+ * page rather than recalled.
+ *
+ * NO COVER IMAGE, deliberately. The piece has one on HackerNoon, and it is
+ * HackerNoon's file on HackerNoon's CDN: hotlinking it would put a third-party
+ * request on this page, hand them a referrer for every visitor, and leave the
+ * card blank the day they move it. Every image on this site is a local file
+ * declared in lib/media.ts. This stays type until one is made for it.
+ *
+ * THE PUBLISHER'S MASTHEAD IS NOT COPY, so there is no string for it here.
+ * The card draws HackerNoon's own lockup as an inline SVG, the way DISPATCH
+ * draws X's mark — see HackerNoonMark in components/sections/Writing.tsx.
+ *
+ * NO HANDLE, also deliberately. DISPATCH prints name-over-handle because X's
+ * card does; the HackerNoon account's handle is a generated string
+ * (`ttw97pvp6z_7o9p76i`), so drawing it would print noise. `profile` links to
+ * the author page it addresses, which is the part that is actually useful.
+ */
+export const WRITING = {
+  eyebrow: 'PUBLISHED WRITING',
+  title: ['THE LONG', 'READ'],
+  standfirst:
+    'Long-form pieces, published where the readers already are — and linked here rather than reprinted.',
+  /** The author page, not the publication's front door. */
+  profile: 'https://hackernoon.com/u/ttw97pvp6z_7o9p76i',
+  cta: 'ALL STORIES ON HACKERNOON',
+  /** Per-card action. The whole card is the link; this names the destination. */
+  action: 'READ ON HACKERNOON',
+  /*
+    Newest first. To add one: paste the headline into `title`, the story's own
+    TLDR into `standfirst`, its date into `published` as ISO, and the canonical
+    URL into `href`. All four sit on the story's own page, so no entry here has
+    to be written from memory.
+  */
+  articles: [
+    {
+      /* Not a route on this site — the piece lives on HackerNoon and is linked
+         there. Kept because it is the story's stable identity, and it makes a
+         React key that cannot collide. */
+      slug: 'when-the-system-flags-the-human-who-was-helping-it',
+      title: 'When the System Flags the Human Who Was Helping It',
+      standfirst:
+        'A public record of months of stress-testing Grok, a spontaneous image generation previously seen only with Elon Musk, and a permanent suspension from Creator Revenue Sharing.',
+      /* ISO, formatted by `postDate` — the same deterministic table DISPATCH
+         uses, so a European CI runner and a US one ship the same string. */
+      published: '2026-08-27',
+      href: 'https://hackernoon.com/when-the-system-flags-the-human-who-was-helping-it',
+      /* The story's closing line, quoted entire. */
+      pull: 'The signal stays.',
+      /* Three of the story's own eight tags, hyphens opened out and set in the
+         site's label case. A card is not a tag cloud. */
+      topics: ['GROK STRESS-TESTING', 'GROK IMAGE GENERATION', 'X MONETIZATION'],
+    },
+  ],
+} as const;
+
 export const METHOD = {
   index: '03',
   label: ['MY', 'METHOD'],
@@ -304,57 +375,6 @@ export const METHOD = {
  * recommendation, not one of BJ Beyond's own chapters. Every factual claim
  * below comes from verify.authentia.it — do not embellish.
  */
-/**
- * RECOMMENDED — artists and events worth the journey.
- *
- * Outside the 01–07 numbering for the same reason Authentia and In Motion are:
- * those numbers are the owner's own chapters, and this recommends someone
- * else's work.
- *
- * NOTHING HERE IS PARAPHRASED. Every field is either printed on the show's own
- * poster — supplied by the owner, and rendered whole beside this copy — or is
- * the artist's own sentence, quoted entire. This file's rule that nothing is
- * invented binds hardest on a third party's exhibition: a wrong date or a
- * misattributed curator sends a reader to a closed door under BJ Beyond's name,
- * and the mistake is the recommender's, not the gallery's.
- *
- * The weekday was checked against the calendar rather than copied on trust —
- * 11 September 2026 is a Friday, as the poster says.
- *
- * A list rather than a single entry, because the section is artists AND events
- * and a second one will land. One reads correctly on its own.
- */
-export const RECOMMENDED = {
-  eyebrow: 'RECOMMENDED ARTIST',
-  title: ['ON', 'SHOW'],
-  standfirst: 'Exhibitions worth the journey, one at a time.',
-  events: [
-    {
-      id: '01',
-      artist: 'SIMONE DOMENICONI',
-      kind: 'SOLO EXHIBITION',
-      title: ['CHESS', 'CYBORG', 'MOVIE'],
-      /*
-        The artist's own words on the show, supplied by the owner and left in
-        Italian on an English page — so whatever renders it carries `lang="it"`,
-        the same treatment the reel pull-quotes get in IN_MOTION. Translating a
-        quotation would make it no longer a quotation.
-      */
-      quote:
-        "Sempre più vicini alla mia personale museale che racconterà la storia dell’arte, scacchi, cyborg e nuove tecnologie, e cinema.",
-      attribution: 'Simone Domeniconi',
-      /** Each label is drawn as written; order is the order they read on the poster. */
-      details: [
-        { label: 'CURATED BY', value: 'Riccardo Ferrucci' },
-        { label: 'VENUE', value: 'Palazzo Guinigi, Via Guinigi 29 — Lucca' },
-        { label: 'DATES', value: '11 September — 4 October 2026' },
-        { label: 'OPENING', value: 'Friday 11 September, 18.00' },
-      ],
-      /** Key in `MEDIA.events`. */
-      mediaKey: 'domeniconi',
-    },
-  ],
-} as const;
 export const AUTHENTIA = {
   eyebrow: 'RECOMMENDED PROJECT',
   title: ['AUTHENTIA', 'ARTE'],
@@ -702,6 +722,10 @@ export const CONTACT = {
 
 export const SOCIAL = [
   { label: 'X', href: 'https://x.com/Bj_Beyond' },
+  /* The owner's own art feed, and NOT the Instagram account IN_MOTION links to
+     — that one is Authentia Arte's channel. Two different accounts, on the same
+     platform, in the same document: check which one you are editing. */
+  { label: 'INSTAGRAM', href: 'https://www.instagram.com/bj_art_feed/' },
   { label: 'TIKTOK', href: 'https://www.tiktok.com/@bj_beyond' },
   { label: 'THREADS', href: 'https://www.threads.net/@bj_beyond' },
   { label: 'REDDIT', href: 'https://www.reddit.com/user/Bj_Beyond' },

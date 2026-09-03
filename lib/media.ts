@@ -275,31 +275,6 @@ export const MEDIA = {
   },
 
   /**
-   * Event posters for RECOMMENDED — supplied artwork, used unmodified.
-   *
-   * Rendered WHOLE and never cropped, which is why there is no `focal` worth
-   * tuning here and why the component draws it at its own 0.708 ratio rather
-   * than inside a fixed frame: this is someone else's finished design, with the
-   * title, the dates and eleven institutional marks all sitting hard against an
-   * edge. A crop of it is not a trim, it is a misquotation — and unlike the
-   * Labs plates, the words on it are the point.
-   *
-   * 400 and 800 are 1x and 2x of the ~272px the poster draws at its widest.
-   */
-  events: {
-    domeniconi: slot({
-      id: 'event-domeniconi',
-      src: '/media/events/domeniconi',
-      widths: [400, 800],
-      alt: 'Poster for Simone Domeniconi’s solo exhibition Chess Cyborg Movie at Palazzo Guinigi, Lucca',
-      focal: '50% 50%',
-      width: 1132,
-      height: 1600,
-      atmosphere: 'texture',
-      warmth: 0.6,
-    }),
-  },
-  /**
    * Book covers.
    *
    * Procedural, and for a stronger reason than the Labs plates: there is no
