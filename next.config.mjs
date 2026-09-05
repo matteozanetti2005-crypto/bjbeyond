@@ -2,9 +2,8 @@
 const nextConfig = {
   /**
    * GitHub Pages, the live host for bjbeyond.it, serves `out/` as-is. The export
-   * also copies the standalone apps in `public/` (/phoenix, /frequency,
-   * /casting-room) and the legacy /pages/*.html verbatim, so every pre-existing
-   * URL keeps resolving.
+   * also copies the standalone apps in `public/` (/phoenix, /frequency) and the
+   * legacy /pages/*.html verbatim, so every pre-existing URL keeps resolving.
    */
   output: 'export',
 
@@ -23,10 +22,9 @@ const nextConfig = {
   reactStrictMode: true,
 
   /**
-   * Dev-only parity. /phoenix, /frequency and /casting-room are directories
-   * containing index.html; static hosts resolve that automatically but
-   * `next dev` does not for files under `public/`, so the links 404 in
-   * development only.
+   * Dev-only parity. /phoenix and /frequency are directories containing
+   * index.html; static hosts resolve that automatically but `next dev` does not
+   * for files under `public/`, so the links 404 in development only.
    *
    * `output: 'export'` ignores rewrites, which is correct — they exist purely
    * to make development behave the way production already does.
@@ -37,8 +35,6 @@ const nextConfig = {
       { source: '/phoenix/', destination: '/phoenix/index.html' },
       { source: '/frequency', destination: '/frequency/index.html' },
       { source: '/frequency/', destination: '/frequency/index.html' },
-      { source: '/casting-room', destination: '/casting-room/index.html' },
-      { source: '/casting-room/', destination: '/casting-room/index.html' },
     ];
   },
 
