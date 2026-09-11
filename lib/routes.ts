@@ -23,7 +23,7 @@
  * destinations rather than prose.
  */
 import type { MetadataRoute } from 'next';
-import { BOOKS, CONTACT, DISPATCH, LABS, METHOD, SITE, WORK } from './content';
+import { BOOKS, CONTACT, DISPATCH, METHOD, SITE, WORK } from './content';
 
 export interface SiteRoute {
   /** Path as served, leading and trailing slash included. */
@@ -116,8 +116,9 @@ export const ROUTES: readonly SiteRoute[] = [
   {
     path: '/labs/',
     label: 'LABS',
-    title: 'Labs',
-    description: LABS.description,
+    title: 'The Labs — AI Tools & Simulators',
+    description:
+      'Interactive tools by BJ Beyond: real-time X For You algorithm simulator, binaural sound studio and audience persona modeling.',
     priority: 0.8,
     changeFrequency: 'monthly',
   },
