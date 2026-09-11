@@ -23,7 +23,7 @@
  * destinations rather than prose.
  */
 import type { MetadataRoute } from 'next';
-import { BOOKS, CONTACT, DISPATCH, METHOD, SITE, WORK } from './content';
+import { BOOKS, CONTACT, DISPATCH, METHOD, SITE } from './content';
 
 export interface SiteRoute {
   /** Path as served, leading and trailing slash included. */
@@ -126,8 +126,9 @@ export const ROUTES: readonly SiteRoute[] = [
   {
     path: '/services/',
     label: 'SERVICES',
-    title: 'Services',
-    description: WORK.description,
+    title: 'Services — Power BI, Data Systems & AI Strategy',
+    description:
+      'Three core offerings: artist valuation models, custom Power BI dashboards, and human-AI collaboration strategy.',
     priority: 0.9,
     changeFrequency: 'monthly',
   },
