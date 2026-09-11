@@ -108,8 +108,9 @@ export const ROUTES: readonly SiteRoute[] = [
   {
     path: '/method/',
     label: 'METHOD',
-    title: `${METHOD.title}${METHOD.trademark}`,
-    description: METHOD.description,
+    title: `${METHOD.title}${METHOD.trademark} Method — 5 Pillar Framework`,
+    description:
+      'The 5-pillar methodology for evaluating creative potential in the AI era. From Authentia Arte to data-driven strategy.',
     priority: 0.9,
     changeFrequency: 'monthly',
   },
