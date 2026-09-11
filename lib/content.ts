@@ -282,9 +282,10 @@ export const DISPATCH = {
  * draws X's mark — see HackerNoonMark in components/sections/Writing.tsx.
  *
  * NO HANDLE, also deliberately. DISPATCH prints name-over-handle because X's
- * card does; the HackerNoon account's handle is a generated string
- * (`ttw97pvp6z_7o9p76i`), so drawing it would print noise. `profile` links to
- * the author page it addresses, which is the part that is actually useful.
+ * card does; the display name and the handle here are the same word
+ * ("BJ Beyond" / `@bj_beyond`), so drawing both would repeat one fact twice.
+ * `profile` links to the author page it addresses, which is the part that is
+ * actually useful.
  */
 export const WRITING = {
   eyebrow: 'PUBLISHED WRITING',
@@ -292,7 +293,7 @@ export const WRITING = {
   standfirst:
     'Long-form pieces, published where the readers already are — and linked here rather than reprinted.',
   /** The author page, not the publication's front door. */
-  profile: 'https://hackernoon.com/u/ttw97pvp6z_7o9p76i',
+  profile: 'https://hackernoon.com/u/bj_beyond',
   cta: 'ALL STORIES ON HACKERNOON',
   /** Per-card action. The whole card is the link; this names the destination. */
   action: 'READ ON HACKERNOON',
@@ -729,6 +730,7 @@ export const SOCIAL = [
   { label: 'TIKTOK', href: 'https://www.tiktok.com/@bj_beyond' },
   { label: 'THREADS', href: 'https://www.threads.net/@bj_beyond' },
   { label: 'REDDIT', href: 'https://www.reddit.com/user/Bj_Beyond' },
+  { label: 'HACKERNOON', href: 'https://hackernoon.com/u/bj_beyond' },
   { label: 'BEACONS', href: 'https://beacons.ai/bj_beyond' },
 ] as const;
 
