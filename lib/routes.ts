@@ -144,7 +144,7 @@ export const ROUTES: readonly SiteRoute[] = [
   {
     path: '/contact/',
     label: 'CONTACT',
-    title: 'Contact',
+    title: 'Contact — Start a Project',
     description: CONTACT.description,
     priority: 0.8,
     changeFrequency: 'yearly',
