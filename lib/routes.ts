@@ -23,7 +23,7 @@
  * destinations rather than prose.
  */
 import type { MetadataRoute } from 'next';
-import { ART, BOOKS, CONTACT, DISPATCH, LABS, METHOD, SITE, WORK } from './content';
+import { BOOKS, CONTACT, DISPATCH, LABS, METHOD, SITE, WORK } from './content';
 
 export interface SiteRoute {
   /** Path as served, leading and trailing slash included. */
@@ -86,8 +86,9 @@ export const ROUTES: readonly SiteRoute[] = [
   {
     path: '/art/',
     label: 'ART',
-    title: 'Art',
-    description: ART.standfirst,
+    title: 'Art Market Intelligence',
+    description:
+      'Deep art market evaluations, Phoenix Soulfire scorecards and artist positioning analysis. Selected reels from Authentia Arte.',
     priority: 0.9,
     changeFrequency: 'monthly',
   },
