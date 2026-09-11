@@ -35,7 +35,7 @@ const jetbrainsMono = JetBrains_Mono({
 export const metadata: Metadata = {
   metadataBase: new URL(SITE.url),
   title: {
-    default: `${SITE.name} — One Step Beyond AI`,
+    default: `${SITE.name} — One Step Beyond AI | Art Market Intelligence & AI Strategy`,
     template: `%s — ${SITE.name}`,
   },
   description: SITE.description,

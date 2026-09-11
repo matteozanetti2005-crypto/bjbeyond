@@ -24,7 +24,7 @@ export const SITE = {
   url: 'https://bjbeyond.it',
   locale: 'Milano, Italia',
   description:
-    'Art Market Intelligence. We go further. At the intersection of data, AI, and human intuition.',
+    'BJ Beyond helps artists, collectors and companies navigate the new creative economy at the intersection of data, AI and human intuition. Independent practice based in Milano.',
   /**
    * Alt text for the shared social card.
    *
